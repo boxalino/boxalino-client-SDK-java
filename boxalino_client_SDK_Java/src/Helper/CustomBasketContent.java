@@ -11,6 +11,6 @@ package Helper;
  */
 public final  class CustomBasketContent {
 
-    public static  String Id;
-    public static  String Price;
+    public   String Id;
+    public   String Price;
 }

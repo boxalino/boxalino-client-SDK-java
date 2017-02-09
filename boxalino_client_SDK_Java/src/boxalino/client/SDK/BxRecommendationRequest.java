@@ -9,6 +9,10 @@ package boxalino.client.SDK;
  *
  * @author HASHIR
  */
-public class BxRecommendationRequest {
-    
+public class BxRecommendationRequest extends BxRequest {
+
+    public BxRecommendationRequest(String language, String choiceIdSimilar, int hitCount) {
+        super(language, choiceIdSimilar, hitCount, 0);
+
+    }
 }

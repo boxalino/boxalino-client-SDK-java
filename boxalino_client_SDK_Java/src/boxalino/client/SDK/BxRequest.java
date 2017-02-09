@@ -6,11 +6,16 @@
 package boxalino.client.SDK;
 
 import Exception.BoxalinoException;
+import Helper.Common;
 import Helper.CustomBasketContent;
+import Helper.Shift;
 import com.boxalino.p13n.api.thrift.ContextItem;
 import com.boxalino.p13n.api.thrift.Filter;
+import com.boxalino.p13n.api.thrift.Hit;
 import com.boxalino.p13n.api.thrift.SimpleSearchQuery;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -262,7 +267,54 @@ public class BxRequest {
     public void setMax(int max) {
         this.max = max;
     }
-    
-     
-        
+
+    public void setBasketProductWithPrices(String fieldName, ArrayList<CustomBasketContent> basketContent, String role, String subRole) {
+        //default start
+        if (role == null || role == Helper.Common.EMPTY_STRING) {
+            role = "mainProduct";
+        }
+        if (subRole == null || subRole == Helper.Common.EMPTY_STRING) {
+            subRole = "mainProduct";
+        }
+
+        //default end
+        if (basketContent != null && basketContent.size() > 0) {
+
+            Collections.sort(basketContent, new Comparator<CustomBasketContent>() {
+                @Override
+                public int compare(CustomBasketContent a, CustomBasketContent b) {
+                    return a.Price.compareTo(b.Price);
+                }
+            });
+            List<CustomBasketContent> basketItem = new Shift<CustomBasketContent>().array_shift(basketContent);
+            ContextItem contextItem = new ContextItem();
+            contextItem.indexId = this.getIndexId();
+            contextItem.fieldName = fieldName;
+            contextItem.contextItemId = basketItem.get(0).Id;
+            contextItem.role = role;
+            this.contextItems.add(contextItem);
+
+            for (CustomBasketContent basketItem1 : basketContent) {
+                ContextItem contextItem1 = new ContextItem();
+                contextItem1.indexId = this.getIndexId();
+                contextItem1.fieldName = fieldName;
+                contextItem1.contextItemId = basketItem1.Id;
+                contextItem1.role = subRole;
+                this.contextItems.add(contextItem1);
+            }
+        }
+    }
+
+    public void setMin(int min) {
+        this.min = min;
+    }
+
+    public void setWithRelaxation(boolean withRelaxation) {
+        this.withRelaxation = withRelaxation;
+    }
+
+    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> items, String[] fields) {
+        return new ArrayList<Map<String, Object>>();
+    }
+
 }
