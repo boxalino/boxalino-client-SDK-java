@@ -6,6 +6,9 @@
 package boxalino.client.SDK;
 
 import Helper.Common;
+import com.boxalino.p13n.api.thrift.Hit;
+
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +32,7 @@ public class BxParametrizedRequest extends BxRequest {
     public String requestFacetsPrefix = "bxfa_";
     public String requestSortFieldPrefix = "bxsf_";
     public String requestReturnFieldsName = "bxrf";
+    private Map<String, Object> callBackCache = null;
 
     public BxParametrizedRequest(String language, String choiceId, int max, int min, List<String> bxReturnFields, String getItemFieldsCB) {
         super(language, choiceId, max == 0 ? 10 : max, min);
@@ -160,7 +164,105 @@ public class BxParametrizedRequest extends BxRequest {
 
         return _params;
     }
-    
-    
+
+    public Map<String, Object> getWeightedParameters() {
+        Map<String, Object> _params = new HashMap<String, Object>();
+
+        for (Map.Entry<String, Object> obj : this.getPrefixedParameters(this.requestWeightedParametersPrefix, false).entrySet()) {
+            String[] pieces = obj.getKey().toString().split(" ");
+            String fieldValue = "";
+            if (pieces.length > 0) {
+                fieldValue = pieces[pieces.length - 1];
+                pieces[pieces.length - 1] = null;
+            }
+            String fieldName = String.join(" ", pieces);
+            if (_params.get(fieldName) != null) {
+                _params.put(fieldName, new HashMap<String, Object>());
+            }
+            _params.put(fieldName, new HashMap<String, Object>());
+
+            ((HashMap) _params.get(fieldName)).put(fieldValue, obj.getValue());
+
+        }
+        return _params;
+    }
+
+    public Map<String, BxFilter> getFilters() {
+        Map<String, BxFilter> filters = super.getFilters();
+        for (Map.Entry<String, Object> obj : this.getPrefixedParameters(this.requestFiltersPrefix, false).entrySet()) {
+            boolean negative = false;
+            String value = "";
+            if ((obj.getValue().toString()).indexOf('!') == 0) {
+                negative = true;
+                value = (obj.getValue().toString()).substring(1);
+            }
+
+            ArrayList<String> bxValues = new ArrayList<String>();
+            bxValues.add(value);
+            BxFilter bxFilter = new BxFilter(obj.getKey().toString(), bxValues, negative);
+            filters.put("", bxFilter);
+        }
+        return filters;
+    }
+
+    public BxFacets getFacets() {
+        BxFacets facets = super.getFacets();
+        if (facets == null) {
+            facets = new BxFacets();
+        }
+        for (Map.Entry<String, Object> obj : this.getPrefixedParameters(this.requestFacetsPrefix, false).entrySet()) {
+            facets.addFacet(obj.getKey(), obj.getValue().toString(), Common.EMPTY_STRING, Common.EMPTY_STRING, 0, false);
+        }
+        return facets;
+    }
+
+    public BxSortFields getSortFields() {
+        BxSortFields sortFields = super.getSortFields();
+        if (sortFields == null) {
+            sortFields = new BxSortFields();
+        }
+        for (Map.Entry<String, Object> obj : this.getPrefixedParameters(this.requestSortFieldPrefix, false).entrySet()) {
+            sortFields.push(obj.getKey(),((Boolean)obj.getValue()));
+        }
+        return sortFields;
+    }
+
+    public ArrayList<String> getReturnFields() {
+        if (super.returnFields == null) {
+            super.returnFields = new ArrayList<String>();
+        }
+        super.returnFields.addAll(this.bxReturnFields);
+        return super.returnFields;
+    }
+
+    public List<String> getAllReturnFields() {
+        List<String> returnFields = this.getReturnFields();
+        if (this.requestMap.get(this.requestReturnFieldsName) != null) {
+            super.getReturnFields().addAll(this.bxReturnFields);
+            returnFields.addAll(Arrays.asList(this.requestMap.get(this.requestReturnFieldsName).split(",")));
+        }
+        return returnFields;
+    }
+
+    public Map<String, Object> retrieveFromCallBack(List<Hit> items, String[] fields) {
+        if (this.callBackCache == null) {
+            this.callBackCache = new HashMap<String, Object>();
+            List<String> ids = new ArrayList<String>();
+            for (Hit item : items) {
+                ids.addAll(item.values.get("id"));
+            }
+        }
+        return this.callBackCache;
+    }
+
+    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> items, String[] fields) {
+        Map<String, Object> itemFields = this.retrieveFromCallBack(items, fields);
+        List<Map<String, Object>> temp = new ArrayList<Map<String, Object>>();
+        temp.add(itemFields);
+        if (((HashMap) temp.get(0)).get("id") != null) {
+            return (List<Map<String, Object>>) ((HashMap) temp.get(0)).get("id");
+        }
+        return super.retrieveHitFieldValues(item, field, items, fields);
+    }
 
 }

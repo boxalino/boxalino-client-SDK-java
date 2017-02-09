@@ -22,6 +22,16 @@ public class BxFilter {
     protected String rangeFrom = Helper.Common.EMPTY_STRING;
     protected String rangeTo = Helper.Common.EMPTY_STRING;
 
+    public BxFilter(String fieldName, ArrayList<String> values, boolean negative) {
+        //default start
+        negative = false;
+        //default end
+
+        this.fieldName = fieldName;
+        this.values = values;
+        this.negative = negative;
+    }
+
     public Filter getThriftFilter() {
         Filter filter = new Filter();
         filter.fieldName = this.fieldName;
