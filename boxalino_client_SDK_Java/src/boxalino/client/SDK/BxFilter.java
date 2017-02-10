@@ -7,6 +7,7 @@ package boxalino.client.SDK;
 
 import com.boxalino.p13n.api.thrift.Filter;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -55,4 +56,47 @@ public class BxFilter {
     public String getFieldName() {
         return this.fieldName;
     }
+
+    public List<String> getValues() {
+        return this.values;
+    }
+
+    public boolean isNegative() {
+        return this.negative;
+    }
+
+    public String getHierarchyId() {
+        return this.hierarchyId;
+    }
+
+    public void setHierarchyId(String hierarchyId) {
+        this.hierarchyId = hierarchyId;
+    }
+
+    public List<String> getHierarchy() {
+        return this.hierarchy;
+    }
+
+    public void setHierarchy(ArrayList<String> hierarchy) {
+        this.hierarchy = hierarchy;
+    }
+
+    public String getRangeFrom() {
+        return this.rangeFrom;
+    }
+
+    public void setRangeFrom(String rangeFrom) {
+        this.rangeFrom = rangeFrom;
+    }
+
+    public String getRangeTo() {
+        return this.rangeTo;
+    }
+
+    public void setRangeTo(String rangeTo) {
+        this.rangeTo = rangeTo;
+    }
+    
+    
+
 }
