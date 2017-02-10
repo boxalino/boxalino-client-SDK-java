@@ -6,7 +6,9 @@
 package boxalino.client.SDK;
 
 import com.boxalino.p13n.api.thrift.ChoiceResponse;
+import com.boxalino.p13n.api.thrift.SearchResult;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -21,6 +23,14 @@ public class BxChooseResponse {
         this.response = response;
         if (bxRequests == null) {
             bxRequests = new ArrayList<BxRequest>();
+        }
+        this.bxRequests = bxRequests;
+    }
+
+    public BxChooseResponse(SearchResult response, List<BxSearchRequest> bxRequests) {
+        this.response = response;
+        if (bxRequests == null) {
+            bxRequests = new ArrayList<BxSearchRequest>();
         }
         this.bxRequests = bxRequests;
     }
