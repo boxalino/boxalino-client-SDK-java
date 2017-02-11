@@ -7,11 +7,13 @@ package boxalino.client.SDK;
 
 import Helper.Common;
 import com.boxalino.p13n.api.thrift.FacetRequest;
+import com.boxalino.p13n.api.thrift.FacetResponse;
 import com.boxalino.p13n.api.thrift.FacetSortOrder;
 import com.boxalino.p13n.api.thrift.FacetValue;
 import com.boxalino.p13n.api.thrift.Filter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +25,7 @@ public class BxFacets {
     private HashMap<String, Filter> filters = new HashMap<String, Filter>();
     public Map<String, FacetValue> selectedValues = new HashMap<String, FacetValue>();
     public Map<String, Object> facets = new HashMap<String, Object>();
+    public List<FacetResponse> facetResponse = new ArrayList<FacetResponse>();
 
     public HashMap<String, Filter> getFilters() {
         return this.filters;
@@ -60,6 +63,10 @@ public class BxFacets {
         ((HashMap) this.facets.get(fieldName)).put("selectedValues", selectedValues);
         ((HashMap) this.facets.get(fieldName)).put("boundsOnly", boundsOnly);
 
+    }
+
+    public void setFacetResponse(List<FacetResponse> facetResponse) {
+        this.facetResponse = facetResponse;
     }
 
 }
