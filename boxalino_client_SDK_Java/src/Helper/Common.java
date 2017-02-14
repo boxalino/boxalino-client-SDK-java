@@ -5,11 +5,19 @@
  */
 package Helper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import static javafx.scene.input.KeyCode.T;
 
 /**
@@ -37,4 +45,17 @@ public class Common {
         }
         return null;
     }
+    
+     public static void unlink(String fileName)
+        {
+            if ( new File(fileName).exists())
+            {
+                new File(fileName).delete();
+            }
+        }
+     
+     public static String file_get_contents(String path) throws FileNotFoundException{
+         return( new Scanner(new File(path)).useDelimiter("\\Z").next());
+     }
+     
 }
