@@ -23,9 +23,9 @@ public class BxAutocompleteRequest {
     protected int textualSuggestionsHitCount;
     protected BxSearchRequest bxSearchRequest;
     protected String indexId = null;
-    private ArrayList<PropertyQuery> propertyQueries = new ArrayList<PropertyQuery>();
+    private ArrayList<PropertyQuery> propertyQueries = new ArrayList<>();
 
-    public BxAutocompleteRequest(String language, String query, int textualSuggestionsHitCount, int productSuggestionHitCount, String autocompleteChoiceId, String searchChoiceId) {
+    public BxAutocompleteRequest(String language, String queryText, int textualSuggestionsHitCount, int productSuggestionHitCount, String autocompleteChoiceId, String searchChoiceId) {
         //default paramter start
         if (productSuggestionHitCount == 0) {
             productSuggestionHitCount = 5;
@@ -36,7 +36,7 @@ public class BxAutocompleteRequest {
         if ((searchChoiceId == null) || (searchChoiceId.isEmpty())) {
             searchChoiceId = "search";
         }
-
+        
         //default parameter end    
         this.language = language;
         this.queryText = queryText;
@@ -123,7 +123,7 @@ public class BxAutocompleteRequest {
     }
 
     public void resetPropertyQueries() {
-        this.propertyQueries = new ArrayList<PropertyQuery>();
+        this.propertyQueries = new ArrayList<>();
     }
     
      public AutocompleteRequest getAutocompleteThriftRequest(String profileid, UserRecord thriftUserRecord)

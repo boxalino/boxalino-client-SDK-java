@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.transport.THttpClient;
+import org.apache.thrift.transport.TTransportException;
 
 /**
  *
@@ -34,16 +35,16 @@ import org.apache.thrift.transport.THttpClient;
  */
 public class BxClient {
 
-    private String account;
-    private String password;
-    private boolean isDev;
+    private final String account;
+    private final String password;
+    private final boolean isDev;
     private String host;
     private Integer port;
     private String uri;
     private String schema;
     private String p13n_username;
     private String p13n_password;
-    private String domain;
+    private final String domain;
 
     private ArrayList<BxAutocompleteRequest> autocompleteRequests = null;
     private ArrayList<BxAutocompleteResponse> autocompleteResponses = null;
@@ -63,7 +64,7 @@ public class BxClient {
     public BxClient(String account, String password, String domain, boolean isDev, String host, Integer port, String uri, String schema, String p13n_username, String p13n_password) {
         //default value start
 
-        if (host == null || host == Helper.Common.EMPTY_STRING) {
+        if (host == null || host.equals(Helper.Common.EMPTY_STRING)) {
             host = null;
         }
         if (port == null) {
@@ -83,16 +84,15 @@ public class BxClient {
         }
         //default value end
 
-        this.chooseRequests = new ArrayList<BxRequest>();
-        this.requestMap = new HashMap<String, String>();
+        this.chooseRequests = new ArrayList<>();
+        this.requestMap = new HashMap<>();
         this._timeout = 2;
-        this.requestContextParameters = new HashMap<String, ArrayList<String>>();
+        this.requestContextParameters = new HashMap<>();
         this.sessionId = null;
         this.profileId = null;
 
         this.account = account;
-        this.password = password;
-        this.requestMap = requestMap;
+        this.password = password;       
         this.isDev = isDev;
 
         this.host = host;
@@ -173,11 +173,11 @@ public class BxClient {
         } else {
             try {
                 transport = new THttpClient(String.format("%s://%s%s", this.schema, this.host, this.uri));
-            } catch (Exception ex) {
+            } catch (TTransportException ex) {
 
             }
         }
-        transport.setCustomHeader("Authorization", new String(Base64.getEncoder().encodeToString((this.p13n_username + ':' + this.p13n_password).getBytes("UTF-8"))));
+        transport.setCustomHeader("Authorization", Base64.getEncoder().encodeToString((this.p13n_username + ':' + this.p13n_password).getBytes("UTF-8")));
         Client client = new Client(new TCompactProtocol(transport));
         transport.open();
         return client;
@@ -185,18 +185,19 @@ public class BxClient {
 
     private Map<String, ArrayList<String>> getRequestContextParameters() {
         Map<String, ArrayList<String>> parameters = this.requestContextParameters;
-        for (BxRequest request : chooseRequests) {
-            for (Map.Entry<String, ArrayList<String>> v : request.getRequestContextParameters().entrySet()) {
+        chooseRequests.forEach((request) -> {
+            request.getRequestContextParameters().entrySet().forEach((v) -> {
                 parameters.put(v.getKey(), new ArrayList(v.getValue()));
-            }
-        }
+            });
+        });
         return parameters;
     }
 
     public RequestContext getRequestContext() {
-        String[] list = this.getSessionAndProfile();
+        String[] list;
+        list = this.getSessionAndProfile();
         RequestContext requestContext = new RequestContext();
-        String sessionId = this.sessionId;
+        String sessionIdd = this.sessionId;
         requestContext.parameters = new HashMap<String, List<String>>() {
             {
                 put("User-Agent", new ArrayList<String>() {
@@ -211,7 +212,7 @@ public class BxClient {
                 });
                 put("User-SessionId", new ArrayList<String>() {
                     {
-                        add(sessionId);
+                        add(sessionIdd);
                     }
                 });
                 put("User-Referer", new ArrayList<String>() {
@@ -231,14 +232,14 @@ public class BxClient {
 
             }
         };
-        for (Map.Entry<String, ArrayList<String>> k : this.getRequestContextParameters().entrySet()) {
+        this.getRequestContextParameters().entrySet().forEach((k) -> {
             requestContext.parameters.put(k.getKey(), k.getValue());
-        }
+        });
         if (this.requestMap != null && requestMap.containsKey("p13nRequestContext")) {
-            Map<String, String> requestMap = this.requestMap;
+            Map<String, String> requestMapp = this.requestMap;
             requestContext.parameters = new HashMap<String, List<String>>() {
                 {
-                    put(requestMap.get("p13nRequestContext"), new ArrayList<String>() {
+                    put(requestMapp.get("p13nRequestContext"), new ArrayList<String>() {
                         {
                             add(requestContext.parameters.get("p13nRequestContext").toString());
                         }
@@ -252,7 +253,8 @@ public class BxClient {
 
     public ChoiceRequest getChoiceRequest(ArrayList<ChoiceInquiry> inquiries, RequestContext requestContext) {
         ChoiceRequest choiceRequest = new ChoiceRequest();
-        String[] list = this.getSessionAndProfile();
+        String[] list;
+        list = this.getSessionAndProfile();
 
         choiceRequest.userRecord = this.getUserRecord();
         choiceRequest.profileId = profileId;
@@ -270,7 +272,7 @@ public class BxClient {
     }
 
     public void resetRequestContextParameter() {
-        this.requestContextParameters = new HashMap<String, ArrayList<String>>();
+        this.requestContextParameters = new HashMap<>();
     }
 
     protected Map<String, ArrayList<String>> getBasicRequestContextParameters() {
@@ -375,7 +377,7 @@ public class BxClient {
     }
 
     public void resetRequests() {
-        this.chooseRequests = new ArrayList<BxRequest>();
+        this.chooseRequests = new ArrayList<>();
     }
 
     public BxRequest getRequest(int index) {
@@ -395,30 +397,28 @@ public class BxClient {
     }
 
     public ArrayList<BxRequest> getRecommendationRequests() {
-        ArrayList<BxRequest> requests = new ArrayList<BxRequest>();
+        ArrayList<BxRequest> requests = new ArrayList<>();
 
-        for (Object request : chooseRequests) {
-            if (request instanceof BxRecommendationRequest) {
-                requests.add((BxRequest) request);
-            }
-        }
+        chooseRequests.stream().filter((request) -> (request instanceof BxRecommendationRequest)).forEachOrdered((request) -> {
+            requests.add((BxRequest) request);
+        });
         return requests;
     }
 
     public ChoiceRequest getThriftChoiceRequest() {
-        ArrayList<ChoiceInquiry> choiceInquiries = new ArrayList<ChoiceInquiry>();
+        ArrayList<ChoiceInquiry> choiceInquiries = new ArrayList<>();
 
-        for (BxRequest request : this.chooseRequests) {
+        this.chooseRequests.stream().map((request) -> {
             ChoiceInquiry choiceInquiry = new ChoiceInquiry();
             choiceInquiry.choiceId = request.getChoiceId();
             choiceInquiry.simpleSearchQuery = request.getSimpleSearchQuery();
-
             choiceInquiry.contextItems = request.getContextItems();
             choiceInquiry.minHitCount = (int) request.getMin();
             choiceInquiry.withRelaxation = request.getWithRelaxation();
-
+            return choiceInquiry;
+        }).forEachOrdered((choiceInquiry) -> {
             choiceInquiries.add(choiceInquiry);
-        }
+        });
         ChoiceRequest choiceRequest = this.getChoiceRequest(choiceInquiries, this.getRequestContext());
         return choiceRequest;
     }
@@ -454,16 +454,16 @@ public class BxClient {
     }
 
     public ArrayList<AutocompleteRequest> use(ArrayList<BxAutocompleteRequest> request, String profileId, UserRecord userRecord) {
-        ArrayList<AutocompleteRequest> listAutocompleteRequest = new ArrayList<AutocompleteRequest>();
-        for (BxAutocompleteRequest req : request) {
+        ArrayList<AutocompleteRequest> listAutocompleteRequest = new ArrayList<>();
+        request.forEach((req) -> {
             listAutocompleteRequest.add(req.getAutocompleteThriftRequest(profileId, userRecord));
-        }
+        });
         return listAutocompleteRequest;
     }
 
     public ArrayList<BxAutocompleteResponse> use(ArrayList<BxAutocompleteResponse> response, int i) {
         BxAutocompleteRequest request = this.autocompleteRequests.get(++i);
-        ArrayList<BxAutocompleteResponse> bxAutocompleteResponse = new ArrayList<BxAutocompleteResponse>();
+        ArrayList<BxAutocompleteResponse> bxAutocompleteResponse = new ArrayList<>();
         for (Object req : response) {
             bxAutocompleteResponse.add(new BxAutocompleteResponse((AutocompleteResponse) req, request));
         }
@@ -473,7 +473,7 @@ public class BxClient {
 
     public ArrayList<BxAutocompleteResponse> use1(List<AutocompleteResponse> response, int i) {
         BxAutocompleteRequest request = this.autocompleteRequests.get(++i);
-        ArrayList<BxAutocompleteResponse> bxAutocompleteResponse = new ArrayList<BxAutocompleteResponse>();
+        ArrayList<BxAutocompleteResponse> bxAutocompleteResponse = new ArrayList<>();
         for (Object req : response) {
             bxAutocompleteResponse.add(new BxAutocompleteResponse((AutocompleteResponse) req, request));
         }

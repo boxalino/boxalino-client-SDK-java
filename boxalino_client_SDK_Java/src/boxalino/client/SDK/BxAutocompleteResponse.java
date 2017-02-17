@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class BxAutocompleteResponse {
 
-    private AutocompleteResponse response;
-    private BxAutocompleteRequest bxAutocompleteRequest;
+    private final AutocompleteResponse response;
+    private final BxAutocompleteRequest bxAutocompleteRequest;
 
     public BxAutocompleteResponse(AutocompleteResponse response, BxAutocompleteRequest bxAutocompleteRequest) {
         this.response = response;
@@ -42,17 +42,17 @@ public class BxAutocompleteResponse {
     }
 
     public List<String> getTextualSuggestions() {
-        List<String> suggestions = new ArrayList<String>();
+        List<String> suggestions = new ArrayList<>();
 
-        for (AutocompleteHit hit : this.getResponse().hits) {
+        this.getResponse().hits.forEach((hit) -> {
             suggestions.add(hit.suggestion);
-        }
+        });
         return suggestions;
     }
 
     protected AutocompleteHit getTextualSuggestionHit(String suggestion) throws BoxalinoException {
         for (AutocompleteHit hit : this.getResponse().hits) {
-            if (hit.suggestion == suggestion) {
+            if (hit.suggestion.equals(suggestion)) {
                 return hit;
             }
         }
@@ -65,11 +65,11 @@ public class BxAutocompleteResponse {
     }
 
     public BxChooseResponse getBxSearchResponse(String textualSuggestion) throws BoxalinoException {
-        BxAutocompleteRequest bxAutocompleteRequest = this.bxAutocompleteRequest;
+        BxAutocompleteRequest bxAutocompleteRequestt = this.bxAutocompleteRequest;
         SearchResult searchResult = textualSuggestion == null ? this.getResponse().prefixSearchResult : this.getTextualSuggestionHit(textualSuggestion).searchResult;
         ArrayList<BxSearchRequest> bxRequests = new ArrayList() {
             {
-                add(bxAutocompleteRequest.getBxSearchRequest());
+                add(bxAutocompleteRequestt.getBxSearchRequest());
             }
         };
         BxChooseResponse bxChooseResponse = new BxChooseResponse(searchResult, bxRequests);
@@ -79,16 +79,16 @@ public class BxAutocompleteResponse {
     public List<PropertyHit> getPropertyHits(String field) {
 
         for (PropertyResult propertyResult : this.getResponse().propertyResults) {
-            if (propertyResult.name == field) {
+            if (propertyResult.name.equals(field)) {
                 return (List<PropertyHit>) propertyResult.hits;
             }
         }
-        return new ArrayList<PropertyHit>();
+        return new ArrayList<>();
     }
 
     public PropertyHit getPropertyHit(String field, String hitValue) {
         for (PropertyHit hit : this.getPropertyHits(field)) {
-            if (hit.value == hitValue) {
+            if (hit.value.equals(hitValue)) {
                 return hit;
             }
         }
@@ -96,10 +96,10 @@ public class BxAutocompleteResponse {
     }
 
     public List<String> getPropertyHitValues(String field) {
-        List<String> hitValues = new ArrayList<String>();
-        for (PropertyHit hit : this.getPropertyHits(field)) {
+        List<String> hitValues = new ArrayList<>();
+        this.getPropertyHits(field).forEach((hit) -> {
             hitValues.add(hit.value);
-        }
+        });
         return hitValues;
     }
 

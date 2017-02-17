@@ -19,7 +19,7 @@ public class BxFilter {
     protected ArrayList<String> values;
     protected boolean negative;
     protected String hierarchyId = Helper.Common.EMPTY_STRING;
-    protected ArrayList<String> hierarchy = new ArrayList<String>();
+    protected ArrayList<String> hierarchy = new ArrayList<>();
     protected String rangeFrom = Helper.Common.EMPTY_STRING;
     protected String rangeTo = Helper.Common.EMPTY_STRING;
 

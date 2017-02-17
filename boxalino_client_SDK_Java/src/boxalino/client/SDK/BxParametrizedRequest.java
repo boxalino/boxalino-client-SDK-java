@@ -91,18 +91,18 @@ public class BxParametrizedRequest extends BxRequest {
     }
 
     public List<String> getPrefixes() {
-        String requestParametersPrefix = this.requestParametersPrefix;
-        String requestWeightedParametersPrefix = this.requestWeightedParametersPrefix;
-        String requestFiltersPrefix = this.requestFiltersPrefix;
-        String requestFacetsPrefix = this.requestFacetsPrefix;
-        String requestSortFieldPrefix = this.requestSortFieldPrefix;
+        String requestParametersPrefixx = this.requestParametersPrefix;
+        String requestWeightedParametersPrefixx = this.requestWeightedParametersPrefix;
+        String requestFiltersPrefixx = this.requestFiltersPrefix;
+        String requestFacetsPrefixx= this.requestFacetsPrefix;
+        String requestSortFieldPrefixx = this.requestSortFieldPrefix;
         return new ArrayList<String>() {
             {
-                add(requestParametersPrefix);
-                add(requestWeightedParametersPrefix);
-                add(requestFiltersPrefix);
-                add(requestFacetsPrefix);
-                add(requestSortFieldPrefix);
+                add(requestParametersPrefixx);
+                add(requestWeightedParametersPrefixx);
+                add(requestFiltersPrefixx);
+                add(requestFacetsPrefixx);
+                add(requestSortFieldPrefixx);
             }
         };
     }
@@ -112,13 +112,8 @@ public class BxParametrizedRequest extends BxRequest {
         checkOtherPrefixes = true;
         //default end
         if (checkOtherPrefixes) {
-            for (String p : this.getPrefixes()) {
-                if (p == prefix) {
-                    continue;
-                }
-                if (prefix.length() < p.length() && _string.indexOf(p) == 0) {
-                    return false;
-                }
+            if (!this.getPrefixes().stream().filter((p) -> !(p == prefix)).noneMatch((p) -> (prefix.length() < p.length() && _string.indexOf(p) == 0))) {
+                return false;
             }
         }
         return prefix == null || _string.indexOf(prefix) == 0;
@@ -129,7 +124,7 @@ public class BxParametrizedRequest extends BxRequest {
         checkOtherPrefixes = true;
         //default end
 
-        Map<String, Object> _params = new HashMap<String, Object>();
+        Map<String, Object> _params = new HashMap<>();
         for (Map.Entry<String, String> k : this.requestMap.entrySet()) {
             if (this.matchesPrefix(k.getKey(), prefix, checkOtherPrefixes)) {
                 _params.put(k.getKey().substring(prefix.length()), k.getValue());
@@ -138,38 +133,24 @@ public class BxParametrizedRequest extends BxRequest {
         return _params;
     }
 
+    @Override
     public Map<String, ArrayList<String>> getRequestContextParameters() {
-        HashMap<String, ArrayList<String>> _params = new HashMap<String, ArrayList<String>>();
-        for (Map.Entry<String, Object> item : getPrefixedParameters(requestWeightedParametersPrefix, true).entrySet()) {
+        HashMap<String, ArrayList<String>> _params = new HashMap<>();
+        getPrefixedParameters(requestWeightedParametersPrefix, true).entrySet().forEach((item) -> {
             _params.put(item.getKey(), (ArrayList<String>) item.getValue());
-        }
-        for (Map.Entry<String, Object> item : getPrefixedParameters(requestParametersPrefix, false).entrySet()) {
-            if (Common.strpos(item.getKey(), requestWeightedParametersPrefix, 0) != -1) {
-                continue;
-            }
-            if (Common.strpos(item.getKey(), requestFiltersPrefix, 0) != -1) {
-                continue;
-            }
-            if (Common.strpos(item.getKey(), requestFacetsPrefix, 0) != -1) {
-                continue;
-            }
-            if (Common.strpos(item.getKey(), requestSortFieldPrefix, 0) != -1) {
-                continue;
-            }
-            if (item.getKey() == requestReturnFieldsName) {
-                continue;
-            }
+        });
+        getPrefixedParameters(requestParametersPrefix, false).entrySet().stream().filter((item) -> !(Common.strpos(item.getKey(), requestWeightedParametersPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestFiltersPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestFacetsPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestSortFieldPrefix, 0) != -1)).filter((item) -> !(item.getKey() == requestReturnFieldsName)).forEachOrdered((item) -> {
             _params.put(item.getKey(), (ArrayList<String>) item.getValue());
-        }
+        });
 
         return _params;
     }
 
     public Map<String, Object> getWeightedParameters() {
-        Map<String, Object> _params = new HashMap<String, Object>();
+        Map<String, Object> _params = new HashMap<>();
 
         for (Map.Entry<String, Object> obj : this.getPrefixedParameters(this.requestWeightedParametersPrefix, false).entrySet()) {
-            String[] pieces = obj.getKey().toString().split(" ");
+            String[] pieces = obj.getKey().split(" ");
             String fieldValue = "";
             if (pieces.length > 0) {
                 fieldValue = pieces[pieces.length - 1];
@@ -177,9 +158,9 @@ public class BxParametrizedRequest extends BxRequest {
             }
             String fieldName = String.join(" ", pieces);
             if (_params.get(fieldName) != null) {
-                _params.put(fieldName, new HashMap<String, Object>());
+                _params.put(fieldName, new HashMap<>());
             }
-            _params.put(fieldName, new HashMap<String, Object>());
+            _params.put(fieldName, new HashMap<>());
 
             ((HashMap) _params.get(fieldName)).put(fieldValue, obj.getValue());
 
@@ -187,6 +168,7 @@ public class BxParametrizedRequest extends BxRequest {
         return _params;
     }
 
+    @Override
     public Map<String, BxFilter> getFilters() {
         Map<String, BxFilter> filters = super.getFilters();
         for (Map.Entry<String, Object> obj : this.getPrefixedParameters(this.requestFiltersPrefix, false).entrySet()) {
@@ -197,14 +179,15 @@ public class BxParametrizedRequest extends BxRequest {
                 value = (obj.getValue().toString()).substring(1);
             }
 
-            ArrayList<String> bxValues = new ArrayList<String>();
+            ArrayList<String> bxValues = new ArrayList<>();
             bxValues.add(value);
-            BxFilter bxFilter = new BxFilter(obj.getKey().toString(), bxValues, negative);
+            BxFilter bxFilter = new BxFilter(obj.getKey(), bxValues, negative);
             filters.put("", bxFilter);
         }
         return filters;
     }
 
+    @Override
     public BxFacets getFacets() {
         BxFacets facets = super.getFacets();
         if (facets == null) {
@@ -216,6 +199,7 @@ public class BxParametrizedRequest extends BxRequest {
         return facets;
     }
 
+    @Override
     public BxSortFields getSortFields() {
         BxSortFields sortFields = super.getSortFields();
         if (sortFields == null) {
@@ -227,37 +211,40 @@ public class BxParametrizedRequest extends BxRequest {
         return sortFields;
     }
 
+    @Override
     public ArrayList<String> getReturnFields() {
         if (super.returnFields == null) {
-            super.returnFields = new ArrayList<String>();
+            super.returnFields = new ArrayList<>();
         }
         super.returnFields.addAll(this.bxReturnFields);
         return super.returnFields;
     }
 
     public List<String> getAllReturnFields() {
-        List<String> returnFields = this.getReturnFields();
+        List<String> returnFieldss = this.getReturnFields();
         if (this.requestMap.get(this.requestReturnFieldsName) != null) {
             super.getReturnFields().addAll(this.bxReturnFields);
-            returnFields.addAll(Arrays.asList(this.requestMap.get(this.requestReturnFieldsName).split(",")));
+            returnFieldss.addAll(Arrays.asList(this.requestMap.get(this.requestReturnFieldsName).split(",")));
         }
-        return returnFields;
+        return returnFieldss;
     }
 
     public Map<String, Object> retrieveFromCallBack(List<Hit> items, String[] fields) {
         if (this.callBackCache == null) {
-            this.callBackCache = new HashMap<String, Object>();
-            List<String> ids = new ArrayList<String>();
-            for (Hit item : items) {
+            this.callBackCache = new HashMap<>();
+            List<String> ids;
+            ids = new ArrayList<>();
+            items.forEach((item) -> {
                 ids.addAll(item.values.get("id"));
-            }
+            });
         }
         return this.callBackCache;
     }
 
+    @Override
     public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> items, String[] fields) {
         Map<String, Object> itemFields = this.retrieveFromCallBack(items, fields);
-        List<Map<String, Object>> temp = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> temp = new ArrayList<>();
         temp.add(itemFields);
         if (((HashMap) temp.get(0)).get("id") != null) {
             return (List<Map<String, Object>>) ((HashMap) temp.get(0)).get("id");

@@ -25,13 +25,13 @@ import net.sf.json.JSONArray;
  */
 public class BxChooseResponse {
 
-    private Object response;
-    private Object bxRequests;
+    private final Object response;
+    private final Object bxRequests;
 
     public BxChooseResponse(ChoiceResponse response, ArrayList<BxRequest> bxRequests) {
         this.response = response;
         if (bxRequests == null) {
-            bxRequests = new ArrayList<BxRequest>();
+            bxRequests = new ArrayList<>();
         }
         this.bxRequests = bxRequests;
     }
@@ -39,7 +39,7 @@ public class BxChooseResponse {
     public BxChooseResponse(SearchResult response, List<BxSearchRequest> bxRequests) {
         this.response = response;
         if (bxRequests == null) {
-            bxRequests = new ArrayList<BxSearchRequest>();
+            bxRequests = new ArrayList<>();
         }
         this.bxRequests = bxRequests;
     }
@@ -49,16 +49,16 @@ public class BxChooseResponse {
     }
 
     protected Variant getChoiceIdResponseVariant(int id) throws BoxalinoException, NoSuchFieldException {
-        Object response = this.getResponse();
-        if (response.getClass().getDeclaredField("Variants") != null) {
-            if (((ChoiceResponse) response).variants != null) {
-                return ((ChoiceResponse) response).variants.get(id - 1);
+        Object responsee = this.getResponse();
+        if (responsee.getClass().getDeclaredField("Variants") != null) {
+            if (((ChoiceResponse) responsee).variants != null) {
+                return ((ChoiceResponse) responsee).variants.get(id - 1);
             }
         }
 
-        if (response.getClass().getName() == (new SearchResult().getClass().getName())) {
+        if (responsee.getClass().getName().equals(new SearchResult().getClass().getName())) {
             Variant variant = new Variant();
-            variant.searchResult = (SearchResult) response;
+            variant.searchResult = (SearchResult) responsee;
             return variant;
         }
         throw new BoxalinoException("no variant provided in choice response for variant id " + id);
@@ -68,7 +68,7 @@ public class BxChooseResponse {
         int k = 0;
         for (BxRequest bxRequest : (ArrayList<BxRequest>) this.bxRequests) {
             k++;
-            if (choice == null || choice == bxRequest.getChoiceId()) {
+            if (choice == null || choice.equals(bxRequest.getChoiceId())) {
                 if (count > 0) {
                     count--;
                     continue;
@@ -80,10 +80,10 @@ public class BxChooseResponse {
     }
 
     public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> fields, String[] hits) {
-        List<Map<String, Object>> fieldValues = new ArrayList<Map<String, Object>>();
-        for (BxRequest bxRequest : (ArrayList<BxRequest>) this.bxRequests) {
+        List<Map<String, Object>> fieldValues = new ArrayList<>();
+        ((ArrayList<BxRequest>) this.bxRequests).forEach((bxRequest) -> {
             fieldValues.addAll(bxRequest.retrieveHitFieldValues(item, field, fields, hits));
-        }
+        });
         return fieldValues;
     }
 
@@ -95,7 +95,7 @@ public class BxChooseResponse {
             return null;
         }
         for (BxRequest bxRequest : (ArrayList<BxRequest>) this.bxRequests) {
-            if (bxRequest.getChoiceId() == choice) {
+            if (bxRequest.getChoiceId().equals(choice)) {
                 return bxRequest.getFacets();
             }
         }
@@ -114,7 +114,7 @@ public class BxChooseResponse {
         }
         for (SearchResult searchResult : variant.searchRelaxation.suggestionsResults) {
             if (searchResult.totalHitCount > 0) {
-                if (searchResult.queryText == "" || variant.searchResult.queryText == "") {
+                if (searchResult.queryText.isEmpty() || variant.searchResult.queryText.isEmpty()) {
                     continue;
                 }
                 int distance = new LevenshteinDistance(searchResult.queryText, variant.searchResult.queryText).getSimilarity();
@@ -159,10 +159,10 @@ public class BxChooseResponse {
     }
 
     public Map<String, Object> getSearchHitFieldValues(SearchResult searchResult, String[] fields) {
-        Map<String, Object> fieldValues = new HashMap<String, Object>();
+        Map<String, Object> fieldValues = new HashMap<>();
 
         if (searchResult != null) {
-            for (Hit item : searchResult.hits) {
+            searchResult.hits.forEach((item) -> {
                 String[] finalFields = fields;
                 if (finalFields == null) {
                     finalFields = item.values.keySet().toArray(new String[item.values.size()]);
@@ -170,7 +170,7 @@ public class BxChooseResponse {
 
                 for (String field : finalFields) {
                     if (item.values.get(field) != null) {
-                        if (item.values.get(field).get(0) != EMPTY_STRING || item.values.get(field).get(0) != null) {
+                        if (!item.values.get(field).get(0).equals(EMPTY_STRING) || item.values.get(field).get(0) != null) {
 
                             ((HashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).put(field, item.values.get(field));
 
@@ -182,8 +182,7 @@ public class BxChooseResponse {
                     }
 
                 }
-
-            }
+            });
         }
         return fieldValues;
     }
@@ -211,12 +210,12 @@ public class BxChooseResponse {
         }
         count = 0;
         for (Map.Entry<String, Object> fieldValueMap : this.getHitFieldValues(fieldNames, choice, true, count, maxDistance).entrySet()) {
-            Map<String, List<String>> temp_fieldValueMap = new HashMap<String, List<String>>();
+            Map<String, List<String>> temp_fieldValueMap = new HashMap<>();
             if (count++ < hitIndex) {
                 continue;
             }
             for (Object fieldValues : temp_fieldValueMap.values()) {
-                List<String> temp_fieldValues = new ArrayList<String>();
+                List<String> temp_fieldValues = new ArrayList<>();
                 temp_fieldValues = (ArrayList<String>) fieldValues;
                 if (temp_fieldValues.size() > 0) {
                     if (returnOneValue) {
@@ -239,10 +238,10 @@ public class BxChooseResponse {
     public Map<String, SearchResult> getSubPhrasesQueries(String choice, int count) throws BoxalinoException, NoSuchFieldException {
 
         if (!this.areThereSubPhrases(choice, count)) {
-            return new HashMap<String, SearchResult>();
+            return new HashMap<>();
         }
 
-        Map<String, SearchResult> queries = new HashMap<String, SearchResult>();
+        Map<String, SearchResult> queries = new HashMap<>();
         Variant variant = this.getChoiceResponseVariant(choice, count);
         int index = 0;
         for (SearchResult searchResult : variant.searchRelaxation.subphrasesResults) {
@@ -258,7 +257,7 @@ public class BxChooseResponse {
         }
         Variant variant = this.getChoiceResponseVariant(choice, count);
         for (SearchResult searchResult : variant.searchRelaxation.subphrasesResults) {
-            if (searchResult.queryText == queryText) {
+            if (searchResult.queryText.equals(queryText)) {
                 return searchResult;
             }
         }
@@ -277,12 +276,12 @@ public class BxChooseResponse {
 
     public Map<String, String> getSearchResultHitIds(SearchResult searchResult, String fieldId) {
         //default start
-        if (fieldId == EMPTY_STRING) {
+        if (fieldId.equals(EMPTY_STRING)) {
             fieldId = "id";
         }
         //default end
 
-        Map<String, String> ids = new HashMap<String, String>();
+        Map<String, String> ids = new HashMap<>();
 
         if (searchResult != null) {
             if (searchResult.hits.size() > 0) {
@@ -302,7 +301,7 @@ public class BxChooseResponse {
 
     public Map<String, String> getSubPhraseHitIds(String queryText, String choice, int count, String fieldId) throws BoxalinoException, NoSuchFieldException {
         //default start
-        if (fieldId == EMPTY_STRING) {
+        if (fieldId.equals(EMPTY_STRING)) {
             fieldId = "id";
         }
         //default end 
@@ -310,7 +309,7 @@ public class BxChooseResponse {
         if (searchResult != null) {
             return this.getSearchResultHitIds(searchResult, fieldId);
         }
-        return new HashMap<String, String>();
+        return new HashMap<>();
     }
 
     public Map<String, String> getHitIds(String choice, boolean considerRelaxation, int count, int maxDistance, String fieldId) throws BoxalinoException, NoSuchFieldException {
@@ -318,7 +317,7 @@ public class BxChooseResponse {
         if (maxDistance == 0) {
             maxDistance = 10;
         }
-        if (fieldId == EMPTY_STRING) {
+        if (fieldId.equals(EMPTY_STRING)) {
             fieldId = "id";
         }
         //default end 
@@ -346,7 +345,7 @@ public class BxChooseResponse {
         if (searchResult != null) {
             return this.getSearchHitFieldValues(searchResult, fields);
         }
-        return new HashMap<String, Object>();
+        return new HashMap<>();
     }
 
     public boolean areResultsCorrected(String choice, int count, int maxDistance) throws BoxalinoException, NoSuchFieldException {
@@ -369,17 +368,17 @@ public class BxChooseResponse {
     }
 
     public String toJson(String[] fields) throws BoxalinoException, NoSuchFieldException {
-        List<Map<String, Object>> temp = new ArrayList<Map<String, Object>>();
-        Map<String, Object> myObject = new HashMap<String, Object>();
+        List<Map<String, Object>> temp = new ArrayList<>();
+        Map<String, Object> myObject = new HashMap<>();
         for (Map.Entry<String, Object> fieldValueMap : this.getHitFieldValues(fields, null, true, 0, 10).entrySet()) {
-            Map<String, Object> hitFieldValues = new HashMap<String, Object>();
-            for (Map.Entry<String, Object> fieldValues : ((Map<String, Object>) fieldValueMap.getValue()).entrySet()) {
+            Map<String, Object> hitFieldValues = new HashMap<>();
+            ((Map<String, Object>) fieldValueMap.getValue()).entrySet().forEach((fieldValues) -> {
                 hitFieldValues.put((fieldValues.getKey()), (new HashMap<String, Object>() {
                     {
                         put("values", fieldValues.getValue());
                     }
                 }));
-            }
+            });
 
             Map<String, Object> idMap = new HashMap<String, Object>() {
                 {

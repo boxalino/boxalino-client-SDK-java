@@ -51,15 +51,15 @@ public class BxData {
     String URL_ZIP = "/frontend/dbmind/en/dbmind/api/data/push";
     String URL_EXECUTE_TASK = "/frontend/dbmind/en/dbmind/files/task/execute";
 
-    private BxClient bxClient;
+    private final BxClient bxClient;
     private String[] languages;
-    private boolean isDev;
-    private boolean isDelta;
-    Map<String, String> sourceIdContainers = new HashMap<String, String>();
-    private Map<String, Object> sources = new HashMap<String, Object>();
-    Map<String, Object> ftpSources = new HashMap<String, Object>();
-    private String host = "http://di1.bx-cloud.com";
-    private String owner = "bx_client_data_api";
+    private final boolean isDev;
+    private final boolean isDelta;
+    Map<String, String> sourceIdContainers = new HashMap<>();
+    private final Map<String, Object> sources = new HashMap<>();
+    Map<String, Object> ftpSources = new HashMap<>();
+    private final String host = "http://di1.bx-cloud.com";
+    private final String owner = "bx_client_data_api";
 
     public BxData(BxClient bxClient, String[] languages, boolean isDev, boolean isDelta) {
         this.bxClient = bxClient;
@@ -81,11 +81,11 @@ public class BxData {
         maxRow = 2;
         //default end
         Map<String, Object> source = (Map<String, Object>) ((HashMap) this.sources.get(container)).get(sourceId);
-        source.put("rows", new HashMap<String, Object>());
+        source.put("rows", new HashMap<>());
         if (source.get("rows") != null) {
             int count = 1;
             BufferedReader reader = new BufferedReader(new FileReader(source.get("filePath").toString()));
-            List<String> listA = new ArrayList<String>();
+            List<String> listA = new ArrayList<>();
             while (reader.read() != -1) {
                 String line = reader.readLine();
                 String[] values = line.split(";");
@@ -129,7 +129,7 @@ public class BxData {
         String sourceId = this.decodeSourceKey(sourceKey)[1].trim();
 
         if (((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields").toString() == EMPTY_STRING) {
-            ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).put("fields", new HashMap<String, Object>());
+            ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).put("fields", new HashMap<>());
 
         }
         ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get(fieldName)).put("type", type);
@@ -183,7 +183,8 @@ public class BxData {
     }
 
     public String getFileNameFromPath(String filePath, boolean withoutExtension) {
-        String[] parts = filePath.split("\\");
+        String[] parts;
+        parts = filePath.split("\\");
         String file = parts[parts.length - 1];
         if (withoutExtension) {
             parts = file.split(".");
@@ -220,8 +221,8 @@ public class BxData {
         if (this.getLanguages().length == 0) {
             throw new BoxalinoException("trying to add a source before having declared the languages with method setLanguages");
         }
-        if (this.sources.size() == 0) {
-            this.sources.put(container, new HashMap<String, Object>());
+        if (this.sources.isEmpty()) {
+            this.sources.put(container, new HashMap<>());
         }
         Map<String, Object> temp_parameters = (Map<String, Object>) parameters;
         temp_parameters.put("filePath", filePath);
@@ -240,30 +241,30 @@ public class BxData {
     public String addCSVItemFile(String filePath, String itemIdColumn, String encoding, String delimiter, String enclosure, String escape, String lineSeparator, String sourceId, String container, boolean validate) throws BoxalinoException, IOException {
         //default start
 
-        if (encoding == EMPTY_STRING) {
+        if (encoding.isEmpty()) {
             encoding = "UTF-8";
         }
 
-        if (delimiter == EMPTY_STRING) {
+        if (delimiter.isEmpty()) {
 
             delimiter = ",";
         }
 
-        if (enclosure == EMPTY_STRING) {
+        if (enclosure.isEmpty()) {
             enclosure = "&";
         }
-        if (escape == EMPTY_STRING) {
+        if (escape.isEmpty()) {
             escape = "\\\\";
         }
-        if (lineSeparator == EMPTY_STRING) {
+        if (lineSeparator.isEmpty()) {
             lineSeparator = "\\n";
         }
-        if (container == EMPTY_STRING) {
+        if (container.isEmpty()) {
             container = "products";
         }
 
         //default end 
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
 
         parameters.put("itemIdColumn", itemIdColumn);
         parameters.put("encoding", encoding);
@@ -285,25 +286,25 @@ public class BxData {
 
     public String addMainCSVItemFile(String filePath, String itemIdColumn, String encoding, String delimiter, String enclosure, String escape, String lineSeparator, String sourceId, String container, boolean validate) throws BoxalinoException, IOException {
         //default start
-        if (encoding == EMPTY_STRING) {
+        if (encoding.isEmpty()) {
             encoding = "UTF-8";
         }
-        if (delimiter == EMPTY_STRING) {
+        if (delimiter.isEmpty()) {
             delimiter = ",";
         }
-        if (enclosure == EMPTY_STRING) {
+        if (enclosure.isEmpty()) {
             enclosure = "\"";
         }
-        if (escape == EMPTY_STRING) {
+        if (escape.isEmpty()) {
             escape = "\\\\";
         }
-        if (lineSeparator == EMPTY_STRING) {
+        if (lineSeparator.isEmpty()) {
             lineSeparator = "\\n";
         }
-        if (sourceId == EMPTY_STRING) {
+        if (sourceId.isEmpty()) {
             sourceId = "item_vals";
         }
-        if (container == EMPTY_STRING) {
+        if (container.isEmpty()) {
             container = "products";
         }
 
@@ -323,7 +324,7 @@ public class BxData {
         }
 
         if (((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get("fieldName")).get("fieldParameters").toString() == EMPTY_STRING) {
-            ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get("fieldName")).put("fieldParameters", new HashMap<String, Object>());
+            ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get("fieldName")).put("fieldParameters", new HashMap<>());
 
         }
         ((HashMap) ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get("fieldName")).get("fieldParameters")).put(parameterName, parameterValue);
@@ -349,22 +350,22 @@ public class BxData {
 
     public void setFtpSource(String sourceKey, String host, int port, String user, String password, String remoteDir, int protocol, int type, int logontype, int timezoneoffset, String pasvMode, int maximumMultipeConnections, String encodingType, int bypassProxy, int syncBrowsing) {
         //default start
-        if (host == null ? EMPTY_STRING == null : host.equals(EMPTY_STRING)) {
+        if (host.isEmpty()) {
             host = "di1.bx-cloud.com";
         }
         if (port == 0) {
             port = 21;
         }
-        if (remoteDir == null ? EMPTY_STRING == null : remoteDir.equals(EMPTY_STRING)) {
+        if (remoteDir.isEmpty()) {
             remoteDir = "/sources/production";
         }
         if (logontype == 0) {
             logontype = 1;
         }
-        if (pasvMode == null ? EMPTY_STRING == null : pasvMode.equals(EMPTY_STRING)) {
+        if (pasvMode.isEmpty()) {
             pasvMode = "MODE_DEFAULT";
         }
-        if (encodingType == null ? EMPTY_STRING == null : encodingType.equals(EMPTY_STRING)) {
+        if (encodingType.isEmpty()) {
             encodingType = "Auto";
         }
         //default end
@@ -377,7 +378,7 @@ public class BxData {
             password = this.bxClient.getPassword();
         }
 
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put("Host", host);
         parameters.put("Port", port);
         parameters.put("User", user);
@@ -400,25 +401,25 @@ public class BxData {
 
     public String addMainCSVCustomerFile(String filePath, String itemIdColumn, String encoding, String delimiter, String enclosure, String escape, String lineSeparator, String sourceId, String container, boolean validate) throws BoxalinoException, IOException {
         //default start
-        if (encoding == EMPTY_STRING) {
+        if (encoding.isEmpty()) {
             encoding = "UTF-8";
         }
-        if (delimiter == EMPTY_STRING) {
+        if (delimiter.isEmpty()) {
             delimiter = ",";
         }
-        if (enclosure == EMPTY_STRING) {
+        if (enclosure.isEmpty()) {
             enclosure = "\\&";
         }
-        if (escape == EMPTY_STRING) {
+        if (escape.isEmpty()) {
             escape = "\\\\";
         }
-        if (lineSeparator == EMPTY_STRING) {
+        if (lineSeparator.isEmpty()) {
             lineSeparator = "\\n";
         }
-        if (sourceId == EMPTY_STRING) {
+        if (sourceId.isEmpty()) {
             sourceId = "customers";
         }
-        if (container == EMPTY_STRING) {
+        if (container.isEmpty()) {
             container = "customers";
         }
         //default end 
@@ -451,33 +452,33 @@ public class BxData {
 
     public String addCategoryFile(String filePath, String categoryIdColumn, String parentIdColumn, Map<String, Object> categoryLabelColumns, String encoding, String delimiter, String enclosure, String escape, String lineSeparator, String sourceId, String container, boolean validate) throws BoxalinoException, IOException {
         //default  start
-        if (encoding == EMPTY_STRING) {
+        if (encoding.isEmpty()) {
             encoding = "UTF-8";
         }
 
-        if (delimiter == EMPTY_STRING) {
+        if (delimiter.isEmpty()) {
             delimiter = ",";
         }
-        if (enclosure == EMPTY_STRING) {
+        if (enclosure.isEmpty()) {
             enclosure = "&";
         }
-        if (escape == EMPTY_STRING) {
+        if (escape.isEmpty()) {
             escape = "\\\\";
         }
 
-        if (lineSeparator == EMPTY_STRING) {
+        if (lineSeparator.isEmpty()) {
             lineSeparator = "\\n";
         }
-        if (sourceId == EMPTY_STRING) {
+        if (sourceId.isEmpty()) {
             sourceId = "resource_categories";
         }
 
-        if (container == EMPTY_STRING) {
+        if (container.isEmpty()) {
             container = "products";
         }
 
         //default end
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
 
         parameters.put("referenceIdColumn", categoryIdColumn);
         parameters.put("parentIdColumn", parentIdColumn);
@@ -494,28 +495,28 @@ public class BxData {
     public String addResourceFile(String filePath, String categoryIdColumn, Object labelColumns, String encoding, String delimiter, String enclosure, String escape, String lineSeparator, String sourceId, String container, boolean validate) throws IOException, BoxalinoException {
         //default start
 
-        if (encoding == EMPTY_STRING) {
+        if (encoding.isEmpty()) {
             encoding = "UTF-8";
         }
-        if (delimiter == EMPTY_STRING) {
+        if (delimiter.isEmpty()) {
             delimiter = ",";
         }
-        if (enclosure == EMPTY_STRING) {
+        if (enclosure.isEmpty()) {
             enclosure = "\\&";
         }
 
-        if (escape == EMPTY_STRING) {
+        if (escape.isEmpty()) {
             escape = "\\\\";
         }
-        if (lineSeparator == EMPTY_STRING) {
+        if (lineSeparator.isEmpty()) {
             lineSeparator = "\\n";
         }
-        if (container == EMPTY_STRING) {
+        if (container.isEmpty()) {
             container = "products";
         }
 
         //default end
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
 
         parameters.put("referenceIdColumn", categoryIdColumn);
         parameters.put("labelColumns", labelColumns);
@@ -534,46 +535,46 @@ public class BxData {
     public String setCSVTransactionFile(String filePath, String orderIdColumn, String productIdColumn, String customerIdColumn, String orderDateIdColumn, String totalOrderValueColumn, String productListPriceColumn, String productDiscountedPriceColumn, String productIdField, String customerIdField, String productsContainer, String customersContainer, String format, String encoding, String delimiter, String enclosure, String escape, String lineSeparator, String container, String sourceId, boolean validate) throws BoxalinoException, IOException {
         //default start
 
-        if (productIdField == EMPTY_STRING) {
+        if (productIdField.isEmpty()) {
             productIdField = "bx_item_id";
         }
-        if (customerIdField == EMPTY_STRING) {
+        if (customerIdField.isEmpty()) {
             customerIdField = "bx_customer_id";
         }
-        if (productsContainer == EMPTY_STRING) {
+        if (productsContainer.isEmpty()) {
             productsContainer = "products";
         }
-        if (customersContainer == EMPTY_STRING) {
+        if (customersContainer.isEmpty()) {
             customersContainer = "customers";
         }
-        if (format == EMPTY_STRING) {
+        if (format.isEmpty()) {
             format = "CSV";
         }
-        if (encoding == EMPTY_STRING) {
+        if (encoding.isEmpty()) {
             encoding = "UTF-8";
         }
-        if (delimiter == EMPTY_STRING) {
+        if (delimiter.isEmpty()) {
             delimiter = ",";
         }
-        if (enclosure == EMPTY_STRING) {
+        if (enclosure.isEmpty()) {
             enclosure = "\\&";
         }
 
-        if (escape == EMPTY_STRING) {
+        if (escape.isEmpty()) {
             escape = "\\\\";
         }
-        if (lineSeparator == EMPTY_STRING) {
+        if (lineSeparator.isEmpty()) {
             lineSeparator = "\\n";
         }
-        if (container == EMPTY_STRING) {
+        if (container.isEmpty()) {
             container = "transactions";
         }
-        if (sourceId == EMPTY_STRING) {
+        if (sourceId.isEmpty()) {
             sourceId = "transactions";
         }
         //default end
 
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
 
         parameters.put("encoding", encoding);
         parameters.put("delimiter", delimiter);
@@ -596,27 +597,27 @@ public class BxData {
 
     public String addCSVCustomerFile(String filePath, String itemIdColumn, String encoding, String delimiter, String enclosure, String escape, String lineSeparator, String sourceId, String container, boolean validate) throws BoxalinoException, IOException {
         //default start
-        if (encoding == EMPTY_STRING) {
+        if (encoding.isEmpty()) {
             encoding = "UTF-8";
         }
-        if (delimiter == EMPTY_STRING) {
+        if (delimiter.isEmpty()) {
             delimiter = ",";
         }
-        if (enclosure == EMPTY_STRING) {
+        if (enclosure.isEmpty()) {
             enclosure = "\\&";
         }
-        if (escape == EMPTY_STRING) {
+        if (escape.isEmpty()) {
             escape = "\\\\";
         }
-        if (lineSeparator == EMPTY_STRING) {
+        if (lineSeparator.isEmpty()) {
             lineSeparator = "\\n";
         }
-        if (container == EMPTY_STRING) {
+        if (container.isEmpty()) {
             container = "customers";
         }
 
         //default end
-        Map<String, Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<>();
         parameters.put("itemIdColumn", itemIdColumn);
         parameters.put("encoding", encoding);
         parameters.put("delimiter", delimiter);
@@ -636,7 +637,7 @@ public class BxData {
 
     public void setCategoryField(String sourceKey, String col, String referenceSourceKey, boolean validate) throws BoxalinoException, IOException {
         //defaul start 
-        if (referenceSourceKey == EMPTY_STRING) {
+        if (referenceSourceKey.isEmpty()) {
             referenceSourceKey = "resource_categories";
         }
         //default end
@@ -686,19 +687,19 @@ public class BxData {
                 Element propertiesXML = xmlDocument.createElement("properties");
                 containerXML.appendChild(propertiesXML);
 
-                String sourceId = sourceValues.getKey().toString();
+                String sourceId = sourceValues.getKey();
 
                 Element sourceXML = xmlDocument.createElement("source");
 
                 Map<String, Object> temp_sourceValues = (Map<String, Object>) ((HashMap) this.sources.get(containerSources.getKey())).get(sourceId);
 
                 sourceXML.setAttribute("id", sourceId);
-                sourceXML.setAttribute("type", temp_sourceValues.get("type".toString()).toString());
+                sourceXML.setAttribute("type", temp_sourceValues.get("type").toString());
                 sourcesXML.appendChild(sourceXML);
 
                 temp_sourceValues.put("file", this.getFileNameFromPath(String.valueOf(temp_sourceValues.get("filePath")), false));
 
-                Map<String, Object> parameters = new HashMap<String, Object>();
+                Map<String, Object> parameters = new HashMap<>();
                 parameters.put("file", false);
                 parameters.put("format", "CSV");
                 parameters.put("encoding", "UTF-8");
@@ -728,7 +729,7 @@ public class BxData {
                     case "transactions":
                         parameters.clear();
                         for (Map.Entry<String, Object> param : temp_sourceValues.entrySet()) {
-                            parameters.put(param.getKey().toString(), param.getValue());
+                            parameters.put(param.getKey(), param.getValue());
                         }
 
                         parameters.remove("filePath");
@@ -743,7 +744,7 @@ public class BxData {
                 for (Map.Entry<String, Object> defaultValue : parameters.entrySet()) {
                     Object value = temp_sourceValues.get(defaultValue.getKey()) != null ? temp_sourceValues.get(defaultValue.getKey()) : defaultValue.getValue();
                     try {
-                        if (value.toString() == EMPTY_STRING) {
+                        if (value.toString().isEmpty()) {
                             throw new BoxalinoException("source parameter " + defaultValue.getKey() + " required but not defined in source id " + sourceId + " for container '$containerName'");
                         }
                     } catch (BoxalinoException ex) {
@@ -791,7 +792,7 @@ public class BxData {
                     }
                 }
 
-                if (this.ftpSources.size() != 0 && String.valueOf(this.ftpSources.get(sourceId)) != null) {
+                if (!this.ftpSources.isEmpty() && String.valueOf(this.ftpSources.get(sourceId)) != null) {
 
                     Element locationXML = xmlDocument.createElement("location");
                     parameter.appendChild(locationXML);
@@ -801,10 +802,9 @@ public class BxData {
                     parameter.appendChild(locationXML);
                     ftpXML.setAttribute("name", "ftp");
 
-                    for (Map.Entry ftpPv : ((Map<String, Object>) ftpSources.get(sourceId)).entrySet()) {
-                        String ftpPn = ftpPv.getKey().toString();
-
-                    }
+                    ((Map<String, Object>) ftpSources.get(sourceId)).entrySet().forEach((ftpPv) -> {
+                        String ftpPn = ftpPv.getKey();
+                    });
                 }
 
                 if (((HashMap) ((HashMap) this.sources.get(containerSources.getKey())).get(sourceId)).containsKey("fields")) {
@@ -872,15 +872,13 @@ public class BxData {
                             referenceSourceXML.setAttribute("value", referenceSourceId);
                         }
                         if (temp_fieldValues.containsKey("fieldParameters")) {
-                            for (Map.Entry<String, Object> parameterValue : ((Map<String, Object>) temp_fieldValues.get("fieldParameters")).entrySet()) {
-                                String parameterName = parameterValue.getKey();
+                            ((Map<String, Object>) temp_fieldValues.get("fieldParameters")).entrySet().stream().map((parameterValue) -> parameterValue.getKey()).forEachOrdered((parameterName) -> {
                                 Element fieldParameterXML = xmlDocument.createElement("fieldParameter");
                                 paramsXML.appendChild(fieldParameterXML);
 
                                 fieldParameterXML.setAttribute("name", parameterName);
                                 fieldParameterXML.setAttribute("value", String.valueOf(((HashMap) (temp_fieldValues.get("fieldParameters"))).get(parameterName)));
-
-                            }
+                            });
                         }
                     }
                 }
@@ -891,10 +889,12 @@ public class BxData {
 
     protected Map<String, Object> callAPI(Map<String, Object> fields, String url, String temporaryFilePath) throws UnsupportedEncodingException, IOException, BoxalinoException {
 
-        String responseFromServer = EMPTY_STRING;
+        String responseFromServer;
+        responseFromServer = EMPTY_STRING;
 
         String urlParameters = null;
-        HttpURLConnection connection = null;
+        HttpURLConnection connection;
+        connection = null;
         for (Map.Entry<String, Object> item : fields.entrySet()) {
             urlParameters += URLEncoder.encode(item.getKey(), "UTF-8") + "="
                     + URLEncoder.encode((item.getValue() instanceof String) ? item.getValue().toString() : new XMLOutputter().outputString((org.jdom2.Document) item.getValue()), "UTF-8") + "&";
@@ -912,20 +912,21 @@ public class BxData {
         connection.setRequestProperty("Content-Language", "en-US");
         connection.setUseCaches(false);
         connection.setDoOutput(true);
-        //Send request
-        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-        wr.writeBytes(urlParameters);
-        wr.close();
+        try ( //Send request
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
+            wr.writeBytes(urlParameters);
+        }
         //Get Response
         InputStream is = connection.getInputStream();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-        StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
-        String line;
-        while ((line = rd.readLine()) != null) {
-            response.append(line);
-            response.append('\r');
-        }
-        rd.close();
+        StringBuilder response;
+        try (BufferedReader rd = new BufferedReader(new InputStreamReader(is))) {
+            response = new StringBuilder(); // or StringBuffer if Java version 5+
+            String line;
+            while ((line = rd.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
+            }
+        } // or StringBuffer if Java version 5+
         responseFromServer = response.toString();
         if (connection != null) {
             connection.disconnect();
@@ -940,7 +941,7 @@ public class BxData {
             throw new BoxalinoException("You should not push specifications when you are pushing a delta file. Only do it when you are preparing full files. Set method parameter ignoreDeltaException to true to ignore this exception and publish anyway.");
         }
 
-        Map<String, Object> fields = new HashMap<String, Object>();
+        Map<String, Object> fields = new HashMap<>();
 
         fields.put("username", this.bxClient.getUsername());
         fields.put("password", this.bxClient.getPassword());
@@ -969,31 +970,27 @@ public class BxData {
     }
 
     public Map<String, Object> getFiles() {
-        Map<String, Object> files = new HashMap<String, Object>();
-        for (Map.Entry<String, Object> containerSources : this.sources.entrySet()) {
+        Map<String, Object> files = new HashMap<>();
+        this.sources.entrySet().forEach((containerSources) -> {
             String container = containerSources.getKey();
             Map<String, Object> temp_containerSources = (Map<String, Object>) containerSources.getValue();
-            for (Map.Entry<String, Object> sourceValues : temp_containerSources.entrySet()) {
-                String sourceId = sourceValues.getKey();
-
+            temp_containerSources.entrySet().stream().map((sourceValues) -> sourceValues.getKey()).forEachOrdered((sourceId) -> {
                 Map<String, Object> temp_source = (Map<String, Object>) ((HashMap) this.sources.get(container)).get(sourceId);
-
-                if (temp_source.containsKey(sourceId)) {
-                    continue;
+                if (!(temp_source.containsKey(sourceId))) {
+                    if (temp_source.containsKey("file")) {
+                        temp_source.put("file", this.getFileNameFromPath(String.valueOf(temp_source.get("filePath")), false));
+                        
+                    }
+                    files.put(String.valueOf(temp_source.get("file")), temp_source.get("filePath"));
                 }
-                if (temp_source.containsKey("file")) {
-                    temp_source.put("file", this.getFileNameFromPath(String.valueOf(temp_source.get("filePath")), false));
-
-                }
-                files.put(String.valueOf(temp_source.get("file")), temp_source.get("filePath"));
-            }
-        }
+            });
+        });
         return files;
     }
 
     public String createZip(String temporaryFilePath, String name) throws FileNotFoundException, IOException, ParserConfigurationException {
         //default start
-        if (name == EMPTY_STRING) {
+        if (name.isEmpty()) {
             name = "bxdata.zip";
         }
         //default end
@@ -1013,35 +1010,33 @@ public class BxData {
         }
 
         Map<String, Object> files = this.getFiles();
-        FileOutputStream fileOutputStream = new FileOutputStream(zipFilePath);
-        ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream);
-        for (Map.Entry<String, Object> file : files.entrySet()) {
-            // a ZipEntry represents a file entry in the zip archive
-            // We name the ZipEntry after the original file's name
-            ZipEntry zipEntry = new ZipEntry(file.getKey().toString());
-            zipOutputStream.putNextEntry(zipEntry);
-
-            FileInputStream fileInputStream = new FileInputStream(file.getKey());
-            byte[] buf = new byte[1024];
-            int bytesRead;
-
-            // Read the input file by chucks of 1024 bytes
-            // and write the read bytes to the zip stream
-            while ((bytesRead = fileInputStream.read(buf)) > 0) {
-                zipOutputStream.write(buf, 0, bytesRead);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(zipFilePath); ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)) {
+            for (Map.Entry<String, Object> file : files.entrySet()) {
+                // a ZipEntry represents a file entry in the zip archive
+                // We name the ZipEntry after the original file's name
+                ZipEntry zipEntry = new ZipEntry(file.getKey());
+                zipOutputStream.putNextEntry(zipEntry);
+                
+                FileInputStream fileInputStream = new FileInputStream(file.getKey());
+                byte[] buf = new byte[1024];
+                int bytesRead;
+                
+                // Read the input file by chucks of 1024 bytes
+                // and write the read bytes to the zip stream
+                while ((bytesRead = fileInputStream.read(buf)) > 0) {
+                    zipOutputStream.write(buf, 0, bytesRead);
+                }
+                
             }
 
+            ZipEntry zipEntry = new ZipEntry("properties.xml");
+            zipOutputStream.putNextEntry(zipEntry);
+            zipOutputStream.write(getXML().toString().getBytes());
+            
+            // close ZipEntry to store the stream to the file
+            zipOutputStream.closeEntry();
+            
         }
-
-        ZipEntry zipEntry = new ZipEntry("properties.xml");
-        zipOutputStream.putNextEntry(zipEntry);
-        zipOutputStream.write(getXML().toString().getBytes());
-
-        // close ZipEntry to store the stream to the file
-        zipOutputStream.closeEntry();
-
-        zipOutputStream.close();
-        fileOutputStream.close();
         return zipFilePath;
     }
 
@@ -1054,7 +1049,7 @@ public class BxData {
 
         String zipFile = this.createZip(temporaryFilePath, EMPTY_STRING);
 
-        Map<String, Object> fields = new HashMap<String, Object>();
+        Map<String, Object> fields = new HashMap<>();
         fields.put("username", this.bxClient.getUsername());
         fields.put("password", this.bxClient.getPassword());
         fields.put("account", this.bxClient.getAccount(false));
@@ -1072,7 +1067,7 @@ public class BxData {
     }
 
     public String prepareAutocompleteIndex(Object fields, String taskName) throws FileNotFoundException {
-        if (taskName == EMPTY_STRING) {
+        if (taskName.isEmpty()) {
             taskName = "autocomplete";
         }
 
@@ -1082,7 +1077,7 @@ public class BxData {
 
     public void prepareCorpusIndex(String taskName) throws FileNotFoundException {
         //default start
-        if (taskName == EMPTY_STRING) {
+        if (taskName.isEmpty()) {
             taskName = "corpus";
         }
         //defualt end 
@@ -1092,7 +1087,7 @@ public class BxData {
 
     public void publishChoices(boolean isTest, String taskName) throws FileNotFoundException {
         //default start
-        if (taskName == EMPTY_STRING) {
+        if (taskName.isEmpty()) {
             taskName = "generate_optimization";
         }
 
@@ -1111,7 +1106,7 @@ public class BxData {
         if (this.isDev) {
             publish = false;
         }
-        Map<String, Object> fields = new HashMap<String, Object>();
+        Map<String, Object> fields = new HashMap<>();
         fields.put("username", this.bxClient.getUsername());
         fields.put("password", this.bxClient.getPassword());
         fields.put("account", this.bxClient.getAccount(false));
@@ -1127,7 +1122,7 @@ public class BxData {
     }
 
     public Map<String, Object> verifyCredentials() throws IOException, UnsupportedEncodingException, BoxalinoException {
-        Map<String, Object> fields = new HashMap<String, Object>();
+        Map<String, Object> fields = new HashMap<>();
         fields.put("username", this.bxClient.getUsername());
         fields.put("password", this.bxClient.getPassword());
         fields.put("account", this.bxClient.getAccount(false));

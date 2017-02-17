@@ -20,15 +20,15 @@ public class BxSortFields {
         
     }
 
-    private Map<String, Boolean> sorts = new HashMap<String, Boolean>();
+    private Map<String, Boolean> sorts = new HashMap<>();
 
-    public void push(String field, boolean reverse) {
+    void push(String field, boolean reverse) {
         this.sorts.put(field, reverse);
     }
 
     public BxSortFields(String field, boolean reverse) {
         //default value start
-        if (field == null || field == Helper.Common.EMPTY_STRING) {
+        if (field == null || field.isEmpty()) {
             field = null;
         }
         //default value end
@@ -43,19 +43,16 @@ public class BxSortFields {
     }
 
     public boolean isFieldReverse(String field) {
-        if (this.sorts != null && this.sorts.get(field) != null) {
-            return true;
-        }
-        return false;
+        return this.sorts != null && this.sorts.get(field) != null;
     }
 
     public ArrayList<SortField> getThriftSortFields() {
-        ArrayList<SortField> sortFields = new ArrayList<SortField>();
-        for (Map.Entry<String, Boolean> field : this.getSortFields().entrySet()) {
+        ArrayList<SortField> sortFields = new ArrayList<>();
+        this.getSortFields().entrySet().forEach((field) -> {
             SortField objSortFields = new SortField();
             objSortFields.fieldName = field.getKey();
             objSortFields.reverse = this.isFieldReverse(field.getKey());
-        }
+        });
         return sortFields;
     }
 }

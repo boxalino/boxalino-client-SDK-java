@@ -16,6 +16,7 @@ import com.boxalino.p13n.api.thrift.Filter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,35 +28,35 @@ public class BxFacets {
 
     protected String parameterPrefix = "";
     protected String priceFieldName = "discountedPrice";
-    private HashMap<String, Filter> filters = new HashMap<String, Filter>();
-    public Map<String, FacetValue> selectedValues = new HashMap<String, FacetValue>();
-    public Map<String, Object> facets = new HashMap<String, Object>();
-    public List<FacetResponse> facetResponse = new ArrayList<FacetResponse>();
+    private final HashMap<String, Filter> filters = new HashMap<>();
+    public Map<String, FacetValue> selectedValues = new HashMap<>();
+    public Map<String, Object> facets = new HashMap<>();
+    public List<FacetResponse> facetResponse = new ArrayList<>();
 
     public HashMap<String, Filter> getFilters() {
         return this.filters;
     }
 
     private ArrayList<FacetValue> facetSelectedValue(String fieldName, String option) {
-        ArrayList<FacetValue> selectedFacets = new ArrayList<FacetValue>();
+        ArrayList<FacetValue> selectedFacets = new ArrayList<>();
         if (this.facets != null) {
-            for (Map.Entry<String, Object> value : facets.entrySet()) {
-                if (value.getKey() == fieldName) {
-                    FacetValue selectedFacet = new FacetValue();
-                    if (option == "ranged") {
-                        String[] rangedValue = value.getKey().split("-");
-                        if (rangedValue[0] != "*") {
-                            selectedFacet.rangeFromInclusive = rangedValue[0];
-                        }
-                        if (rangedValue[1] != "*") {
-                            selectedFacet.rangeToExclusive = rangedValue[1];
-                        }
-                    } else {
-                        selectedFacet.stringValue = value.getKey();
+            facets.entrySet().stream().filter((value) -> (value.getKey() == fieldName)).map((value) -> {
+                FacetValue selectedFacet = new FacetValue();
+                if (option == "ranged") {
+                    String[] rangedValue = value.getKey().split("-");
+                    if (rangedValue[0] != "*") {
+                        selectedFacet.rangeFromInclusive = rangedValue[0];
                     }
-                    selectedFacets.add(selectedFacet);
+                    if (rangedValue[1] != "*") {
+                        selectedFacet.rangeToExclusive = rangedValue[1];
+                    }
+                } else {
+                    selectedFacet.stringValue = value.getKey();
                 }
-            }
+                return selectedFacet;
+            }).forEachOrdered((selectedFacet) -> {
+                selectedFacets.add(selectedFacet);
+            });
             return selectedFacets;
         }
         return null;
@@ -63,30 +64,31 @@ public class BxFacets {
 
     public ArrayList<FacetRequest> getThriftFacets() {
 
-        ArrayList<FacetRequest> thriftFacets = new ArrayList<FacetRequest>();
-        for (Map.Entry<String, Object> item : facets.entrySet()) {
+        ArrayList<FacetRequest> thriftFacets = new ArrayList<>();
+        facets.entrySet().stream().map((item) -> {
             String type = ((HashMap) item.getValue()).get("type").toString();
             int order = (Integer) (((HashMap) item.getValue()).get("order"));
-
             FacetRequest facetRequest = new FacetRequest();
-            facetRequest.fieldName = item.getKey().toString();
-            facetRequest.numerical = type == "ranged" ? true : type == "numerical" ? true : false;
-            facetRequest.range = type == "ranged" ? true : false;
+            facetRequest.fieldName = item.getKey();
+            facetRequest.numerical = (type == "ranged" ? true : (type == "numerical"));
+            facetRequest.range = type == "ranged";
             facetRequest.boundsOnly = (Boolean) (((HashMap) item.getValue()).get("boundsOnly"));
             facetRequest.selectedValues = this.facetSelectedValue(item.getValue().toString(), type);
             facetRequest.sortOrder = (FacetSortOrder) ((order == 1) ? FacetSortOrder.COLLATION : FacetSortOrder.POPULATION);
+            return facetRequest;
+        }).forEachOrdered((facetRequest) -> {
             thriftFacets.add(facetRequest);
-        }
+        });
         return thriftFacets;
     }
 
     public void addFacet(String fieldName, String selectedValue, String type, String label, int order, boolean boundsOnly) {
 
         //default start
-        if (type == Common.EMPTY_STRING) {
+        if (type.isEmpty()) {
             type = "string";
         }
-        if (label == Common.EMPTY_STRING) {
+        if (label.isEmpty()) {
             label = null;
         }
         if (order == 0) {
@@ -94,11 +96,11 @@ public class BxFacets {
         }
         boundsOnly = false;
         //default end 
-        selectedValues = new HashMap<String, FacetValue>();
+        selectedValues = new HashMap<>();
         if (selectedValue != null) {
             selectedValues.put(selectedValue, new FacetValue());
         }
-        Map<String, Object> fvalue = new HashMap<String, Object>();
+        Map<String, Object> fvalue = new HashMap<>();
         ((HashMap) this.facets.get(fieldName)).put("label", label);
         ((HashMap) this.facets.get(fieldName)).put("type", type);
         ((HashMap) this.facets.get(fieldName)).put("order", order);
@@ -126,10 +128,10 @@ public class BxFacets {
         if (order == 0) {
             order = 2;
         }
-        if (label == EMPTY_STRING) {
+        if (label.isEmpty()) {
             label = "Price";
         }
-        if (fieldName == EMPTY_STRING) {
+        if (fieldName.isEmpty()) {
             fieldName = "discountedPrice";
         }
         //default end
@@ -139,9 +141,9 @@ public class BxFacets {
 
     protected FacetResponse getFacetResponse(String fieldName) throws BoxalinoException {
         if (this.facetResponse != null) {
-            for (FacetResponse facetResponse : this.facetResponse) {
-                if (facetResponse.fieldName == fieldName) {
-                    return facetResponse;
+            for (FacetResponse facetResponsee : this.facetResponse) {
+                if (facetResponsee.fieldName == fieldName) {
+                    return facetResponsee;
                 }
             }
         }
@@ -158,9 +160,9 @@ public class BxFacets {
 
     protected Map<String, Map<String, FacetValue>> buildTree(FacetResponse response, HashMap<String, String> parents, int parentLevel) {
         if (parents == null) {
-            parents = new HashMap<String, String>();
+            parents = new HashMap<>();
         }
-        if (parents.size() == 0) {
+        if (parents.isEmpty()) {
             for (FacetValue node : response.values) {
                 if ((node.hierarchy).size() == 1) {
                     for (String nodeh : node.hierarchy) {
@@ -169,20 +171,20 @@ public class BxFacets {
                 }
             }
         }
-        Map<String, Map<String, FacetValue>> children = new HashMap<String, Map<String, FacetValue>>();
+        Map<String, Map<String, FacetValue>> children = new HashMap<>();
         for (FacetValue node : response.values) {
             if ((node.hierarchy).size() == parentLevel + 2) {
                 boolean allTrue = true;
                 for (Map.Entry<String, String> item : parents.entrySet()) {
-                    if ((node.hierarchy.get(Integer.valueOf((String) item.getKey())) != EMPTY_STRING) || (node.hierarchy.get(Integer.valueOf((String) item.getKey())) != item.getValue())) {
+                    if ((!node.hierarchy.get(Integer.valueOf((String) item.getKey())).isEmpty()) || (node.hierarchy.get(Integer.valueOf((String) item.getKey())) != item.getValue())) {
                         allTrue = false;
                     }
                 }
                 if (allTrue) {
-                    HashMap<String, String> childHierarchy = new HashMap<String, String>();
-                    for (String nodeh : node.hierarchy) {
+                    HashMap<String, String> childHierarchy = new HashMap<>();
+                    node.hierarchy.forEach((nodeh) -> {
                         childHierarchy.put(String.valueOf(node.hierarchy.indexOf(nodeh)), nodeh);
-                    }
+                    });
                     children = (this.buildTree(response, childHierarchy, parentLevel + 1));
                 }
             }
@@ -190,15 +192,15 @@ public class BxFacets {
         for (FacetValue node : response.values) {
             if (node.hierarchy.size() == parentLevel + 1) {
                 boolean allTrue = true;
-                Map<String, String> childHierarchy = new HashMap<String, String>();
+                Map<String, String> childHierarchy = new HashMap<>();
                 for (HashMap.Entry<String, String> item : childHierarchy.entrySet()) {
-                    if (parents.get(item.getKey()) != item.getValue().toString()) {
+                    if (parents.get(item.getKey()) != item.getValue()) {
                         allTrue = false;
                     }
                 }
                 if (allTrue) {
-                    Map<String, Map<String, FacetValue>> buildresult = new HashMap<String, Map<String, FacetValue>>();
-                    Map<String, FacetValue> buildresultChild = new HashMap<String, FacetValue>();
+                    Map<String, Map<String, FacetValue>> buildresult = new HashMap<>();
+                    Map<String, FacetValue> buildresultChild = new HashMap<>();
                     buildresultChild.put("children", (FacetValue) children.get("children"));
                     buildresult.put("node", buildresultChild);
                     return buildresult;
@@ -215,18 +217,16 @@ public class BxFacets {
         if (tree.get("node") == null) {
             return null;
         }
-        List<String> parts = new ArrayList<String>();
-        for (String par : ((FacetValue) ((HashMap) tree.get("node")).get("node")).stringValue.split("/")) {
-            parts.add(par);
-        }
+        List<String> parts = new ArrayList<>();
+        parts.addAll(Arrays.asList(((FacetValue) ((HashMap) tree.get("node")).get("node")).stringValue.split("/")));
 
-        if (parts.get(0).toString() == ((HashMap) this.facets.get("category_id")).get("selectedValues").toString()) {
+        if (parts.get(0) == ((HashMap) this.facets.get("category_id")).get("selectedValues").toString()) {
             return tree;
         }
         for (Map.Entry node : tree.get("children").entrySet()) {
 
-            HashMap<String, Map<String, FacetValue>> selectedTreeNodetemp = new HashMap<String, Map<String, FacetValue>>();
-            Map<String, FacetValue> selectedTreeNodeFatemp = new HashMap<String, FacetValue>();
+            HashMap<String, Map<String, FacetValue>> selectedTreeNodetemp = new HashMap<>();
+            Map<String, FacetValue> selectedTreeNodeFatemp = new HashMap<>();
             selectedTreeNodeFatemp.put(String.valueOf(node.getKey()), (FacetValue) node.getValue());
             selectedTreeNodetemp.put("node", selectedTreeNodeFatemp);
             Map<String, Map<String, FacetValue>> result = this.getSelectedTreeNode(selectedTreeNodetemp);
@@ -243,13 +243,13 @@ public class BxFacets {
             return null;
         }
 
-        if (tree.get("children").size() == 0) {
+        if (tree.get("children").isEmpty()) {
             return null;
         }
         if (tree.get("children").size() > 1) {
             return tree;
         }
-        Map<String, FacetValue> treech = new HashMap<String, FacetValue>();
+        Map<String, FacetValue> treech = new HashMap<>();
         treech.put("node", ((FacetValue) ((HashMap) tree.get("children")).entrySet().toArray()[0]));
         tree = new HashMap<String, Map<String, FacetValue>>() {
             {
@@ -261,34 +261,33 @@ public class BxFacets {
 
     protected Map<String, FacetValue> getFacetKeysValues(String fieldName) throws BoxalinoException {
         if (fieldName == "") {
-            return new HashMap<String, FacetValue>();
+            return new HashMap<>();
         }
-        Map<String, FacetValue> facetValues = new HashMap<String, FacetValue>();
+        Map<String, FacetValue> facetValues = new HashMap<>();
 
-        FacetResponse facetResponse = this.getFacetResponse(fieldName);
+        FacetResponse facetResponsee = this.getFacetResponse(fieldName);
 
         String type = this.getFacetType(fieldName);
         switch (type) {
             case "hierarchical":
-                Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponse, null, 0);
+                Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponsee, null, 0);
                 tree = this.getSelectedTreeNode(tree);
                 Map<String, Map<String, FacetValue>> node = this.getFirstNodeWithSeveralChildren(tree);
                 if (node != null) {
-                    for (Map.Entry<String, FacetValue> fvalue : node.get("children").entrySet()) {
+                    node.get("children").entrySet().forEach((fvalue) -> {
                         facetValues.put(fvalue.getKey() == "node" ? fvalue.getValue().stringValue : EMPTY_STRING, (FacetValue) node.get("node").values().toArray()[0]);
-                    }
+            });
                 }
                 break;
             case "ranged":
-                for (FacetValue facetValue : facetResponse.values) {
+                facetResponsee.values.forEach((facetValue) -> {
                     facetValues.put(facetValue.rangeFromInclusive + "-" + facetValue.rangeToExclusive, facetValue);
-
-                }
+        });
                 break;
             default:
-                for (FacetValue facetValue : facetResponse.values) {
+                facetResponsee.values.forEach((facetValue) -> {
                     facetValues.put(facetValue.stringValue, facetValue);
-                }
+        });
                 break;
         }
         return facetValues;
@@ -362,10 +361,10 @@ public class BxFacets {
     }
 
     public Map<String, FacetValue> getSelectedValues(String fieldName) {
-        selectedValues = new HashMap<String, FacetValue>();
+        selectedValues = new HashMap<>();
         try {
             for (Map.Entry<String, FacetValue> key : this.getFacetValues(fieldName).entrySet()) {
-                if ((this.isFacetValueSelected(fieldName, key.getValue())) != EMPTY_STRING) {
+                if (!this.isFacetValueSelected(fieldName, key.getValue()).isEmpty()) {
                     selectedValues.put(key.getKey(), new FacetValue());
                 }
             }
@@ -436,8 +435,8 @@ public class BxFacets {
         Map<String, Object> facet = this.getFacetByFieldName(fieldName);
         if (facet != null) {
             if (facet.get("type").toString() == "hierarchical") {
-                FacetResponse facetResponse = this.getFacetResponse(fieldName);
-                Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponse, null, 0);
+                FacetResponse facetResponsee = this.getFacetResponse(fieldName);
+                Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponsee, null, 0);
                 tree = this.getSelectedTreeNode(tree);
                 return ((FacetValue) ((HashMap) tree.get("node")).get("node")).hierarchy.size() > 1;
 
@@ -456,9 +455,9 @@ public class BxFacets {
                 return tree;
             }
 
-            Map<String, FacetValue> cFMap = new HashMap<String, FacetValue>();
+            Map<String, FacetValue> cFMap = new HashMap<>();
             cFMap.put("children", (FacetValue) child.getValue());
-            Map<String, Map<String, FacetValue>> cParent = new HashMap<String, Map<String, FacetValue>>();
+            Map<String, Map<String, FacetValue>> cParent = new HashMap<>();
             cParent.put("children", cFMap);
             Map<String, Map<String, FacetValue>> parent = this.getTreeParent(cParent, treeEnd);
             if (parent != null) {
@@ -474,12 +473,12 @@ public class BxFacets {
         Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponse, null, 0);
         Map<String, Map<String, FacetValue>> treeEnd = this.getSelectedTreeNode(tree);
         if (treeEnd == null) {
-            return new HashMap<String, Map<String, FacetValue>>();
+            return new HashMap<>();
         }
         if ((((FacetValue) ((HashMap) treeEnd.get("node")).get("node")).stringValue) == (((FacetValue) ((HashMap) tree.get("node")).get("node")).stringValue)) {
-            return new HashMap<String, Map<String, FacetValue>>();
+            return new HashMap<>();
         }
-        Map<String, Map<String, FacetValue>> parent = new HashMap<String, Map<String, FacetValue>>();
+        Map<String, Map<String, FacetValue>> parent = new HashMap<>();
         parent = treeEnd;
         Map<String, String> parents = null;
         while (parent.size() > 0) {
@@ -493,7 +492,7 @@ public class BxFacets {
             parent = this.getTreeParent(tree, parent);
         }
         parents = parents;
-        Map<String, Map<String, FacetValue>> tfinal = new HashMap<String, Map<String, FacetValue>>();
+        Map<String, Map<String, FacetValue>> tfinal = new HashMap<>();
         for (Map.Entry<String, String> v : parents.entrySet()) {
             ((FacetValue) ((HashMap) tfinal.get(v.getKey())).get(v.getKey())).stringValue = v.getValue();
         }
@@ -502,8 +501,8 @@ public class BxFacets {
 
     public long getParentCategoriesHitCount(int id) throws BoxalinoException {
         String fieldName = "categories";
-        FacetResponse facetResponse = this.getFacetResponse(fieldName);
-        Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponse, null, 0);
+        FacetResponse facetResponsee = this.getFacetResponse(fieldName);
+        Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponsee, null, 0);
         Map<String, Map<String, FacetValue>> treeEnd = this.getSelectedTreeNode(tree);
         if (treeEnd == null) {
             return ((FacetValue) ((HashMap) tree.get("node")).get("node")).hitCount;
@@ -542,8 +541,8 @@ public class BxFacets {
         Map<String, Object> facet = this.getFacetByFieldName(fieldName);
         if (facet != null) {
             if (facet.get("type").toString() == "hierarchical") {
-                FacetResponse facetResponse = this.getFacetResponse(fieldName);
-                Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponse, null, 0);
+                FacetResponse facetResponsee = this.getFacetResponse(fieldName);
+                Map<String, Map<String, FacetValue>> tree = this.buildTree(facetResponsee, null, 0);
                 tree = this.getSelectedTreeNode(tree);
                 String pl = ((FacetValue) ((HashMap) tree.get("node")).get("node")).stringValue;
                 List<String> parts = new ArrayList<String>() {
@@ -579,7 +578,7 @@ public class BxFacets {
     }
 
     public Map<String, FacetValue> getCategoriesKeyLabels() throws BoxalinoException {
-        Map<String, FacetValue> categoryValueArray = new HashMap<String, FacetValue>();
+        Map<String, FacetValue> categoryValueArray = new HashMap<>();
         for (Map.Entry v : this.getCategories().entrySet()) {
             String label = this.getCategoryValueLabel((FacetValue) v.getValue());
             categoryValueArray.put(label, (FacetValue) v.getValue());
@@ -641,7 +640,7 @@ public class BxFacets {
     }
 
     public String getParentId(String fieldName, String id) {
-        List<String> hierarchy = new ArrayList<String>();
+        List<String> hierarchy = new ArrayList<>();
         for (FacetResponse response : this.facetResponse) {
             if (response.fieldName == fieldName) {
                 for (FacetValue item : response.values) {

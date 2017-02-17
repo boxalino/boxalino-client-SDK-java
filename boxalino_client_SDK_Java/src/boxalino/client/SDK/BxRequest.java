@@ -63,12 +63,12 @@ public class BxRequest {
         queryText = Helper.Common.EMPTY_STRING;
         bxFacets = new BxFacets();
         bxSortFields = new BxSortFields();
-        bxFilters = new HashMap<String, BxFilter>();
+        bxFilters = new HashMap<>();
         orFilters = false;
 
         try {
 
-            if (choiceId == Helper.Common.EMPTY_STRING) {
+            if (choiceId.isEmpty()) {
                 throw new BoxalinoException("BxRequest created with null choiceId");
             }
             this.language = language;
@@ -162,10 +162,10 @@ public class BxRequest {
         searchQuery.queryText = this.getQuerytext();
         searchQuery.groupBy = this.groupBy;
         if (this.getFilters().size() > 0) {
-            searchQuery.filters = new ArrayList<Filter>();
-            for (Map.Entry filter : this.getFilters().entrySet()) {
+            searchQuery.filters = new ArrayList<>();
+            this.getFilters().entrySet().forEach((filter) -> {
                 searchQuery.filters.add(((BxFilter) filter).getThriftFilter());
-            }
+            });
         }
         searchQuery.orFilters = this.getOrFilters();
         if (this.getFacets() != null) {
@@ -179,7 +179,7 @@ public class BxRequest {
 
     public Map<String, ArrayList<String>> getRequestContextParameters() {
 
-        Map<String, ArrayList<String>> contextParameters = new HashMap<String, ArrayList<String>>();
+        Map<String, ArrayList<String>> contextParameters = new HashMap<>();
         return contextParameters;
     }
 
@@ -314,7 +314,7 @@ public class BxRequest {
     }
 
     public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> items, String[] fields) {
-        return new ArrayList<Map<String, Object>>();
+        return new ArrayList<>();
     }
 
 }
