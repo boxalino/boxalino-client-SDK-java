@@ -45,7 +45,7 @@ public class BxRequest {
     private boolean withRelaxation;
     private String groupBy;
 
-    public BxRequest(String language, String choiceId, float max, float min) {
+    public BxRequest(String language, String choiceId, float max, float min) throws BoxalinoException {
 
         // default parameter start
         if (max == 0.0f) {
@@ -80,7 +80,7 @@ public class BxRequest {
             }
             this.withRelaxation = choiceId == "search";
         } catch (BoxalinoException ex) {
-
+           throw ex;
         }
 
     }

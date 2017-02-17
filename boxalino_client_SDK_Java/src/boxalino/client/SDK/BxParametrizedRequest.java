@@ -5,6 +5,7 @@
  */
 package boxalino.client.SDK;
 
+import Exception.BoxalinoException;
 import Helper.Common;
 import com.boxalino.p13n.api.thrift.Hit;
 
@@ -34,7 +35,7 @@ public class BxParametrizedRequest extends BxRequest {
     public String requestReturnFieldsName = "bxrf";
     private Map<String, Object> callBackCache = null;
 
-    public BxParametrizedRequest(String language, String choiceId, int max, int min, List<String> bxReturnFields, String getItemFieldsCB) {
+    public BxParametrizedRequest(String language, String choiceId, int max, int min, List<String> bxReturnFields, String getItemFieldsCB) throws BoxalinoException {
         super(language, choiceId, max == 0 ? 10 : max, min);
         if (bxReturnFields != null) {
             this.bxReturnFields = bxReturnFields;

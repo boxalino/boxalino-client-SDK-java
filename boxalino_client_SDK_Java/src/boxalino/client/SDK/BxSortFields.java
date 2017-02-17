@@ -15,12 +15,12 @@ import java.util.Map;
  * @author HASHIR
  */
 public class BxSortFields {
-    
-    public  BxSortFields(){
-        
-    }
 
-    private Map<String, Boolean> sorts = new HashMap<>();
+    private Map<String, Boolean> sorts;
+
+    public BxSortFields() {
+        sorts = new HashMap<>();
+    }
 
     void push(String field, boolean reverse) {
         this.sorts.put(field, reverse);
@@ -28,6 +28,8 @@ public class BxSortFields {
 
     public BxSortFields(String field, boolean reverse) {
         //default value start
+        sorts = new HashMap<>();
+
         if (field == null || field.isEmpty()) {
             field = null;
         }

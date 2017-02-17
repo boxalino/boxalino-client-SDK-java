@@ -9,7 +9,6 @@ import Exception.BoxalinoException;
 import Helper.Common;
 import static Helper.Common.EMPTY_STRING;
 import com.google.gson.Gson;
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -30,14 +29,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import javafx.util.Pair;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import org.jdom2.output.XMLOutputter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  *
@@ -193,7 +190,7 @@ public class BxData {
         return file;
     }
 
-    public void validateSource(String container, String sourceId) throws IOException {
+    public void validateSource(String container, String sourceId) throws IOException, BoxalinoException {
         try {
 
             Map<String, Object> source = (Map<String, Object>) ((HashMap) this.sources.get(container)).get(sourceId);
@@ -204,6 +201,7 @@ public class BxData {
                 }
             }
         } catch (BoxalinoException ex) {
+            throw ex;
         }
     }
 
@@ -651,7 +649,7 @@ public class BxData {
 
     }
 
-    public Document getXML() throws ParserConfigurationException {
+    public Document getXML() throws ParserConfigurationException, BoxalinoException {
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -748,6 +746,7 @@ public class BxData {
                             throw new BoxalinoException("source parameter " + defaultValue.getKey() + " required but not defined in source id " + sourceId + " for container '$containerName'");
                         }
                     } catch (BoxalinoException ex) {
+                        throw ex;
                     }
 
                     Element xml_parameter = xmlDocument.createElement(defaultValue.getKey());
@@ -988,7 +987,7 @@ public class BxData {
         return files;
     }
 
-    public String createZip(String temporaryFilePath, String name) throws FileNotFoundException, IOException, ParserConfigurationException {
+    public String createZip(String temporaryFilePath, String name) throws FileNotFoundException, IOException, ParserConfigurationException, BoxalinoException {
         //default start
         if (name.isEmpty()) {
             name = "bxdata.zip";

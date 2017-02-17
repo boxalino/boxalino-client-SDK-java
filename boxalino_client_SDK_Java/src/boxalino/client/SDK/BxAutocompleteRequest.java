@@ -5,6 +5,7 @@
  */
 package boxalino.client.SDK;
 
+import Exception.BoxalinoException;
 import com.boxalino.p13n.api.thrift.AutocompleteQuery;
 import com.boxalino.p13n.api.thrift.AutocompleteRequest;
 import com.boxalino.p13n.api.thrift.PropertyQuery;
@@ -25,7 +26,7 @@ public class BxAutocompleteRequest {
     protected String indexId = null;
     private ArrayList<PropertyQuery> propertyQueries = new ArrayList<>();
 
-    public BxAutocompleteRequest(String language, String queryText, int textualSuggestionsHitCount, int productSuggestionHitCount, String autocompleteChoiceId, String searchChoiceId) {
+    public BxAutocompleteRequest(String language, String queryText, int textualSuggestionsHitCount, int productSuggestionHitCount, String autocompleteChoiceId, String searchChoiceId) throws BoxalinoException {
         //default paramter start
         if (productSuggestionHitCount == 0) {
             productSuggestionHitCount = 5;

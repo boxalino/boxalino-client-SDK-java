@@ -13,17 +13,17 @@ import Exception.BoxalinoException;
  */
 public class BxSearchRequest extends BxRequest {
 
-    public BxSearchRequest(String language, String queryText, int max, String choiceId) {
+    public BxSearchRequest(String language, String queryText, int max, String choiceId) throws BoxalinoException {
         super(language, choiceId == null ? "search" : choiceId, max, 0);
 
         try {
-            if (choiceId == "") {
+            if (choiceId.isEmpty()) {
                 throw new BoxalinoException("BxRequest created with null choiceId");
             }
 
             super.setQuerytext(queryText);
         } catch (BoxalinoException ex) {
-
+              throw ex;
         }
 
     }

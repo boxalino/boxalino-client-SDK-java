@@ -360,7 +360,7 @@ public class BxFacets {
         return selected;
     }
 
-    public Map<String, FacetValue> getSelectedValues(String fieldName) {
+    public Map<String, FacetValue> getSelectedValues(String fieldName) throws BoxalinoException {
         selectedValues = new HashMap<>();
         try {
             for (Map.Entry<String, FacetValue> key : this.getFacetValues(fieldName).entrySet()) {
@@ -369,7 +369,7 @@ public class BxFacets {
                 }
             }
         } catch (BoxalinoException ex) {
-
+            throw ex;
         }
         return selectedValues;
     }

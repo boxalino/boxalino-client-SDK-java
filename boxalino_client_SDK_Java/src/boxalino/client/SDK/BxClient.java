@@ -160,7 +160,7 @@ public class BxClient {
         return userRecord;
     }
 
-    private Client getP13n(int timeout, boolean useCurlIfAvailable) throws UnsupportedEncodingException {
+    private Client getP13n(int timeout, boolean useCurlIfAvailable) throws UnsupportedEncodingException, TTransportException {
         //default start
         if (timeout == 0) {
             timeout = 2;
@@ -174,7 +174,7 @@ public class BxClient {
             try {
                 transport = new THttpClient(String.format("%s://%s%s", this.schema, this.host, this.uri));
             } catch (TTransportException ex) {
-
+                throw ex;
             }
         }
         transport.setCustomHeader("Authorization", Base64.getEncoder().encodeToString((this.p13n_username + ':' + this.p13n_password).getBytes("UTF-8")));
@@ -193,7 +193,7 @@ public class BxClient {
         return parameters;
     }
 
-    public RequestContext getRequestContext() {
+    public RequestContext getRequestContext() throws URISyntaxException {
         String[] list;
         list = this.getSessionAndProfile();
         RequestContext requestContext = new RequestContext();
@@ -220,7 +220,7 @@ public class BxClient {
                         try {
                             add(new HttpContext().getReferer());
                         } catch (URISyntaxException ex) {
-
+                             throw ex;
                         }
                     }
                 });
@@ -251,7 +251,7 @@ public class BxClient {
         return requestContext;
     }
 
-    public ChoiceRequest getChoiceRequest(ArrayList<ChoiceInquiry> inquiries, RequestContext requestContext) {
+    public ChoiceRequest getChoiceRequest(ArrayList<ChoiceInquiry> inquiries, RequestContext requestContext) throws URISyntaxException {
         ChoiceRequest choiceRequest = new ChoiceRequest();
         String[] list;
         list = this.getSessionAndProfile();
@@ -275,7 +275,7 @@ public class BxClient {
         this.requestContextParameters = new HashMap<>();
     }
 
-    protected Map<String, ArrayList<String>> getBasicRequestContextParameters() {
+    protected Map<String, ArrayList<String>> getBasicRequestContextParameters() throws URISyntaxException {
         sessionId = this.getSessionAndProfile()[0];
         profileId = this.getSessionAndProfile()[1];
         return new HashMap<String, ArrayList<String>>() {
@@ -300,7 +300,7 @@ public class BxClient {
                         try {
                             add(new HttpContext().getReferer());
                         } catch (URISyntaxException ex) {
-
+                            throw ex;
                         }
                     }
                 });
@@ -353,7 +353,7 @@ public class BxClient {
 
     private ChoiceResponse p13nchoose(ChoiceRequest choiceRequest) throws UnsupportedEncodingException, TException, IOException {
         ChoiceResponse choiceResponse = this.getP13n(this._timeout, false).choose(choiceRequest);
-        if (this.requestMap.size() > 0 && this.requestMap.get("dev_bx_disp") != null && this.requestMap.get("dev_bx_disp") == "true") {
+        if (this.requestMap.size() > 0 && this.requestMap.get("dev_bx_disp") != null && this.requestMap.get("dev_bx_disp").equals("true")) {
 
             new HttpContext().responseWrite("<pre><h1>Choice Request</h1>");
             new HttpContext().responseWrite(choiceRequest.getClass().getName());
@@ -405,7 +405,7 @@ public class BxClient {
         return requests;
     }
 
-    public ChoiceRequest getThriftChoiceRequest() {
+    public ChoiceRequest getThriftChoiceRequest() throws URISyntaxException {
         ArrayList<ChoiceInquiry> choiceInquiries = new ArrayList<>();
 
         this.chooseRequests.stream().map((request) -> {
@@ -423,11 +423,11 @@ public class BxClient {
         return choiceRequest;
     }
 
-    protected void choose() throws TException, IOException {
+    protected void choose() throws TException, IOException, URISyntaxException {
         this.chooseResponses = this.p13nchoose(this.getThriftChoiceRequest());
     }
 
-    public BxChooseResponse getResponse() throws TException, IOException {
+    public BxChooseResponse getResponse() throws TException, IOException, URISyntaxException {
         if (this.chooseResponses == null) {
             this.choose();
         }
