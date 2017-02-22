@@ -7,6 +7,7 @@ package Helper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.Scanner;
 
 /**
@@ -34,17 +35,19 @@ public class Common {
         }
         return null;
     }
-    
-     public static void unlink(String fileName)
-        {
-            if ( new File(fileName).exists())
-            {
-                new File(fileName).delete();
-            }
+
+    public static void unlink(String fileName) {
+        if (new File(fileName).exists()) {
+            new File(fileName).delete();
         }
-     
-     public static String file_get_contents(String path) throws FileNotFoundException{
-         return( new Scanner(new File(path)).useDelimiter("\\Z").next());
-     }
-     
+    }
+
+    public static String file_get_contents(String path) throws FileNotFoundException {
+        return (new Scanner(new File(path)).useDelimiter("\\Z").next());
+    }
+
+    public static <T> Iterable<T> emptyIfNull(Iterable<T> iterable) {
+        return iterable == null ? Collections.<T>emptyList() : iterable;
+    }
+
 }

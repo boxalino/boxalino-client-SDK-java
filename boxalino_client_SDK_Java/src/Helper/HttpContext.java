@@ -5,30 +5,27 @@
  */
 package Helper;
 
+import static Helper.Common.EMPTY_STRING;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.directwebremoting.WebContext;
-import org.directwebremoting.WebContextFactory;
 
 /**
  *
  * @author HASHIR
  */
-public class HttpContext extends HttpServlet {
+public class HttpContext {
 
-    private int _VISITOR_COOKIE_TIME = 31536000;
+    public static HttpServletRequest request;
+    public static HttpServletResponse response;
 
-    public String[] getSessionAndProfile(String sessionId, String profileId, String domain) {
+    private final int _VISITOR_COOKIE_TIME = 31536000;
 
-        WebContext ctx = WebContextFactory.get();
-        HttpServletRequest request = ctx.getHttpServletRequest();
-        HttpServletResponse response = ctx.getHttpServletResponse();
+    public String[] getSessionAndProfile(String sessionId, String profileId, String domain) {     
         Cookie[] cookies = null;
         cookies = request.getCookies();
         if (sessionId != null && profileId != null) {
@@ -77,35 +74,27 @@ public class HttpContext extends HttpServlet {
         return new String[]{sessionId, profileId};
     }
 
-    public String getUserAgent() {
-        WebContext ctx = WebContextFactory.get();
-        HttpServletRequest request = ctx.getHttpServletRequest();
+    public String getUserAgent() {       
         return request.getHeader("User-Agent");
     }
 
-    public String getIP() {
-        WebContext ctx = WebContextFactory.get();
-        HttpServletRequest request = ctx.getHttpServletRequest();
+    public String getIP() {       
         return request.getRemoteAddr();
     }
 
-    public String getReferer() throws URISyntaxException {
-        WebContext ctx = WebContextFactory.get();
-        HttpServletRequest request = ctx.getHttpServletRequest();
-        return new URI(request.getHeader("referer")).getPath();
+    public String getReferer() throws URISyntaxException {        
+        return   request.getHeader("referer")==null?EMPTY_STRING: new URI(request.getHeader("referer")).getPath();
     }
 
-    public String getCurrentUrl() {
-        WebContext ctx = WebContextFactory.get();
-        HttpServletRequest request = ctx.getHttpServletRequest();
+    public String getCurrentUrl() {       
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getRequestURI() + "?" + request.getQueryString();
     }
 
-    public void responseWrite(String content) throws IOException {
-        WebContext ctx = WebContextFactory.get();
-        HttpServletResponse response = ctx.getHttpServletResponse();
+    public void responseWrite(String content) throws IOException {     
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         out.println(content);
     }
+    
+
 }

@@ -6,6 +6,7 @@
 package boxalino.client.SDK;
 
 import Exception.BoxalinoException;
+import static Helper.Common.EMPTY_STRING;
 
 /**
  *
@@ -16,15 +17,7 @@ public class BxSearchRequest extends BxRequest {
     public BxSearchRequest(String language, String queryText, int max, String choiceId) throws BoxalinoException {
         super(language, choiceId == null ? "search" : choiceId, max, 0);
 
-        try {
-            if (choiceId.isEmpty()) {
-                throw new BoxalinoException("BxRequest created with null choiceId");
-            }
-
-            super.setQuerytext(queryText);
-        } catch (BoxalinoException ex) {
-              throw ex;
-        }
+        super.setQuerytext(queryText);
 
     }
 

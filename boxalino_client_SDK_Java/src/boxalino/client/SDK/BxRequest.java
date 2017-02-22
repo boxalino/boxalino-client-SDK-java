@@ -7,6 +7,7 @@ package boxalino.client.SDK;
 
 import Exception.BoxalinoException;
 import Helper.Common;
+import static Helper.Common.emptyIfNull;
 import Helper.CustomBasketContent;
 import Helper.Shift;
 import com.boxalino.p13n.api.thrift.ContextItem;
@@ -98,7 +99,7 @@ public class BxRequest {
     public void setIndexId(String indexId) {
         this.indexId = indexId;
         int k = 0;
-        for (ContextItem contextItem : contextItems) {
+        for (ContextItem contextItem : emptyIfNull(contextItems)) {
             if (contextItem.indexId == null || contextItem.indexId == Helper.Common.EMPTY_STRING) {
                 this.contextItems.get(k).indexId = indexId;
             }

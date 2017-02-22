@@ -18,10 +18,13 @@ import com.boxalino.p13n.api.thrift.RequestContext;
 import com.boxalino.p13n.api.thrift.UserRecord;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.thrift.TException;
@@ -61,14 +64,14 @@ public class BxClient {
 
     private Map<String, String> requestMap;
 
-    public BxClient(String account, String password, String domain, boolean isDev, String host, Integer port, String uri, String schema, String p13n_username, String p13n_password) {
+    public BxClient(String account, String password, String domain, boolean isDev, String host, int port, String uri, String schema, String p13n_username, String p13n_password) {
         //default value start
 
         if (host == null || host.equals(Helper.Common.EMPTY_STRING)) {
             host = null;
         }
-        if (port == null) {
-            host = null;
+        if (port == 0) {
+            port = 0;
         }
         if (uri == null || uri == Helper.Common.EMPTY_STRING) {
             uri = null;
@@ -92,7 +95,7 @@ public class BxClient {
         this.profileId = null;
 
         this.account = account;
-        this.password = password;       
+        this.password = password;
         this.isDev = isDev;
 
         this.host = host;
@@ -100,7 +103,7 @@ public class BxClient {
             this.host = "cdn.bx-cloud.com";
         }
         this.port = port;
-        if (this.port == null) {
+        if (this.port == 0) {
             this.port = 443;
         }
         this.uri = uri;
@@ -160,7 +163,7 @@ public class BxClient {
         return userRecord;
     }
 
-    private Client getP13n(int timeout, boolean useCurlIfAvailable) throws UnsupportedEncodingException, TTransportException {
+    private Client getP13n(int timeout, boolean useCurlIfAvailable) throws UnsupportedEncodingException, TTransportException, URISyntaxException, MalformedURLException {
         //default start
         if (timeout == 0) {
             timeout = 2;
@@ -172,7 +175,7 @@ public class BxClient {
 
         } else {
             try {
-                transport = new THttpClient(String.format("%s://%s%s", this.schema, this.host, this.uri));
+                    transport = new THttpClient(new URI(String.format("%s://%s%s", this.schema, this.host, this.uri)).toURL().toString());
             } catch (TTransportException ex) {
                 throw ex;
             }
@@ -196,6 +199,7 @@ public class BxClient {
     public RequestContext getRequestContext() throws URISyntaxException {
         String[] list;
         list = this.getSessionAndProfile();
+        setSessionAndProfile(list[0],list[1]);
         RequestContext requestContext = new RequestContext();
         String sessionIdd = this.sessionId;
         requestContext.parameters = new HashMap<String, List<String>>() {
@@ -220,7 +224,7 @@ public class BxClient {
                         try {
                             add(new HttpContext().getReferer());
                         } catch (URISyntaxException ex) {
-                             throw ex;
+                            throw ex;
                         }
                     }
                 });
@@ -351,7 +355,7 @@ public class BxClient {
         throw e;
     }
 
-    private ChoiceResponse p13nchoose(ChoiceRequest choiceRequest) throws UnsupportedEncodingException, TException, IOException {
+    private ChoiceResponse p13nchoose(ChoiceRequest choiceRequest) throws UnsupportedEncodingException, TException, IOException, URISyntaxException {
         ChoiceResponse choiceResponse = this.getP13n(this._timeout, false).choose(choiceRequest);
         if (this.requestMap.size() > 0 && this.requestMap.get("dev_bx_disp") != null && this.requestMap.get("dev_bx_disp").equals("true")) {
 
@@ -408,17 +412,16 @@ public class BxClient {
     public ChoiceRequest getThriftChoiceRequest() throws URISyntaxException {
         ArrayList<ChoiceInquiry> choiceInquiries = new ArrayList<>();
 
-        this.chooseRequests.stream().map((request) -> {
+        for (BxRequest request : this.chooseRequests) {
             ChoiceInquiry choiceInquiry = new ChoiceInquiry();
             choiceInquiry.choiceId = request.getChoiceId();
             choiceInquiry.simpleSearchQuery = request.getSimpleSearchQuery();
             choiceInquiry.contextItems = request.getContextItems();
             choiceInquiry.minHitCount = (int) request.getMin();
             choiceInquiry.withRelaxation = request.getWithRelaxation();
-            return choiceInquiry;
-        }).forEachOrdered((choiceInquiry) -> {
             choiceInquiries.add(choiceInquiry);
-        });
+        }
+
         ChoiceRequest choiceRequest = this.getChoiceRequest(choiceInquiries, this.getRequestContext());
         return choiceRequest;
     }
@@ -449,7 +452,7 @@ public class BxClient {
         this.setAutocompleteRequests(request);
     }
 
-    private AutocompleteResponse p13nautocomplete(AutocompleteRequest autocompleteRequest) throws UnsupportedEncodingException, TException {
+    private AutocompleteResponse p13nautocomplete(AutocompleteRequest autocompleteRequest) throws UnsupportedEncodingException, TException, URISyntaxException, MalformedURLException {
         return this.getP13n(this._timeout, false).autocomplete(autocompleteRequest);
     }
 
@@ -481,13 +484,13 @@ public class BxClient {
 
     }
 
-    private List<AutocompleteResponse> p13nautocompleteAll(ArrayList<AutocompleteRequest> requests) throws UnsupportedEncodingException, TException {
+    private List<AutocompleteResponse> p13nautocompleteAll(ArrayList<AutocompleteRequest> requests) throws UnsupportedEncodingException, TException, URISyntaxException, MalformedURLException {
         AutocompleteRequestBundle requestBundle = new AutocompleteRequestBundle();
         requestBundle.requests = requests;
         return this.getP13n(this._timeout, false).autocompleteAll(requestBundle).responses;
     }
 
-    public void autocomplete() throws UnsupportedEncodingException, TException {
+    public void autocomplete() throws UnsupportedEncodingException, TException, URISyntaxException, MalformedURLException {
         String[] str = this.getSessionAndProfile();
         sessionId = str[0];
         profileId = str[1];
@@ -500,7 +503,7 @@ public class BxClient {
 
     }
 
-    public ArrayList<BxAutocompleteResponse> getAutocompleteResponses() throws UnsupportedEncodingException, TException {
+    public ArrayList<BxAutocompleteResponse> getAutocompleteResponses() throws UnsupportedEncodingException, TException, URISyntaxException, MalformedURLException {
         if (this.autocompleteResponses == null) {
             this.autocomplete();
         }

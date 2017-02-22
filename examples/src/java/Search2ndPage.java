@@ -5,6 +5,7 @@
  */
 
 import Exception.BoxalinoException;
+import Helper.HttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxSearchRequest;
@@ -49,6 +50,8 @@ public class Search2ndPage extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpContext.request = request;
+        HttpContext.response = response;
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
 
