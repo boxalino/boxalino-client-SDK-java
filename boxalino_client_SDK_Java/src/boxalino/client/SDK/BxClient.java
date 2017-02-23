@@ -16,6 +16,8 @@ import com.boxalino.p13n.api.thrift.ChoiceResponse;
 import com.boxalino.p13n.api.thrift.P13nService.Client;
 import com.boxalino.p13n.api.thrift.RequestContext;
 import com.boxalino.p13n.api.thrift.UserRecord;
+import com.boxalino.p13n.pool.ClientPool;
+import com.boxalino.p13n.pool.SimpleClientPool;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -175,7 +177,7 @@ public class BxClient {
 
         } else {
             try {
-                    transport = new THttpClient(new URI(String.format("%s://%s%s", this.schema, this.host, this.uri)).toURL().toString());
+                transport = new THttpClient(new URI(String.format("%s://%s%s", this.schema, this.host, this.uri)).toURL().toString());
             } catch (TTransportException ex) {
                 throw ex;
             }
@@ -199,7 +201,7 @@ public class BxClient {
     public RequestContext getRequestContext() throws URISyntaxException {
         String[] list;
         list = this.getSessionAndProfile();
-        setSessionAndProfile(list[0],list[1]);
+        setSessionAndProfile(list[0], list[1]);
         RequestContext requestContext = new RequestContext();
         String sessionIdd = this.sessionId;
         requestContext.parameters = new HashMap<String, List<String>>() {
@@ -356,7 +358,21 @@ public class BxClient {
     }
 
     private ChoiceResponse p13nchoose(ChoiceRequest choiceRequest) throws UnsupportedEncodingException, TException, IOException, URISyntaxException {
-        ChoiceResponse choiceResponse = this.getP13n(this._timeout, false).choose(choiceRequest);
+        String url = "https://cdn.bx-cloud.com/p13n.web/p13n";
+        String username = "boxalino", pwd = "tkZ8EXfzeZc6SdXZntCU";
+        String user = "csharp_unittest";
+        ClientPool pool = new SimpleClientPool(url, username, pwd);
+        
+     
+        
+        
+        ChoiceResponse response = pool.withClient(client -> {ChoiceResponse choiceResponsee = client.choose(choiceRequest);
+			return choiceResponsee;
+		});
+        
+        
+        
+        
         if (this.requestMap.size() > 0 && this.requestMap.get("dev_bx_disp") != null && this.requestMap.get("dev_bx_disp").equals("true")) {
 
             new HttpContext().responseWrite("<pre><h1>Choice Request</h1>");
@@ -368,10 +384,10 @@ public class BxClient {
 
             new HttpContext().responseWrite("<br><h1>Choice Response</h1>");
             new HttpContext().responseWrite(choiceRequest.getClass().getName());
-            new HttpContext().responseWrite("Variants" + choiceResponse.variants);
+            new HttpContext().responseWrite("Variants" + response.variants);
             new HttpContext().responseWrite("</pre>");
         }
-        return choiceResponse;
+        return response;
     }
 
     public void addRequest(BxRequest request) {
