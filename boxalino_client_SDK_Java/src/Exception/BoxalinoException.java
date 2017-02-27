@@ -11,6 +11,7 @@ package Exception;
  */
 public class BoxalinoException extends Exception{
        public BoxalinoException() {
+           super();
         // TODO Auto-generated constructor stub
     }
 

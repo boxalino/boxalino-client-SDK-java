@@ -50,7 +50,7 @@ public class BxChooseResponse {
 
     protected Variant getChoiceIdResponseVariant(int id) throws BoxalinoException, NoSuchFieldException {
         Object responsee = this.getResponse();
-        if (responsee.getClass().getDeclaredField("Variants") != null) {
+        if (responsee.getClass().getField("variants") != null) {
             if (((ChoiceResponse) responsee).variants != null) {
                 return ((ChoiceResponse) responsee).variants.get(id - 1);
             }

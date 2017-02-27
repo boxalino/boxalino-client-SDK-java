@@ -16,8 +16,6 @@ import com.boxalino.p13n.api.thrift.ChoiceResponse;
 import com.boxalino.p13n.api.thrift.P13nService.Client;
 import com.boxalino.p13n.api.thrift.RequestContext;
 import com.boxalino.p13n.api.thrift.UserRecord;
-import com.boxalino.p13n.pool.ClientPool;
-import com.boxalino.p13n.pool.SimpleClientPool;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -182,7 +180,7 @@ public class BxClient {
                 throw ex;
             }
         }
-        transport.setCustomHeader("Authorization", Base64.getEncoder().encodeToString((this.p13n_username + ':' + this.p13n_password).getBytes("UTF-8")));
+        transport.setCustomHeader("Authorization","Basic " + Base64.getEncoder().encodeToString((this.p13n_username + ':' + this.p13n_password).getBytes("UTF-8")));
         Client client = new Client(new TCompactProtocol(transport));
         transport.open();
         return client;
@@ -358,21 +356,7 @@ public class BxClient {
     }
 
     private ChoiceResponse p13nchoose(ChoiceRequest choiceRequest) throws UnsupportedEncodingException, TException, IOException, URISyntaxException {
-        String url = "https://cdn.bx-cloud.com/p13n.web/p13n";
-        String username = "boxalino", pwd = "tkZ8EXfzeZc6SdXZntCU";
-        String user = "csharp_unittest";
-        ClientPool pool = new SimpleClientPool(url, username, pwd);
-        
-     
-        
-        
-        ChoiceResponse response = pool.withClient(client -> {ChoiceResponse choiceResponsee = client.choose(choiceRequest);
-			return choiceResponsee;
-		});
-        
-        
-        
-        
+        ChoiceResponse choiceResponse = this.getP13n(this._timeout, false).choose(choiceRequest);
         if (this.requestMap.size() > 0 && this.requestMap.get("dev_bx_disp") != null && this.requestMap.get("dev_bx_disp").equals("true")) {
 
             new HttpContext().responseWrite("<pre><h1>Choice Request</h1>");
@@ -384,10 +368,10 @@ public class BxClient {
 
             new HttpContext().responseWrite("<br><h1>Choice Response</h1>");
             new HttpContext().responseWrite(choiceRequest.getClass().getName());
-            new HttpContext().responseWrite("Variants" + response.variants);
+            new HttpContext().responseWrite("Variants" + choiceResponse.variants);
             new HttpContext().responseWrite("</pre>");
         }
-        return response;
+        return choiceResponse;
     }
 
     public void addRequest(BxRequest request) {
