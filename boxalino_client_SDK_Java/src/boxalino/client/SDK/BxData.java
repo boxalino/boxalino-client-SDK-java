@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -83,8 +85,8 @@ public class BxData {
             int count = 1;
             BufferedReader reader = new BufferedReader(new FileReader(source.get("filePath").toString()));
             List<String> listA = new ArrayList<>();
-            while (reader.read() != -1) {
-                String line = reader.readLine();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
                 String[] values = line.split(";");
                 listA.add(values[0]);
                 if (count++ >= maxRow) {
@@ -108,7 +110,7 @@ public class BxData {
         if (rows != null) {
             String[] row = ((String[]) rows);
             for (String item : row) {
-                if (item == (col)) {
+                if (item.equals(col.toString())) {
                     in_array++;
                     break;
                 }
@@ -125,10 +127,12 @@ public class BxData {
         String container = this.decodeSourceKey(sourceKey)[0].trim();
         String sourceId = this.decodeSourceKey(sourceKey)[1].trim();
 
-        if (((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields").toString() == EMPTY_STRING) {
-            ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).put("fields", new HashMap<>());
+        if (((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields") == null) {
+            ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).put("fields", new HashMap<String, Object>());
 
         }
+
+        ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).put(fieldName, new HashMap<String, Object>());
         ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get(fieldName)).put("type", type);
         ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get(fieldName)).put("localized", localized);
         ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get(fieldName)).put("map", colMap);
@@ -181,7 +185,7 @@ public class BxData {
 
     public String getFileNameFromPath(String filePath, boolean withoutExtension) {
         String[] parts;
-        parts = filePath.split("\\");
+        parts = filePath.split("\\^");
         String file = parts[parts.length - 1];
         if (withoutExtension) {
             parts = file.split(".");
@@ -751,10 +755,10 @@ public class BxData {
 
                     Element xml_parameter = xmlDocument.createElement(defaultValue.getKey());
                     if (parameter != null) {
-                        parameter.appendChild(xml_parameter);
+                        parameter = (Element) parameter.appendChild(xml_parameter);
 
                     } else {
-                        sourceXML.appendChild(xml_parameter);
+                        parameter = (Element) sourceXML.appendChild(xml_parameter);
                     }
 
                     if (value instanceof HashMap) {
@@ -978,7 +982,7 @@ public class BxData {
                 if (!(temp_source.containsKey(sourceId))) {
                     if (temp_source.containsKey("file")) {
                         temp_source.put("file", this.getFileNameFromPath(String.valueOf(temp_source.get("filePath")), false));
-                        
+
                     }
                     files.put(String.valueOf(temp_source.get("file")), temp_source.get("filePath"));
                 }
@@ -1015,26 +1019,26 @@ public class BxData {
                 // We name the ZipEntry after the original file's name
                 ZipEntry zipEntry = new ZipEntry(file.getKey());
                 zipOutputStream.putNextEntry(zipEntry);
-                
+
                 FileInputStream fileInputStream = new FileInputStream(file.getKey());
                 byte[] buf = new byte[1024];
                 int bytesRead;
-                
+
                 // Read the input file by chucks of 1024 bytes
                 // and write the read bytes to the zip stream
                 while ((bytesRead = fileInputStream.read(buf)) > 0) {
                     zipOutputStream.write(buf, 0, bytesRead);
                 }
-                
+
             }
 
             ZipEntry zipEntry = new ZipEntry("properties.xml");
             zipOutputStream.putNextEntry(zipEntry);
             zipOutputStream.write(getXML().toString().getBytes());
-            
+
             // close ZipEntry to store the stream to the file
             zipOutputStream.closeEntry();
-            
+
         }
         return zipFilePath;
     }
@@ -1134,8 +1138,15 @@ public class BxData {
     public String getError(String responseBody) {
         return responseBody;
     }
-    
-    
-    
+
+    public void publishChanges() {
+        try {
+            this.publishOwnerChanges(true);
+        } catch (IOException ex) {
+
+        } catch (BoxalinoException ex) {
+
+        }
+    }
 
 }

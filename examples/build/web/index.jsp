@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/Search2ndPage" />
+      <jsp:include page="/DataBasic" />
     </body>
 </html>
