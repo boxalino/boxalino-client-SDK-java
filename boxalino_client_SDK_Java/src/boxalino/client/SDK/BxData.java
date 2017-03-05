@@ -9,6 +9,7 @@ import Exception.BoxalinoException;
 import Helper.Common;
 import static Helper.Common.EMPTY_STRING;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -19,6 +20,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,14 +29,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-import org.jdom2.output.XMLOutputter;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import jdk.nashorn.internal.parser.JSONParser;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -653,17 +661,15 @@ public class BxData {
 
     }
 
-    public Document getXML() throws ParserConfigurationException, BoxalinoException {
-
+    public Document getXML() throws ParserConfigurationException, BoxalinoException, TransformerException, TransformerException, TransformerException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document xmlDocument = dBuilder.newDocument();
 
         Element rootXML = xmlDocument.createElement("root");
-
+        xmlDocument.appendChild(rootXML);
         Element languagesXML = xmlDocument.createElement("languages");
         rootXML.appendChild(languagesXML);
-
         for (String lang : this.getLanguages()) {
             Element languageXML = xmlDocument.createElement("language");
             languageXML.setAttribute("id", lang);
@@ -672,7 +678,6 @@ public class BxData {
         }
         Element containersXML = xmlDocument.createElement("containers");
         rootXML.appendChild(containersXML);
-
         for (Map.Entry<String, Object> containerSources : this.sources.entrySet()) {
 
             for (Map.Entry<String, Object> sourceValues : ((Map<String, Object>) containerSources.getValue()).entrySet()) {
@@ -866,7 +871,7 @@ public class BxData {
                         Element paramsXML = xmlDocument.createElement("params");
                         propertyXML.appendChild(paramsXML);
 
-                        if (referenceSourceKey != "") {
+                        if (referenceSourceKey != null) {
                             Element referenceSourceXML = xmlDocument.createElement("referenceSource");
 
                             paramsXML.appendChild(referenceSourceXML);
@@ -887,6 +892,7 @@ public class BxData {
                 }
             }
         }
+
         return xmlDocument;
     }
 
@@ -899,8 +905,25 @@ public class BxData {
         HttpURLConnection connection;
         connection = null;
         for (Map.Entry<String, Object> item : fields.entrySet()) {
-            urlParameters += URLEncoder.encode(item.getKey(), "UTF-8") + "="
-                    + URLEncoder.encode((item.getValue() instanceof String) ? item.getValue().toString() : new XMLOutputter().outputString((org.jdom2.Document) item.getValue()), "UTF-8") + "&";
+            String value = String.valueOf(item.getValue());
+            if (item.getKey() == "xml") {
+                DOMSource domSource = new DOMSource((Document) item.getValue());
+                StringWriter writer = new StringWriter();
+                StreamResult result = new StreamResult(writer);
+                TransformerFactory tf = TransformerFactory.newInstance();
+                Transformer transformer = null;
+                try {
+                    transformer = tf.newTransformer();
+                    transformer.transform(domSource, result);
+                } catch (TransformerConfigurationException ex) {
+
+                } catch (TransformerException ex) {
+
+                }
+                value = writer.toString();
+            }
+
+            urlParameters += URLEncoder.encode(item.getKey(), "UTF-8") + "=" + URLEncoder.encode(value, "UTF-8") + "&";
 
         }
         if (urlParameters.endsWith("&")) {
@@ -938,7 +961,7 @@ public class BxData {
         return this.checkResponseBody(responseFromServer, url);
     }
 
-    public Map<String, Object> pushDataSpecifications(boolean ignoreDeltaException) throws BoxalinoException, ParserConfigurationException, IOException {
+    public Map<String, Object> pushDataSpecifications(boolean ignoreDeltaException) throws BoxalinoException, ParserConfigurationException, IOException, TransformerException {
 
         if (!ignoreDeltaException && this.isDelta) {
             throw new BoxalinoException("You should not push specifications when you are pushing a delta file. Only do it when you are preparing full files. Set method parameter ignoreDeltaException to true to ignore this exception and publish anyway.");
@@ -959,9 +982,15 @@ public class BxData {
     public Map<String, Object> checkResponseBody(String responseBody, String url) throws BoxalinoException {
         if (responseBody == null) {
             throw new BoxalinoException("API response of call to " + url + " is empty string, this is an error!");
+
         }
 
-        Map<String, Object> value = (Map<String, Object>) new Gson().fromJson(responseBody, HashMap.class);
+        Gson gson = new Gson();
+        Map<String, Object> value = gson.fromJson(responseBody, new TypeToken<HashMap<String, Object>>() {
+        }.getType());
+
+       
+
         if (value.containsKey("token")) {
             if (value.containsKey("changes")) {
                 if (value.get("changes").toString().length() > 2) {
@@ -991,7 +1020,7 @@ public class BxData {
         return files;
     }
 
-    public String createZip(String temporaryFilePath, String name) throws FileNotFoundException, IOException, ParserConfigurationException, BoxalinoException {
+    public String createZip(String temporaryFilePath, String name) throws FileNotFoundException, IOException, ParserConfigurationException, BoxalinoException, TransformerException {
         //default start
         if (name.isEmpty()) {
             name = "bxdata.zip";
@@ -1048,7 +1077,7 @@ public class BxData {
         return filename;
     }
 
-    public Map<String, Object> pushData(String temporaryFilePath) throws IOException, UnsupportedEncodingException, BoxalinoException, FileNotFoundException, ParserConfigurationException {
+    public Map<String, Object> pushData(String temporaryFilePath) throws IOException, UnsupportedEncodingException, BoxalinoException, FileNotFoundException, ParserConfigurationException, TransformerException {
 
         String zipFile = this.createZip(temporaryFilePath, EMPTY_STRING);
 
