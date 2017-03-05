@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 /**
  *
@@ -46,8 +47,7 @@ public class DataBasic extends HttpServlet {
         HttpContext.request = request;
         HttpContext.response = response;
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-
+            /* TODO output your page here. You may use following sample code. */          
             /**
              * In this example, we take a very simple CSV file with product
              * data, generate the specifications, load them, publish them and
@@ -66,7 +66,7 @@ public class DataBasic extends HttpServlet {
             //Create the Boxalino Data SDK instance
             BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null), languages, isDev, isDelta);
 
-            String file = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\products.csv").getPath(); //a csv file with header row
+            String file = new File("E:\\GitHub\\Workspace\\boxalino-client-SDK-java\\boxalino-client-SDK-java\\SampleData\\products.csv").getPath(); //a csv file with header row
             String itemIdColumn = "id"; //the column header row name of the csv with the unique id of each item
 
             //add a csv file as main product file
@@ -128,7 +128,10 @@ public class DataBasic extends HttpServlet {
            
         } catch (ParserConfigurationException ex) {
            
+        } catch (TransformerException ex) {
+            
         }
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
