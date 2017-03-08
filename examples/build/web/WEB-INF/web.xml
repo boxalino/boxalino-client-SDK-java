@@ -8,6 +8,10 @@
         <servlet-name>DataBasic</servlet-name>
         <servlet-class>com.boxalino.examples.DataBasic</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DataCategories</servlet-name>
+        <servlet-class>com.boxalino.examples.DataCategories</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search2ndPage</servlet-name>
         <url-pattern>/Search2ndPage</url-pattern>
@@ -15,6 +19,10 @@
     <servlet-mapping>
         <servlet-name>DataBasic</servlet-name>
         <url-pattern>/DataBasic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DataCategories</servlet-name>
+        <url-pattern>/DataCategories</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

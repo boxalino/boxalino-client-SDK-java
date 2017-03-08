@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/DataBasic" />
+      <jsp:include page="/DataCategories" />
     </body>
 </html>

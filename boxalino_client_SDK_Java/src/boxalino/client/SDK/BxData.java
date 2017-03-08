@@ -193,11 +193,11 @@ public class BxData {
 
     public String getFileNameFromPath(String filePath, boolean withoutExtension) {
         String[] parts;
-        parts = filePath.split("\\^");
+        parts = filePath.split("\\\\");
         String file = parts[parts.length - 1];
         if (withoutExtension) {
-            parts = file.split(".");
-            return parts[0].trim();
+            String[] ext = file.split("\\.");
+            return ext[0].trim();
         }
         return file;
     }
@@ -208,7 +208,7 @@ public class BxData {
             Map<String, Object> source = (Map<String, Object>) ((HashMap) this.sources.get(container)).get(sourceId);
 
             if (source.get("format").toString() == "CSV") {
-                if (source.get("itemIdColumn").toString() != null) {
+                if (source.containsKey("itemIdColumn")) {
                     this.validateColumnExistance(container, sourceId, source.get("itemIdColumn"));
                 }
             }
@@ -283,7 +283,7 @@ public class BxData {
         parameters.put("escape", escape);
         parameters.put("lineSeparator", lineSeparator);
 
-        if (sourceId == null) {
+        if (sourceId.isEmpty()) {
             sourceId = this.getFileNameFromPath(filePath, true);
         }
         return this.addSourceFile(filePath, sourceId, container, "item_data_file", "CSV", parameters, validate);
@@ -1049,7 +1049,7 @@ public class BxData {
                 ZipEntry zipEntry = new ZipEntry(file.getKey());
                 zipOutputStream.putNextEntry(zipEntry);
 
-                FileInputStream fileInputStream = new FileInputStream(file.getKey());
+                FileInputStream fileInputStream = new FileInputStream(file.getValue().toString());
                 byte[] buf = new byte[1024];
                 int bytesRead;
 
