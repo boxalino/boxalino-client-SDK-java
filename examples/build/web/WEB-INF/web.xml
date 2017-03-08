@@ -12,6 +12,10 @@
         <servlet-name>DataCategories</servlet-name>
         <servlet-class>com.boxalino.examples.DataCategories</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DataCustomers</servlet-name>
+        <servlet-class>com.boxalino.examples.DataCustomers</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search2ndPage</servlet-name>
         <url-pattern>/Search2ndPage</url-pattern>
@@ -23,6 +27,10 @@
     <servlet-mapping>
         <servlet-name>DataCategories</servlet-name>
         <url-pattern>/DataCategories</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DataCustomers</servlet-name>
+        <url-pattern>/DataCustomers</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
