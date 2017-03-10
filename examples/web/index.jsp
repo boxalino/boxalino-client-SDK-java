@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/DataCustomers" />
+      <jsp:include page="/DataDebugXml" />
     </body>
 </html>

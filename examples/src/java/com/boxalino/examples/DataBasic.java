@@ -42,12 +42,12 @@ public class DataBasic extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException  {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpContext.request = request;
         HttpContext.response = response;
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */          
+            /* TODO output your page here. You may use following sample code. */
             /**
              * In this example, we take a very simple CSV file with product
              * data, generate the specifications, load them, publish them and
@@ -123,15 +123,27 @@ public class DataBasic extends HttpServlet {
             out.print("</body></html>");
 
         } catch (UnsupportedEncodingException ex) {
-           
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(String.join("<br>", ex.getMessage()));
+            out.print("</body></html>");
         } catch (FileNotFoundException ex) {
-           
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(String.join("<br>", ex.getMessage()));
+            out.print("</body></html>");
         } catch (ParserConfigurationException ex) {
-           
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(String.join("<br>", ex.getMessage()));
+            out.print("</body></html>");
         } catch (TransformerException ex) {
-            
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(String.join("<br>", ex.getMessage()));
+            out.print("</body></html>");
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
