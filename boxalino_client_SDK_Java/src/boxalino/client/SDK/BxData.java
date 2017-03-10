@@ -239,6 +239,9 @@ public class BxData {
         temp_parameters.put("format", format);
         temp_parameters.put("type", type);
 
+        if (!this.sources.containsKey(container)) {
+            this.sources.put(container, new HashMap<String, Object>());
+        }
         ((HashMap) this.sources.get(container)).put(sourceId, temp_parameters);
 
         if (validate) {
@@ -988,8 +991,6 @@ public class BxData {
         Gson gson = new Gson();
         Map<String, Object> value = gson.fromJson(responseBody, new TypeToken<HashMap<String, Object>>() {
         }.getType());
-
-       
 
         if (value.containsKey("token")) {
             if (value.containsKey("changes")) {

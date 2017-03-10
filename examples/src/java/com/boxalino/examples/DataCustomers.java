@@ -47,8 +47,8 @@ public class DataCustomers extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
             //path to the lib folder with the Boxalino Client SDK and C# Thrift Client files
             //required parameters you should set for this example to work
-            String account = ""; // your account name
-            String password = ""; // your account password
+            String account = "java_unittest"; // your account name
+            String password = "java_unittest"; // your account password
             String domain = ""; // your web-site domain (e.g.: www.abc.com)
             String[] languages = new String[]{"en"}; //declare the list of available languages
             boolean isDev = false; //are the data to be pushed dev or prod data?
