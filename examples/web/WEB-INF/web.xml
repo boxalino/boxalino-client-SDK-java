@@ -24,6 +24,22 @@
         <servlet-name>DataFullExport</servlet-name>
         <servlet-class>com.boxalino.examples.DataFullExport</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DataInit</servlet-name>
+        <servlet-class>com.boxalino.examples.DataInit</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DataResource</servlet-name>
+        <servlet-class>com.boxalino.examples.DataResource</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DataSplitFieldValues</servlet-name>
+        <servlet-class>com.boxalino.examples.DataSplitFieldValues</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DataTransactions</servlet-name>
+        <servlet-class>com.boxalino.examples.DataTransactions</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search2ndPage</servlet-name>
         <url-pattern>/Search2ndPage</url-pattern>
@@ -47,6 +63,22 @@
     <servlet-mapping>
         <servlet-name>DataFullExport</servlet-name>
         <url-pattern>/DataFullExport</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DataInit</servlet-name>
+        <url-pattern>/DataInit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DataResource</servlet-name>
+        <url-pattern>/DataResource</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DataSplitFieldValues</servlet-name>
+        <url-pattern>/DataSplitFieldValues</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DataTransactions</servlet-name>
+        <url-pattern>/DataTransactions</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
