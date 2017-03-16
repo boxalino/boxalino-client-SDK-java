@@ -7,8 +7,13 @@ package Helper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.json.JSONArray;
 
 /**
@@ -44,13 +49,17 @@ public class Common {
     }
 
     public static String file_get_contents(String path) throws FileNotFoundException {
-        return (new Scanner(new File(path)).useDelimiter("\\Z").next());
+        String response = null;
+        try {
+            response = new Scanner(new URL(path).openStream(), "UTF-8").useDelimiter("\\A").next();
+        } catch (MalformedURLException ex) {
+        } catch (IOException ex) {
+        }
+        return response;
     }
 
     public static <T> Iterable<T> emptyIfNull(Iterable<T> iterable) {
         return iterable == null ? Collections.<T>emptyList() : iterable;
     }
-    
-   
 
 }

@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/DataDebugXml" />
+      <jsp:include page="/DataFullExport" />
     </body>
 </html>

@@ -20,6 +20,10 @@
         <servlet-name>DataDebugXml</servlet-name>
         <servlet-class>com.boxalino.examples.DataDebugXml</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DataFullExport</servlet-name>
+        <servlet-class>com.boxalino.examples.DataFullExport</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search2ndPage</servlet-name>
         <url-pattern>/Search2ndPage</url-pattern>
@@ -39,6 +43,10 @@
     <servlet-mapping>
         <servlet-name>DataDebugXml</servlet-name>
         <url-pattern>/DataDebugXml</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DataFullExport</servlet-name>
+        <url-pattern>/DataFullExport</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

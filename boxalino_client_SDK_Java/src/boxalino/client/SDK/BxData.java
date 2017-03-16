@@ -336,11 +336,11 @@ public class BxData {
             throw new BoxalinoException("trying to add a field parameter on sourceId " + sourceId + ", container " + container + ", fieldName " + fieldName + " while this field doesn't exist");
         }
 
-        if (((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get("fieldName")).get("fieldParameters").toString() == EMPTY_STRING) {
-            ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get("fieldName")).put("fieldParameters", new HashMap<>());
+        if (!((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get(fieldName)).containsKey("fieldParameters")) {
+            ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get(fieldName)).put("fieldParameters", new HashMap<>());
 
         }
-        ((HashMap) ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get("fieldName")).get("fieldParameters")).put(parameterName, parameterValue);
+        ((HashMap) ((HashMap) ((HashMap) ((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields")).get(fieldName)).get("fieldParameters")).put(parameterName, parameterValue);
 
     }
 
@@ -539,7 +539,7 @@ public class BxData {
         parameters.put("escape", escape);
         parameters.put("lineSeparator", lineSeparator);
 
-        if (sourceId == null) {
+        if (sourceId == null || sourceId.isEmpty()) {
             sourceId = "resource_" + this.getFileNameFromPath(filePath, true);
         }
         return this.addSourceFile(filePath, sourceId, container, "resource", "CSV", parameters, validate);
@@ -873,14 +873,15 @@ public class BxData {
 
                         Element paramsXML = xmlDocument.createElement("params");
                         propertyXML.appendChild(paramsXML);
-
                         if (referenceSourceKey != null) {
-                            Element referenceSourceXML = xmlDocument.createElement("referenceSource");
+                            if (!referenceSourceKey.isEmpty()) {
+                                Element referenceSourceXML = xmlDocument.createElement("referenceSource");
 
-                            paramsXML.appendChild(referenceSourceXML);
-                            String referenceContainer = decodeSourceKey(referenceSourceKey)[0].trim();
-                            String referenceSourceId = decodeSourceKey(referenceSourceKey)[1].trim();
-                            referenceSourceXML.setAttribute("value", referenceSourceId);
+                                paramsXML.appendChild(referenceSourceXML);
+                                String referenceContainer = decodeSourceKey(referenceSourceKey)[0].trim();
+                                String referenceSourceId = decodeSourceKey(referenceSourceKey)[1].trim();
+                                referenceSourceXML.setAttribute("value", referenceSourceId);
+                            }
                         }
                         if (temp_fieldValues.containsKey("fieldParameters")) {
                             ((Map<String, Object>) temp_fieldValues.get("fieldParameters")).entrySet().stream().map((parameterValue) -> parameterValue.getKey()).forEachOrdered((parameterName) -> {
