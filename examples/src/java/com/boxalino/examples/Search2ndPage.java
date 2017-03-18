@@ -93,37 +93,33 @@ public class Search2ndPage extends HttpServlet {
             }
 
         } catch (BoxalinoException ex) {
-            if (print) {
-                PrintWriter out = response.getWriter();
-                out.print("<html><body>");
-                out.print(ex.getMessage());
-                out.print("</body></html>");
 
-            }
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+
         } catch (NoSuchFieldException ex) {
-            if (print) {
-                PrintWriter out = response.getWriter();
-                out.print("<html><body>");
-                out.print(ex.getMessage());
-                out.print("</body></html>");
 
-            }
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+
         } catch (URISyntaxException ex) {
-            if (print) {
-                PrintWriter out = response.getWriter();
-                out.print("<html><body>");
-                out.print(ex.getMessage());
-                out.print("</body></html>");
 
-            }
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+
         } catch (TException ex) {
-            if (print) {
-                PrintWriter out = response.getWriter();
-                out.print("<html><body>");
-                out.print(ex.getMessage());
-                out.print("</body></html>");
 
-            }
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+
         }
     }
 

@@ -408,7 +408,7 @@ public class BxFacets {
     }
 
     public List<String> getFieldNames() {
-        return Arrays.asList((String[]) (this.facets).keySet().toArray());
+        return this.facets.size()>0?Arrays.asList((String[]) (this.facets).keySet().toArray()):new ArrayList<String>();
     }
 
     protected Map<String, Object> getFacetByFieldName(String fieldName) {

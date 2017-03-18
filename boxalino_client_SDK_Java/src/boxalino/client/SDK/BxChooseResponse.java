@@ -13,6 +13,7 @@ import com.boxalino.p13n.api.thrift.Hit;
 import com.boxalino.p13n.api.thrift.HitsGroup;
 import com.boxalino.p13n.api.thrift.SearchResult;
 import com.boxalino.p13n.api.thrift.Variant;
+import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -162,7 +163,7 @@ public class BxChooseResponse {
         Map<String, Object> fieldValues = new HashMap<>();
 
         if (searchResult != null) {
-            searchResult.hits.forEach((item) -> {
+            for (Hit item : searchResult.hits) {
                 String[] finalFields = fields;
                 if (finalFields == null) {
                     finalFields = item.values.keySet().toArray(new String[item.values.size()]);
@@ -171,9 +172,9 @@ public class BxChooseResponse {
                 for (String field : finalFields) {
                     if (item.values.get(field) != null) {
                         if (!item.values.get(field).get(0).equals(EMPTY_STRING) || item.values.get(field).get(0) != null) {
-
-                            ((HashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).put(field, item.values.get(field));
-
+                            String key = item.values.get("id").get(0).toString();
+                            fieldValues.put(key, new HashMap());
+                            ((HashMap) fieldValues.get(key)).put(field, item.values.get(field));
                         }
                     }
                     if (((HashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).get(field) == null) {
@@ -182,7 +183,7 @@ public class BxChooseResponse {
                     }
 
                 }
-            });
+            }
         }
         return fieldValues;
     }
@@ -394,7 +395,7 @@ public class BxChooseResponse {
             temp.add(fieldValues);
         }
         myObject.put("hits", temp);
-        return JSONArray.fromObject(myObject).toString();
+        return new Gson().toJson(myObject);
 
     }
 

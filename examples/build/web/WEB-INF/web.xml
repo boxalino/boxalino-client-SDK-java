@@ -40,6 +40,10 @@
         <servlet-name>DataTransactions</servlet-name>
         <servlet-class>com.boxalino.examples.DataTransactions</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ParametrizedRequest</servlet-name>
+        <servlet-class>com.boxalino.examples.ParametrizedRequest</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search2ndPage</servlet-name>
         <url-pattern>/Search2ndPage</url-pattern>
@@ -79,6 +83,10 @@
     <servlet-mapping>
         <servlet-name>DataTransactions</servlet-name>
         <url-pattern>/DataTransactions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ParametrizedRequest</servlet-name>
+        <url-pattern>/ParametrizedRequest</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
