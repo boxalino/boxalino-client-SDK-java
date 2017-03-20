@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.transport.THttpClient;
@@ -180,7 +182,7 @@ public class BxClient {
                 throw ex;
             }
         }
-        transport.setCustomHeader("Authorization","Basic " + Base64.getEncoder().encodeToString((this.p13n_username + ':' + this.p13n_password).getBytes("UTF-8")));
+        transport.setCustomHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString((this.p13n_username + ':' + this.p13n_password).getBytes("UTF-8")));
         Client client = new Client(new TCompactProtocol(transport));
         transport.open();
         return client;
@@ -513,4 +515,24 @@ public class BxClient {
     public void setTimeout(int timeout) {
         this._timeout = timeout;
     }
+
+    public BxAutocompleteResponse getAutocompleteResponse() {
+        List<BxAutocompleteResponse> responses=null;
+        try {
+            responses = this.getAutocompleteResponses();
+        } catch (UnsupportedEncodingException ex) {
+          
+        } catch (TException ex) {
+           
+        } catch (URISyntaxException ex) {
+           
+        } catch (MalformedURLException ex) {
+            
+        }
+        if (responses.get(0) != null) {
+            return responses.get(0);
+        }
+        return null;
+    }
+
 }
