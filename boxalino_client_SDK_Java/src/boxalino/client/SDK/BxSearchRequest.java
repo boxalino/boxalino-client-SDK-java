@@ -15,7 +15,7 @@ import static Helper.Common.EMPTY_STRING;
 public class BxSearchRequest extends BxRequest {
 
     public BxSearchRequest(String language, String queryText, int max, String choiceId) throws BoxalinoException {
-        super(language, choiceId == null ? "search" : choiceId, max, 0);
+        super(language, choiceId.isEmpty() ? "search" : choiceId, max, 0);
 
         super.setQuerytext(queryText);
 

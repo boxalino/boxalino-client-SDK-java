@@ -69,7 +69,7 @@ public class BxChooseResponse {
         int k = 0;
         for (BxRequest bxRequest : (ArrayList<BxRequest>) this.bxRequests) {
             k++;
-            if (choice == null || choice.equals(bxRequest.getChoiceId())) {
+            if (choice.isEmpty() || choice.equals(bxRequest.getChoiceId())) {
                 if (count > 0) {
                     count--;
                     continue;

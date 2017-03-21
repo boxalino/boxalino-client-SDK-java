@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/ParametrizedRequest" />
+      <jsp:include page="/SearchSubPhrases" />
     </body>
 </html>

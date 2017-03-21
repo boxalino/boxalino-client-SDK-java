@@ -58,8 +58,8 @@ public class SearchSubPhrases extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
 
-            account = "";
-            password = "";
+            account = "csharp_unittest";
+            password = "csharp_unittest";
             domain = "";// your web-site domain (e.g.: www.abc.com)
             language = "en";// a valid language code (e.g.: "en", "fr", "de", "it", ...)
             queryText = "women pack";// a search query

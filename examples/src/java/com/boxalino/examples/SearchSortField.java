@@ -53,8 +53,8 @@ public class SearchSortField extends HttpServlet {
         HttpContext.response = response;
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            String account = ""; // your account name
-            String password = ""; // your account password
+            String account = "java_unittest"; // your account name
+            String password = "java_unittest"; // your account password
             boolean isDev = false;
             String domain = ""; // your web-site domain (e.g.: www.abc.com)
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
