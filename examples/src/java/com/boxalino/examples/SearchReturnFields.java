@@ -5,18 +5,43 @@
  */
 package com.boxalino.examples;
 
+import Exception.BoxalinoException;
+import Helper.HttpContext;
+import boxalino.client.SDK.BxChooseResponse;
+import boxalino.client.SDK.BxClient;
+import boxalino.client.SDK.BxSearchRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.thrift.TException;
 
 /**
  *
  * @author HASHIR
  */
 public class SearchReturnFields extends HttpServlet {
+
+    public String account;
+    public String password;
+    String domain;
+    String language;
+    List<String> logs;
+    String queryText;
+    int hitCount;
+    public boolean print;
+    ArrayList<String> fieldNames;
+    public BxChooseResponse bxResponse = null;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -30,17 +55,75 @@ public class SearchReturnFields extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        HttpContext.request = request;
+        HttpContext.response = response;
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet SearchReturnFields</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet SearchReturnFields at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            String account = ""; // your account name
+            String password = ""; // your account password
+
+            domain = "";// your web-site domain (e.g.: www.abc.com)
+            language = "en";// a valid language code (e.g.: "en", "fr", "de", "it", ...)
+            queryText = "women";// a search query
+            hitCount = 10;//a maximum number of search result to return in one page
+            fieldNames = new ArrayList<String>();
+            logs = new ArrayList<String>();//optional, just used here in example to collect logs
+            fieldNames.add("products_color"); //IMPORTANT: you need to put "products_" as a prefix to your field name except for standard fields: "title", "body", "discountedPrice", "standardPrice"
+            boolean print = true;
+            boolean isDev = false;
+            //Create the Boxalino Client SDK instance
+            //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+
+            //create search request
+            BxSearchRequest bxrequest = new BxSearchRequest(language, queryText, hitCount, "");
+
+            //set the fields to be returned for each item in the response
+            bxrequest.setReturnFields(fieldNames);
+
+            //add the request
+            bxClient.addRequest(bxrequest);
+            //make the query to Boxalino server and get back the response for all requests
+            bxResponse = bxClient.getResponse();
+
+            for (Map.Entry obj : bxResponse.getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
+                String Id = String.valueOf(obj.getKey());
+                HashMap<String, Object> fieldValueMap = (HashMap<String, Object>) obj.getValue();
+
+                String entity = "<h3>" + Id + "</h3>";
+
+                for (Map.Entry item : ((HashMap<String, Object>) fieldValueMap).entrySet()) {
+                    entity += item.getKey() + ": " + String.join(",", (List<String>) (item.getValue()));
+                }
+                logs.add(entity);
+            }
+
+            if (print) {
+                out.print("<html><body>");
+                out.print(String.join("<br>", logs));
+                out.print("</body></html>");
+            }
+
+        } catch (BoxalinoException ex) {
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+        } catch (TException ex) {
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+        } catch (URISyntaxException ex) {
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+        } catch (NoSuchFieldException ex) {
+            PrintWriter out = response.getWriter();
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
         }
     }
 
