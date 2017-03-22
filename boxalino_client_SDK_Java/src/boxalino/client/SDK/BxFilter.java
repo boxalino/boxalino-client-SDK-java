@@ -15,17 +15,17 @@ import java.util.List;
  */
 public class BxFilter {
 
-    protected String fieldName;
-    protected ArrayList<String> values;
-    protected boolean negative;
-    protected String hierarchyId = Helper.Common.EMPTY_STRING;
-    protected ArrayList<String> hierarchy = new ArrayList<>();
-    protected String rangeFrom = Helper.Common.EMPTY_STRING;
-    protected String rangeTo = Helper.Common.EMPTY_STRING;
+    public String fieldName;
+    public ArrayList<String> values;
+    public boolean negative;
+    public String hierarchyId = Helper.Common.EMPTY_STRING;
+    public ArrayList<String> hierarchy = new ArrayList<>();
+    public String rangeFrom = Helper.Common.EMPTY_STRING;
+    public String rangeTo = Helper.Common.EMPTY_STRING;
 
     public BxFilter(String fieldName, ArrayList<String> values, boolean negative) {
         //default start
-        negative = false;
+     
         //default end
 
         this.fieldName = fieldName;

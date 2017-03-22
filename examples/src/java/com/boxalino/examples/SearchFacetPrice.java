@@ -69,8 +69,8 @@ public class SearchFacetPrice extends HttpServlet {
              */
 
             //required parameters you should set for this example to work
-            String account = ""; // your account name
-            String password = ""; // your account password
+            String account = "boxalino_automated_tests"; // your account name
+            String password = "boxalino_automated_tests"; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean isDev = false;

@@ -89,7 +89,7 @@ public class BxChooseResponse {
     }
 
     public BxFacets getRequestFacets(String choice) {
-        if (choice == null) {
+        if (choice.isEmpty()) {
             if (((ArrayList<BxRequest>) this.bxRequests).get(0) != null) {
                 return ((ArrayList<BxRequest>) this.bxRequests).get(0).getFacets();
             }

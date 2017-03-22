@@ -102,12 +102,7 @@ public class SearchFilter extends HttpServlet {
             bxRequest.addFilter(new BxFilter(filterField, (ArrayList<String>) filterValues, filterNegative));
 
             //add the request
-            bxClient.addRequest(bxRequest);
-
-              Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                out.print("<html><body>");
-                out.print("<pre>" + gson.toJson(bxClient.getThriftChoiceRequest()) + "</pre>");
-                out.print("</body></html>");
+            bxClient.addRequest(bxRequest);          
             
             
             //make the query to Boxalino server and get back the response for all requests

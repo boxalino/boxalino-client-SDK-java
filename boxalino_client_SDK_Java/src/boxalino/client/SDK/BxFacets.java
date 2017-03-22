@@ -101,6 +101,7 @@ public class BxFacets {
             selectedValues.put(selectedValue, new FacetValue());
         }
         Map<String, Object> fvalue = new HashMap<>();
+        this.facets.put(fieldName, new HashMap());
         ((HashMap) this.facets.get(fieldName)).put("label", label);
         ((HashMap) this.facets.get(fieldName)).put("type", type);
         ((HashMap) this.facets.get(fieldName)).put("order", order);
@@ -142,7 +143,7 @@ public class BxFacets {
     protected FacetResponse getFacetResponse(String fieldName) throws BoxalinoException {
         if (this.facetResponse != null) {
             for (FacetResponse facetResponsee : this.facetResponse) {
-                if (facetResponsee.fieldName == fieldName) {
+                if (facetResponsee.fieldName.equals(fieldName)) {
                     return facetResponsee;
                 }
             }
@@ -276,18 +277,18 @@ public class BxFacets {
                 if (node != null) {
                     node.get("children").entrySet().forEach((fvalue) -> {
                         facetValues.put(fvalue.getKey() == "node" ? fvalue.getValue().stringValue : EMPTY_STRING, (FacetValue) node.get("node").values().toArray()[0]);
-            });
+                    });
                 }
                 break;
             case "ranged":
                 facetResponsee.values.forEach((facetValue) -> {
                     facetValues.put(facetValue.rangeFromInclusive + "-" + facetValue.rangeToExclusive, facetValue);
-        });
+                });
                 break;
             default:
                 facetResponsee.values.forEach((facetValue) -> {
                     facetValues.put(facetValue.stringValue, facetValue);
-        });
+                });
                 break;
         }
         return facetValues;
@@ -303,7 +304,14 @@ public class BxFacets {
             throw new BoxalinoException("Requesting an invalid facet values for fieldname: " + fieldName + ", requested value: " + facetValue + ", available values . " + String.join(",", (keyValues).keySet()));
         }
         String type = this.getFacetType(fieldName);
-        FacetValue fv = keyValues.get(facetValue) != null ? keyValues.get(facetValue) : null;
+        FacetValue fv = null;
+        for (Map.Entry fvalue : keyValues.entrySet()) {
+            if (fvalue.getValue().equals(facetValue)) {
+                fv = (FacetValue) fvalue.getValue();
+                break;
+            }
+
+        }
         switch (type) {
             case "hierarchical":
                 List<String> parts = Arrays.asList(fv.stringValue.split("/"));
@@ -408,7 +416,7 @@ public class BxFacets {
     }
 
     public List<String> getFieldNames() {
-        return this.facets.size()>0?Arrays.asList((String[]) (this.facets).keySet().toArray()):new ArrayList<String>();
+        return this.facets.size() > 0 ? Arrays.asList((String[]) (this.facets).keySet().toArray()) : new ArrayList<String>();
     }
 
     protected Map<String, Object> getFacetByFieldName(String fieldName) {
