@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/SearchSubPhrases" />
+      <jsp:include page="/SearchFilter" />
     </body>
 </html>

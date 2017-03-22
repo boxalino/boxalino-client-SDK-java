@@ -81,7 +81,7 @@ public class BxRequest {
             }
             this.withRelaxation = choiceId == "search";
         } catch (BoxalinoException ex) {
-           throw ex;
+            throw ex;
         }
 
     }
@@ -164,9 +164,9 @@ public class BxRequest {
         searchQuery.groupBy = this.groupBy;
         if (this.getFilters().size() > 0) {
             searchQuery.filters = new ArrayList<>();
-            this.getFilters().entrySet().forEach((filter) -> {
-                searchQuery.filters.add(((BxFilter) filter).getThriftFilter());
-            });
+            for (Map.Entry filter : this.getFilters().entrySet()) {
+                searchQuery.filters.add(((BxFilter) filter.getValue()).getThriftFilter());
+            }
         }
         searchQuery.orFilters = this.getOrFilters();
         if (this.getFacets() != null) {

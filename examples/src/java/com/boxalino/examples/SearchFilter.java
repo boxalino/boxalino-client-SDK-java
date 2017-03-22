@@ -11,6 +11,8 @@ import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxFilter;
 import boxalino.client.SDK.BxSearchRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
@@ -71,8 +73,8 @@ public class SearchFilter extends HttpServlet {
              * filter on product which are visible and not out of stock, etc.)
              */
             //required parameters you should set for this example to work
-            String account = ""; // your account name
-            String password = ""; // your account password
+            String account = "boxalino_automated_tests"; // your account name
+            String password = "boxalino_automated_tests"; // your account password
 
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             logs = new ArrayList<String>(); //optional, just used here in example to collect logs
@@ -102,6 +104,12 @@ public class SearchFilter extends HttpServlet {
             //add the request
             bxClient.addRequest(bxRequest);
 
+              Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                out.print("<html><body>");
+                out.print("<pre>" + gson.toJson(bxClient.getThriftChoiceRequest()) + "</pre>");
+                out.print("</body></html>");
+            
+            
             //make the query to Boxalino server and get back the response for all requests
             bxResponse = bxClient.getResponse();
 

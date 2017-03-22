@@ -171,13 +171,17 @@ public class BxChooseResponse {
 
                 for (String field : finalFields) {
                     if (item.values.get(field) != null) {
-                        if (!item.values.get(field).get(0).equals(EMPTY_STRING) || item.values.get(field).get(0) != null) {
-                            String key = item.values.get("id").get(0).toString();
-                            fieldValues.put(key, new HashMap());
-                            ((HashMap) fieldValues.get(key)).put(field, item.values.get(field));
+                        if (item.values.get(field).size() > 0) {
+                            if (!item.values.get(field).get(0).equals(EMPTY_STRING) || item.values.get(field).get(0) != null) {
+                                String key = item.values.get("id").get(0).toString();
+                                fieldValues.put(key, new HashMap());
+                                ((HashMap) fieldValues.get(key)).put(field, item.values.get(field));
+                            }
                         }
                     }
-                    if (((HashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).get(field) == null) {
+                    
+                    if (fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0)) == null) {
+                        fieldValues.put(((ArrayList<String>) item.values.get("id")).get(0), new HashMap());
                         ((HashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).put(field, this.retrieveHitFieldValues(item, field, searchResult.hits, finalFields));
 
                     }

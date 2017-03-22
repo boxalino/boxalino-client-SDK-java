@@ -59,8 +59,8 @@ public class SearchReturnFields extends HttpServlet {
         HttpContext.response = response;
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            String account = ""; // your account name
-            String password = ""; // your account password
+            String account = "boxalino_automated_tests"; // your account name
+            String password = "boxalino_automated_tests"; // your account password
 
             domain = "";// your web-site domain (e.g.: www.abc.com)
             language = "en";// a valid language code (e.g.: "en", "fr", "de", "it", ...)

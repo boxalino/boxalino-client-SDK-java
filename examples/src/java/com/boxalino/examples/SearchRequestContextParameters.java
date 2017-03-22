@@ -59,8 +59,8 @@ public class SearchRequestContextParameters extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             // required parameters you should set for this example to work
-            String account = ""; // your account name
-            String password = ""; // your account password
+            String account = "csharp_unittest"; // your account name
+            String password = "csharp_unittest"; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
