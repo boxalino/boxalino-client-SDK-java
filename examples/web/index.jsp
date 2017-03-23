@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/SearchAutocompleteItems" />
+      <jsp:include page="/RecommendationsSimilarComplementary" />
     </body>
 </html>

@@ -51,8 +51,8 @@ public class Search2ndPage extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
 
             //required parameters you should set for this example to work
-            account = "java_unittest";
-            password = "java_unittest";
+            account = "csharp_unittest";
+            password = "csharp_unittest";
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             logs = new ArrayList<>(); //optional, just used here in example to collect logs
             isDev = true;
@@ -68,7 +68,7 @@ public class Search2ndPage extends HttpServlet {
             int offset = 5; //the offset to start the page with (if = hitcount ==> page 2)
 
             //create search request
-            BxSearchRequest bxRequest = new BxSearchRequest(language, queryText, hitCount, null);
+            BxSearchRequest bxRequest = new BxSearchRequest(language, queryText, hitCount, "");
 
             //set an offset for the returned search results (start at position provided)
             bxRequest.setOffset(offset);
@@ -80,7 +80,7 @@ public class Search2ndPage extends HttpServlet {
             bxResponse = bxClient.getResponse();
 
             //loop on the search response hit ids and print them
-            for (Map.Entry item : bxResponse.getHitIds(null, true, 0, 10, "id").entrySet()) {
+            for (Map.Entry item : bxResponse.getHitIds("", true, 0, 10, "id").entrySet()) {
                 logs.add(item.getKey() + ": returned id " + item.getValue());
             }
 
