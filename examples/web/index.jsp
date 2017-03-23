@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/RecommendationsSimilarComplementary" />
+      <jsp:include page="/ParametrizedRequest" />
     </body>
 </html>

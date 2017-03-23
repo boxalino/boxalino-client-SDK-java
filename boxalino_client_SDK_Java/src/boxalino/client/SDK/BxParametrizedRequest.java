@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -218,7 +219,7 @@ public class BxParametrizedRequest extends BxRequest {
             super.returnFields = new ArrayList<>();
         }
         super.returnFields.addAll(this.bxReturnFields);
-        return super.returnFields;
+        return (ArrayList<String>)super.returnFields.stream().distinct().collect(Collectors.toList());
     }
 
     public List<String> getAllReturnFields() {

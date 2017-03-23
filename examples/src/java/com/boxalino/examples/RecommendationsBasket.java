@@ -56,8 +56,8 @@ public class RecommendationsBasket extends HttpServlet {
         HttpContext.response = response;
         try (PrintWriter out = response.getWriter()) {
 
-            account = ""; // your account name
-            password = ""; // your account password
+            account = "boxalino_automated_tests"; // your account name
+            password = "boxalino_automated_tests"; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             String[] languages = new String[]{"en"}; //declare the list of available languages
             boolean isDev = false; //are the data to be pushed dev or prod data?
