@@ -92,6 +92,15 @@ public class RecommendationsSimilarComplementary extends HttpServlet {
             //add the request
             bxClient.addRequest(bxRequestSimilar);
 
+            //create complementary recommendations request
+            BxRecommendationRequest bxRequestComplementary = new BxRecommendationRequest(language, choiceIdComplementary, hitCount);
+
+            //indicate the product the user is looking at now (reference of what the recommendations need to be similar to)
+            bxRequestComplementary.setProductContext(itemFieldId, itemFieldIdValue, "");
+
+            //add the request
+            bxClient.addRequest(bxRequestComplementary);
+
             //make the query to Boxalino server and get back the response for all requests (make sure you have added all your requests before calling getResponse; i.e.: do not push the first request, then call getResponse, then add a new request, then call getResponse again it wil not work; N.B.: if you need to do to separate requests call, then you cannot reuse the same instance of BxClient, but need to create a new one)
             bxResponse = bxClient.getResponse();
 

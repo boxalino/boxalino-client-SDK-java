@@ -60,6 +60,7 @@ public class BxRequest {
         indexId = Helper.Common.EMPTY_STRING;
         requestMap = new HashMap<String, String>();
         returnFields = new ArrayList<String>();
+        contextItems=new ArrayList<ContextItem>();
         offset = 0;
         queryText = Helper.Common.EMPTY_STRING;
         bxFacets = new BxFacets();
