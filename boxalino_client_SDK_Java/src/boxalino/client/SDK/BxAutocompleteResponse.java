@@ -66,7 +66,7 @@ public class BxAutocompleteResponse {
 
     public BxChooseResponse getBxSearchResponse(String textualSuggestion) throws BoxalinoException {
         BxAutocompleteRequest bxAutocompleteRequestt = this.bxAutocompleteRequest;
-        SearchResult searchResult = textualSuggestion == null ? this.getResponse().prefixSearchResult : this.getTextualSuggestionHit(textualSuggestion).searchResult;
+        SearchResult searchResult = textualSuggestion.isEmpty() ? this.getResponse().prefixSearchResult : this.getTextualSuggestionHit(textualSuggestion).searchResult;
         ArrayList<BxSearchRequest> bxRequests = new ArrayList() {
             {
                 add(bxAutocompleteRequestt.getBxSearchRequest());

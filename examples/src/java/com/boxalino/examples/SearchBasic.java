@@ -64,8 +64,8 @@ public class SearchBasic extends HttpServlet {
 
             //path to the lib folder with the Boxalino Client SDK and C# Thrift Client files
             //required parameters you should set for this example to work
-            account = ""; // your account name
-            password = ""; // your account password
+            account = "boxalino_automated_tests"; // your account name
+            password = "boxalino_automated_tests"; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             String[] languages = new String[]{"en"}; //declare the list of available languages
             boolean isDev = false; //are the data to be pushed dev or prod data?
@@ -82,7 +82,7 @@ public class SearchBasic extends HttpServlet {
             int hitCount = 10; //a maximum number of search result to return in one page
 
             //create search request
-            BxSearchRequest bxRequest = new BxSearchRequest(language, queryText, hitCount, null);
+            BxSearchRequest bxRequest = new BxSearchRequest(language, queryText, hitCount, "");
 
             //add the request
             bxClient.addRequest(bxRequest);

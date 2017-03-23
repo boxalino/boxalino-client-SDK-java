@@ -215,25 +215,28 @@ public class BxFacets {
         if ((this.facets.get("category_id")) != null) {
             return tree;
         }
-        if (tree.get("node") == null) {
-            return null;
-        }
-        List<String> parts = new ArrayList<>();
-        parts.addAll(Arrays.asList(((FacetValue) ((HashMap) tree.get("node")).get("node")).stringValue.split("/")));
+        if (tree != null) {
+            if (tree.get("node") == null) {
+                return null;
+            }
 
-        if (parts.get(0) == ((HashMap) this.facets.get("category_id")).get("selectedValues").toString()) {
-            return tree;
-        }
-        for (Map.Entry node : tree.get("children").entrySet()) {
+            List<String> parts = new ArrayList<>();
+            parts.addAll(Arrays.asList(((FacetValue) ((HashMap) tree.get("node")).get("node")).stringValue.split("/")));
 
-            HashMap<String, Map<String, FacetValue>> selectedTreeNodetemp = new HashMap<>();
-            Map<String, FacetValue> selectedTreeNodeFatemp = new HashMap<>();
-            selectedTreeNodeFatemp.put(String.valueOf(node.getKey()), (FacetValue) node.getValue());
-            selectedTreeNodetemp.put("node", selectedTreeNodeFatemp);
-            Map<String, Map<String, FacetValue>> result = this.getSelectedTreeNode(selectedTreeNodetemp);
+            if (parts.get(0) == ((HashMap) this.facets.get("category_id")).get("selectedValues").toString()) {
+                return tree;
+            }
+            for (Map.Entry node : tree.get("children").entrySet()) {
 
-            if (result != null) {
-                return result;
+                HashMap<String, Map<String, FacetValue>> selectedTreeNodetemp = new HashMap<>();
+                Map<String, FacetValue> selectedTreeNodeFatemp = new HashMap<>();
+                selectedTreeNodeFatemp.put(String.valueOf(node.getKey()), (FacetValue) node.getValue());
+                selectedTreeNodetemp.put("node", selectedTreeNodeFatemp);
+                Map<String, Map<String, FacetValue>> result = this.getSelectedTreeNode(selectedTreeNodetemp);
+
+                if (result != null) {
+                    return result;
+                }
             }
         }
         return null;
@@ -344,7 +347,14 @@ public class BxFacets {
                 };
 
             default:
-                fv = keyValues.get(facetValue);
+                
+                for(Map.Entry kval :  keyValues.entrySet()){
+                    if(kval.getValue().equals(facetValue)){
+                         fv =(FacetValue) kval.getValue();
+                    }
+                }
+                
+               
                 String StringValue = String.valueOf(fv.stringValue);
                 String dHitCount = String.valueOf(fv.hitCount);
                 String dSelected = String.valueOf(fv.selected);

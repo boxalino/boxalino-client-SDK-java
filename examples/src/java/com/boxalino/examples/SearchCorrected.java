@@ -63,9 +63,9 @@ public class SearchCorrected extends HttpServlet {
 
             //path to the lib folder with the Boxalino Client SDK and c# Thrift Client files
             //required parameters you should set for this example to work
-            String account = ""; // your account name
-            String password = ""; // your account password
-            String domain = ""; // your web-site domain (e.g.: www.abc.com)
+            account = "boxalino_automated_tests"; // your account name
+            password = "boxalino_automated_tests"; // your account password
+            domain = ""; // your web-site domain (e.g.: www.abc.com)
             String[] languages = new String[]{"en"}; //declare the list of available languages
             boolean isDev = false; //are the data to be pushed dev or prod data?
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
@@ -78,7 +78,7 @@ public class SearchCorrected extends HttpServlet {
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
 
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
-            String queryText = "womem"; // a search query
+            String queryText = "women"; // a search query
             int hitCount = 10; //a maximum number of search result to return in one page
 
             //create search request

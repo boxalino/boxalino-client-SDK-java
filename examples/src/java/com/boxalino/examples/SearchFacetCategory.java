@@ -63,8 +63,8 @@ public class SearchFacetCategory extends HttpServlet {
 
             //path to the lib folder with the Boxalino Client SDK and C# Thrift Client files
             //required parameters you should set for this example to work
-            account = ""; // your account name
-            password = ""; // your account password
+            account = "csharp_unittest"; // your account name
+            password = "csharp_unittest"; // your account password
             String domain = ""; // your web-site domain (e.g.: www.abc.com)
             String[] languages = new String[]{"en"}; //declare the list of available languages
             boolean isDev = false; //are the data to be pushed dev or prod data?

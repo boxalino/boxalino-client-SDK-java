@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-      <jsp:include page="/SearchFacetPrice" />
+      <jsp:include page="/SearchAutocompleteItems" />
     </body>
 </html>

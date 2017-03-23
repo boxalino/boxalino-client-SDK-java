@@ -14,6 +14,7 @@ import com.boxalino.p13n.api.thrift.HitsGroup;
 import com.boxalino.p13n.api.thrift.SearchResult;
 import com.boxalino.p13n.api.thrift.Variant;
 import com.google.gson.Gson;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +52,13 @@ public class BxChooseResponse {
 
     protected Variant getChoiceIdResponseVariant(int id) throws BoxalinoException, NoSuchFieldException {
         Object responsee = this.getResponse();
-        if (responsee.getClass().getField("variants") != null) {
+        Field field = null;
+        try {
+            field = responsee.getClass().getField("variants");
+        } catch (NoSuchFieldException ex) {
+        }
+
+        if (field != null) {
             if (((ChoiceResponse) responsee).variants != null) {
                 return ((ChoiceResponse) responsee).variants.get(id - 1);
             }
@@ -179,7 +186,7 @@ public class BxChooseResponse {
                             }
                         }
                     }
-                    
+
                     if (fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0)) == null) {
                         fieldValues.put(((ArrayList<String>) item.values.get("id")).get(0), new HashMap());
                         ((HashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).put(field, this.retrieveHitFieldValues(item, field, searchResult.hits, finalFields));
@@ -360,7 +367,7 @@ public class BxChooseResponse {
             maxDistance = 10;
         }
         //default end 
-        return this.getTotalHitCount(choice, false, count, 0) == 0 && this.getTotalHitCount(choice, true, count, maxDistance) > 0 && this.areThereSubPhrases(EMPTY_STRING, 0) == false;
+        return Boolean.FALSE.equals(this.getTotalHitCount(choice, false, count, 0) == 0 && this.getTotalHitCount(choice, true, count, maxDistance) > 0 && this.areThereSubPhrases(EMPTY_STRING, 0));
     }
 
     public String getCorrectedQuery(String choice, int count) throws BoxalinoException, NoSuchFieldException {
