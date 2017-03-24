@@ -425,7 +425,7 @@ public class BxChooseResponse {
             temp.add(fieldValues);
         }
         myObject.put("hits", temp);          
-        return new Gson().toJson(myObject);
+        return (myObject.toString());
 
     }
 
