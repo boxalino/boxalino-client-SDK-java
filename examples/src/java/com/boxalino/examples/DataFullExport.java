@@ -31,6 +31,10 @@ import javax.xml.transform.TransformerException;
  */
 public class DataFullExport extends HttpServlet {
 
+    public String account;
+    public String password;
+    public boolean print;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -53,14 +57,14 @@ public class DataFullExport extends HttpServlet {
 
             //path to the lib folder with the Boxalino Client SDK and C# Thrift Client files
             //required parameters you should set for this example to work
-            String account = "java_unittest"; // your account name
-            String password = "java_unittest"; // your account password
+            account = "java_unittest"; // your account name
+            password = "java_unittest"; // your account password
             String domain = ""; // your web-site domain (e.g.: www.abc.com)
             String[] languages = new String[]{"en"}; //declare the list of available languages
             boolean isDev = false; //are the data to be pushed dev or prod data?
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
-            boolean print = true;
+            print = true;
 
             //Create the Boxalino Data SDK instance
             BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null), languages, isDev, isDelta);
@@ -210,7 +214,7 @@ public class DataFullExport extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
