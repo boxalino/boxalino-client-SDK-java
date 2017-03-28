@@ -124,7 +124,7 @@ public class BxRequest {
         return this.offset;
     }
 
-    public float getMax() {
+    public int getMax() {
         return this.max;
     }
 
@@ -199,7 +199,7 @@ public class BxRequest {
         return this.contextItems;
     }
 
-    public float getMin() {
+    public int getMin() {
         return this.min;
     }
 
