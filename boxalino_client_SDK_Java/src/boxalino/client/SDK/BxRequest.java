@@ -41,12 +41,12 @@ public class BxRequest {
 
     private String language;
     private String choiceId;
-    private float max;
-    private float min;
+    private int max;
+    private int min;
     private boolean withRelaxation;
     private String groupBy;
 
-    public BxRequest(String language, String choiceId, float max, float min) throws BoxalinoException {
+    public BxRequest(String language, String choiceId, int max, int min) throws BoxalinoException {
 
         // default parameter start
         if (max == 0.0f) {

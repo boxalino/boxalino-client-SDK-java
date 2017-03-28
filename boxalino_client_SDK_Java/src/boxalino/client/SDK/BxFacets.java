@@ -329,8 +329,8 @@ public class BxFacets {
                     }
                 };
             case "ranged":
-                double from = Math.round(Double.parseDouble(fv.rangeFromInclusive));
-                double to = Math.round(Double.parseDouble(fv.rangeToExclusive));
+                long from = Math.round(Double.parseDouble(fv.rangeFromInclusive));
+                long to = Math.round(Double.parseDouble(fv.rangeToExclusive));
                 String valueLabel = from + " - " + to;
                 String paramValue = fv.stringValue;
                 paramValue = from + "-" + to;
