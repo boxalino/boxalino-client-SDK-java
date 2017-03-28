@@ -29,14 +29,14 @@ import org.apache.thrift.TException;
  *
  * @author HASHIR
  */
-public class RecommendationsBasket extends HttpServlet {
+public class RecommendationsBasket {
 
-    String account;
-    String password;
+    public String _account;
+    public String _password;
     String domain;
     List<String> logs;
     String language;
-    boolean print = true;
+    public boolean _print;
     boolean isDev;
     public BxChooseResponse bxResponse = null;
 
@@ -49,22 +49,21 @@ public class RecommendationsBasket extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpContext.request = request;
-        HttpContext.response = response;
-        try (PrintWriter out = response.getWriter()) {
+    protected void recommendationsBasket(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        new HttpContext().request = request;
+        new HttpContext().response = response;
+        PrintWriter out = response.getWriter();
+        try {
 
-            account = "boxalino_automated_tests"; // your account name
-            password = "boxalino_automated_tests"; // your account password
+            String account = this._account; // your account name
+            String password = this._password; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             String[] languages = new String[]{"en"}; //declare the list of available languages
             boolean isDev = false; //are the data to be pushed dev or prod data?
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>();
             //optional, just used here in example to collect logs
-            boolean print = true;
+            boolean print = this._print;
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String choiceId = "basket"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
@@ -98,71 +97,38 @@ public class RecommendationsBasket extends HttpServlet {
                 logs.add(item.getKey() + ": returned id " + item.getValue());
             }
             if (print) {
+
                 out.print("<html><body>");
                 out.print(String.join("<br>", logs));
                 out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
         } catch (TException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
         } catch (URISyntaxException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
         } catch (NoSuchFieldException ex) {
-            PrintWriter out = response.getWriter();
+
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+        } catch (IOException ex) {
+
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

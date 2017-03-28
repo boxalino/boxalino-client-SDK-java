@@ -31,7 +31,7 @@ import javax.xml.transform.TransformerException;
  *
  * @author HASHIR
  */
-public class DataResource extends HttpServlet {
+public class DataResource {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,12 +42,11 @@ public class DataResource extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpContext.request = request;
-        HttpContext.response = response;
-        try (PrintWriter out = response.getWriter()) {
+    protected void dataResource(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        new HttpContext().request = request;
+        new HttpContext().response = response;
+        PrintWriter out = response.getWriter();
+        try {
             /* TODO output your page here. You may use following sample code. */
             /**
              * In this example, we take a very simple CSV file with product
@@ -68,10 +67,10 @@ public class DataResource extends HttpServlet {
             //Create the Boxalino Data SDK instance
             BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null), languages, isDev, isDelta);
 
-            String mainProductFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\products.csv").getPath();
+            String mainProductFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/products.csv");
             String itemIdColumn = "id"; //the column header row name of the csv with the unique id of each item
 
-            String colorFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\color.csv").getPath();
+            String colorFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/color.csv");
             String colorIdColumn = "color_id"; //column header row name of the csv with the unique category id
 
             Map<String, Object> colorLabelColumns = new HashMap<String, Object>() {
@@ -79,7 +78,7 @@ public class DataResource extends HttpServlet {
                     put("en", "value_en");
                 }
             };  //column header row names of the csv with the category label in each language
-            String productToColorsFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\product_color.csv").getPath();
+            String productToColorsFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/product_color.csv");
 
             //add a csv file as main product file
             String mainSourceKey = bxData.addMainCSVItemFile(mainProductFile, itemIdColumn, "", "", "", "", "", "", "", true);
@@ -107,6 +106,7 @@ public class DataResource extends HttpServlet {
             logs.add("push the data for data sync");
             bxData.pushData(null);
             if (print) {
+
                 out.print("<html><body>");
                 out.print(String.join("<br>", logs));
                 out.print("</body></html>");
@@ -115,65 +115,31 @@ public class DataResource extends HttpServlet {
         } catch (BoxalinoException ex) {
 
         } catch (UnsupportedEncodingException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(String.join("<br>", ex.getMessage()));
             out.print("</body></html>");
         } catch (FileNotFoundException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(String.join("<br>", ex.getMessage()));
             out.print("</body></html>");
         } catch (ParserConfigurationException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(String.join("<br>", ex.getMessage()));
             out.print("</body></html>");
         } catch (TransformerException ex) {
-            PrintWriter out = response.getWriter();
+
+            out.print("<html><body>");
+            out.print(String.join("<br>", ex.getMessage()));
+            out.print("</body></html>");
+        } catch (IOException ex) {
+
             out.print("<html><body>");
             out.print(String.join("<br>", ex.getMessage()));
             out.print("</body></html>");
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

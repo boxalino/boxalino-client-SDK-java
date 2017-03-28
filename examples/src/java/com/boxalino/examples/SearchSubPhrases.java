@@ -29,7 +29,7 @@ import org.apache.thrift.TException;
  *
  * @author HASHIR
  */
-public class SearchSubPhrases extends HttpServlet {
+public class SearchSubPhrases {
 
     public String account;
     public String password;
@@ -50,12 +50,11 @@ public class SearchSubPhrases extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpContext.request = request;
-        HttpContext.response = response;
-        try (PrintWriter out = response.getWriter()) {
+    protected void searchSubPhrases(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        new HttpContext().request = request;
+        new HttpContext().response = response;
+        PrintWriter out = response.getWriter();
+        try {
             /* TODO output your page here. You may use following sample code. */
 
             account = "csharp_unittest";
@@ -105,72 +104,39 @@ public class SearchSubPhrases extends HttpServlet {
             }
 
             if (print) {
+
                 out.print("<html><body>");
                 out.print(String.join("<br>", logs));
                 out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
         } catch (NoSuchFieldException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
         } catch (TException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
         } catch (URISyntaxException ex) {
-            PrintWriter out = response.getWriter();
+
+            out.print("<html><body>");
+            out.print(ex.getMessage());
+            out.print("</body></html>");
+        } catch (IOException ex) {
+
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
         }
 
     }
-
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

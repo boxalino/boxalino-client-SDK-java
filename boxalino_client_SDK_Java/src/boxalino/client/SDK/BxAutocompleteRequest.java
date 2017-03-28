@@ -28,7 +28,7 @@ public class BxAutocompleteRequest {
 
     public BxAutocompleteRequest(String language, String queryText, int textualSuggestionsHitCount, int productSuggestionHitCount, String autocompleteChoiceId, String searchChoiceId) throws BoxalinoException {
         //default paramter start
-        if (productSuggestionHitCount == 0) {
+        if (productSuggestionHitCount==0) {
             productSuggestionHitCount = 5;
         }
         if ((autocompleteChoiceId == null) || (autocompleteChoiceId.isEmpty())) {

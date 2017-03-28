@@ -6,6 +6,7 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
+import static Helper.Common.EMPTY_STRING;
 import Helper.HttpContext;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxData;
@@ -29,11 +30,11 @@ import javax.xml.transform.TransformerException;
  *
  * @author HASHIR
  */
-public class DataFullExport extends HttpServlet {
+public class DataFullExport {
 
-    public String account;
-    public String password;
-    public boolean print;
+    public String _account;
+    public String _password;
+    public boolean _print;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,12 +45,11 @@ public class DataFullExport extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpContext.request = request;
-        HttpContext.response = response;
-        try (PrintWriter out = response.getWriter()) {
+    public void dataFullExport(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        new HttpContext().request = request;
+        new HttpContext().response = response;
+        PrintWriter out = response.getWriter();
+        try {
             /* TODO output your page here. You may use following sample code. */
  /* TODO output your page here. You may use following sample code. */
  /*In this example, we take a very simple CSV file with product data, generate the specifications, load them, publish them and push the data to Boxalino Data Intelligence
@@ -57,21 +57,21 @@ public class DataFullExport extends HttpServlet {
 
             //path to the lib folder with the Boxalino Client SDK and C# Thrift Client files
             //required parameters you should set for this example to work
-            account = "java_unittest"; // your account name
-            password = "java_unittest"; // your account password
+            String account = this._account; // your account name
+            String password = this._password; // your account password
             String domain = ""; // your web-site domain (e.g.: www.abc.com)
             String[] languages = new String[]{"en"}; //declare the list of available languages
             boolean isDev = false; //are the data to be pushed dev or prod data?
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
-            print = true;
+            boolean print = this._print;
 
             //Create the Boxalino Data SDK instance
             BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null), languages, isDev, isDelta);
 
-            String file = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\products.csv").getPath();
+            String file = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/products.csv");
             String itemIdColumn = "id"; //the column header row name of the csv with the unique id of each item
-            String colorFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\color.csv").getPath();
+            String colorFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/color.csv");
             String colorIdColumn = "color_id"; //column header row name of the csv with the unique category id
             Map<String, Object> colorLabelColumns = new HashMap<String, Object>() {
                 {
@@ -79,7 +79,7 @@ public class DataFullExport extends HttpServlet {
                 }
             };  //column header row names of the csv with the category label in each language
 
-            String productToColorsFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\product_color.csv").getPath();
+            String productToColorsFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/product_color.csv");
 
             //add a csv file as main product file
             String sourceKey = bxData.addMainCSVItemFile(file, itemIdColumn, "", "", "", "", "", "", "", true);
@@ -117,7 +117,7 @@ public class DataFullExport extends HttpServlet {
             bxData.addSourceLocalizedTextField(productToColorsSourceKey, "color", colorIdColumn, colorSourceKey, true);
 
             //Category export
-            String categoryFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\categories.csv").getPath();
+            String categoryFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/categories.csv");
             String categoryIdColumn = "category_id"; //column header row name of the csv with the unique category id
             String parentCategoryIdColumn = "parent_id"; //column header row name of the csv with the parent category id
 
@@ -126,7 +126,7 @@ public class DataFullExport extends HttpServlet {
                     put("en", "value_en");
                 }
             };
-            String productToCategoriesFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\product_categories.csv").getPath();
+            String productToCategoriesFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/SampleData/product_categories.csv");
             //add a csv file with products ids to categories ids
             String productToCategoriesSourceKey = bxData.addCSVItemFile(productToCategoriesFile, itemIdColumn, "", "", "", "", "", "", "", true);
 
@@ -135,7 +135,7 @@ public class DataFullExport extends HttpServlet {
             bxData.setCategoryField(productToCategoriesSourceKey, categoryIdColumn, "", true);
 
             //Customer export
-            String customerFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\customers.csv").getPath();
+            String customerFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/customers.csv");
             String customerIdColumn = "customer_id"; //the column header row name of the csv with the unique id of each item
 
             //add a csv file as main customer file
@@ -144,7 +144,7 @@ public class DataFullExport extends HttpServlet {
             bxData.addSourceStringField(customerSourceKey, "zip", "zip", "", true);
 
             //Transaction export
-            String transactionFile = new File("E:\\Github\\BoxalinoJava\\boxalino-client-SDK-java\\SampleData\\transactions.csv").getPath();
+            String transactionFile = request.getServletContext().getRealPath("/WEB-INF/Resources/SampleData/transactions.csv");
             String orderIdColumn = "order_id"; //the column header row name of the csv with the order (or transaction) id 
             String transactionProductIdColumn = "product_id"; //the column header row name of the csv with the product id
             String transactionCustomerIdColumn = "customer_id"; //the column header row name of the csv with the customer id
@@ -187,60 +187,26 @@ public class DataFullExport extends HttpServlet {
             }
 
         } catch (BoxalinoException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(String.join("<br>", ex.getMessage()));
             out.print("</body></html>");
         } catch (ParserConfigurationException ex) {
-            PrintWriter out = response.getWriter();
+
             out.print("<html><body>");
             out.print(String.join("<br>", ex.getMessage()));
             out.print("</body></html>");
         } catch (TransformerException ex) {
-            PrintWriter out = response.getWriter();
+
+            out.print("<html><body>");
+            out.print(String.join("<br>", ex.getMessage()));
+            out.print("</body></html>");
+        } catch (IOException ex) {
+
             out.print("<html><body>");
             out.print(String.join("<br>", ex.getMessage()));
             out.print("</body></html>");
         }
     }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

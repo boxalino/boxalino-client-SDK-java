@@ -20,12 +20,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HttpContext {
 
-    public static HttpServletRequest request;
-    public static HttpServletResponse response;
+    public HttpServletRequest request;
+    public HttpServletResponse response;
 
     private final int _VISITOR_COOKIE_TIME = 31536000;
 
-    public String[] getSessionAndProfile(String sessionId, String profileId, String domain) {     
+    public String[] getSessionAndProfile(String sessionId, String profileId, String domain) {
         Cookie[] cookies = null;
         cookies = request.getCookies();
         if (sessionId != null && profileId != null) {
@@ -74,27 +74,26 @@ public class HttpContext {
         return new String[]{sessionId, profileId};
     }
 
-    public String getUserAgent() {       
+    public String getUserAgent() {
         return request.getHeader("User-Agent");
     }
 
-    public String getIP() {       
+    public String getIP() {
         return request.getRemoteAddr();
     }
 
-    public String getReferer() throws URISyntaxException {        
-        return   request.getHeader("referer")==null?EMPTY_STRING: new URI(request.getHeader("referer")).getPath();
+    public String getReferer() throws URISyntaxException {
+        return request.getHeader("referer") == null ? EMPTY_STRING : new URI(request.getHeader("referer")).getPath();
     }
 
-    public String getCurrentUrl() {       
+    public String getCurrentUrl() {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getRequestURI() + "?" + request.getQueryString();
     }
 
-    public void responseWrite(String content) throws IOException {     
+    public void responseWrite(String content) throws IOException {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         out.println(content);
     }
-    
 
 }
