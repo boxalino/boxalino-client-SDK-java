@@ -5,14 +5,7 @@
  */
 package Helper;
 
-import static Helper.Common.EMPTY_STRING;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 /**
  *
@@ -20,80 +13,76 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HttpContext {
 
-    public HttpServletRequest request;
-    public HttpServletResponse response;
-
     private final int _VISITOR_COOKIE_TIME = 31536000;
 
+    public static String sessionId;
+    public static String profileId;
+    private static String domain;
+    private static String ip;
+    private static String referer;
+    private static String currentUrl;
+    private static String htmlDebug = "";
+    private static String userAgent = "";
+    
+     
+    public HttpContext(String domain, String userAgent, String ip, String referer, String currentUrl) {
+        this.sessionId = null;
+        this.profileId = null;
+        this.domain = domain;
+        this.userAgent = userAgent;
+        this.ip = ip;
+        this.referer = referer;
+        this.currentUrl = currentUrl;
+    }
+
+    public HttpContext(String sessionId, String profileId, String domain, String userAgent, String ip, String referer, String currentUrl) {
+        this.sessionId = sessionId;
+        this.profileId = profileId;
+        this.domain = domain;
+        this.userAgent = userAgent;
+        this.ip = ip;
+        this.referer = referer;
+        this.currentUrl = currentUrl;
+    }
+
     public String[] getSessionAndProfile(String sessionId, String profileId, String domain) {
-        Cookie[] cookies = null;
-        cookies = request.getCookies();
-        if (sessionId != null && profileId != null) {
-            return new String[]{sessionId, profileId};
+        if (sessionId != null) {
+            this.sessionId = sessionId;
         }
-        if (cookies != null) {
-
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("cems")) {
-                    sessionId = cookie.getValue();
-                } else {
-                    sessionId = request.getSession().getId();
-                }
-
-                if (cookie.getName().equals("cemv")) {
-                    profileId = cookie.getValue();
-                } else {
-                    profileId = request.getSession().getId();
-                }
-
-            }
+        if (profileId != null) {
+            this.profileId = profileId;
         }
-        if (domain == null || domain == Helper.Common.EMPTY_STRING) {
-            Cookie cemsCookie = new Cookie("cems", sessionId);
-            cemsCookie.setMaxAge(_VISITOR_COOKIE_TIME);
-            response.addCookie(cemsCookie);
-
-            Cookie cemvCookie = new Cookie("cemv", profileId);
-            cemvCookie.setMaxAge(_VISITOR_COOKIE_TIME);
-            response.addCookie(cemvCookie);
-
-        } else {
-            Cookie cemsCookie = new Cookie("cems", sessionId);
-            cemsCookie.setMaxAge(_VISITOR_COOKIE_TIME);
-            cemsCookie.setPath("/");
-            cemsCookie.setDomain(domain);
-            response.addCookie(cemsCookie);
-
-            Cookie cemvCookie = new Cookie("cemv", profileId);
-            cemvCookie.setMaxAge(_VISITOR_COOKIE_TIME);
-            cemvCookie.setPath("/");
-            cemvCookie.setDomain(domain);
-            response.addCookie(cemvCookie);
+        if (this.sessionId == null) {
+            this.sessionId = UUID.randomUUID().toString();
         }
-
-        return new String[]{sessionId, profileId};
+        if (this.profileId == null) {
+            this.profileId = UUID.randomUUID().toString();
+        }
+        return new String[]{this.sessionId, this.profileId};
     }
 
     public String getUserAgent() {
-        return request.getHeader("User-Agent");
+        return this.userAgent;
     }
 
     public String getIP() {
-        return request.getRemoteAddr();
+        return this.ip;
     }
 
-    public String getReferer() throws URISyntaxException {
-        return request.getHeader("referer") == null ? EMPTY_STRING : new URI(request.getHeader("referer")).getPath();
+    public String getReferer() {
+        return this.referer;
     }
 
     public String getCurrentUrl() {
-        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getRequestURI() + "?" + request.getQueryString();
+        return this.currentUrl;
     }
 
-    public void responseWrite(String content) throws IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println(content);
+    public String responseWrite(String write) {
+        this.htmlDebug += write;
+        return this.htmlDebug;
     }
 
+    public String getHtmlDebug() {
+        return this.htmlDebug;
+    }
 }

@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-     <% new com.boxalino.examples.DataFullExport().dataFullExport(request,response); %>
+     <% new com.boxalino.examples.ParametrizedRequest().parametrizedRequest(request,response); %>
     </body>
 </html>

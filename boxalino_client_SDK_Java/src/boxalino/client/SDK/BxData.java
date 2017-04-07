@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -40,9 +41,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import jdk.nashorn.internal.parser.JSONParser;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -83,49 +81,62 @@ public class BxData {
         return this.languages;
     }
 
-    public Object getSourceCSVRow(String container, String sourceId, int row, int maxRow) throws FileNotFoundException, IOException {
-        //default start
-        maxRow = 2;
-        //default end
-        Map<String, Object> source = (Map<String, Object>) ((HashMap) this.sources.get(container)).get(sourceId);
-        source.put("rows", new HashMap<>());
-        if (source.get("rows") != null) {
-            int count = 1;
-            BufferedReader reader = new BufferedReader(new FileReader(source.get("filePath").toString()));
-            List<String> listA = new ArrayList<>();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split(";");
-                listA.add(values[0]);
-                if (count++ >= maxRow) {
-                    break;
+    public Object getSourceCSVRow(String container, String sourceId, int row, int maxRow) throws BoxalinoException {
+        try {
+            //default start
+            maxRow = 2;
+            //default end
+            Map<String, Object> source = (Map<String, Object>) ((HashMap) this.sources.get(container)).get(sourceId);
+            source.put("rows", new HashMap<>());
+            if (source.get("rows") != null) {
+                int count = 1;
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader(source.get("filePath").toString()));
+                    List<String> listA = new ArrayList<>();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        String[] values = line.split(";");
+                        listA.add(values[0]);
+                        if (count++ >= maxRow) {
+                            break;
+                        }
+                    }
+
+                    source.put("rows", listA.get(0).split(","));
+                } catch (IOException ex) {
+                    throw new BoxalinoException(ex.getMessage(), ex.getCause());
                 }
+
             }
-
-            source.put("rows", listA.get(0).split(","));
-
+            if (source.get("rows") != null) {
+                return source.get("rows");
+            }
+            return null;
+        } catch (UncheckedIOException ex) {
+            //throw ex.getCause();
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
-        if (source.get("rows") != null) {
-            return source.get("rows");
-        }
-        return null;
     }
 
-    public void validateColumnExistance(String container, String sourceId, Object col) throws BoxalinoException, IOException {
-        Object rows = getSourceCSVRow(container, sourceId, 0, 0);
+    public void validateColumnExistance(String container, String sourceId, Object col) throws BoxalinoException {
+        try {
+            Object rows = getSourceCSVRow(container, sourceId, 0, 0);
 
-        int in_array = 0;
-        if (rows != null) {
-            String[] row = ((String[]) rows);
-            for (String item : row) {
-                if (item.equals(col.toString())) {
-                    in_array++;
-                    break;
+            int in_array = 0;
+            if (rows != null) {
+                String[] row = ((String[]) rows);
+                for (String item : row) {
+                    if (item.equals(col.toString())) {
+                        in_array++;
+                        break;
+                    }
+                }
+                if (in_array == 0) {
+                    throw new BoxalinoException("the source " + sourceId + " in the container " + container + " declares an column " + col + " which is not present in the header row of the provided CSV file: " + String.join(",", row));
                 }
             }
-            if (in_array == 0) {
-                throw new BoxalinoException("the source " + sourceId + " in the container " + container + " declares an column " + col + " which is not present in the header row of the provided CSV file: " + String.join(",", row));
-            }
+        } catch (UncheckedIOException ex) {
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
 
     }
@@ -148,7 +159,7 @@ public class BxData {
 
         Map<String, Object> source = (Map<String, Object>) ((HashMap) this.sources.get(container)).get(sourceId);
 
-        if (source.get("format").toString() == "CSV") {
+        if (source.get("format").toString().equals("CSV")) {
             if (localized && referenceSourceKey == null) {
                 try {
                     Map<String, String> temp_colMap = (Map<String, String>) colMap;
@@ -207,7 +218,7 @@ public class BxData {
 
             Map<String, Object> source = (Map<String, Object>) ((HashMap) this.sources.get(container)).get(sourceId);
 
-            if (source.get("format").toString() == "CSV") {
+            if (source.get("format").toString().equals("CSV")) {
                 if (source.containsKey("itemIdColumn")) {
                     this.validateColumnExistance(container, sourceId, source.get("itemIdColumn"));
                 }
@@ -332,7 +343,7 @@ public class BxData {
         String container = this.decodeSourceKey(sourceKey)[0].trim();
         String sourceId = this.decodeSourceKey(sourceKey)[1].trim();
 
-        if (((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields").toString() == EMPTY_STRING) {
+        if (((HashMap) ((HashMap) this.sources.get(container)).get(sourceId)).get("fields").toString().equals(EMPTY_STRING)) {
             throw new BoxalinoException("trying to add a field parameter on sourceId " + sourceId + ", container " + container + ", fieldName " + fieldName + " while this field doesn't exist");
         }
 
@@ -655,7 +666,7 @@ public class BxData {
         }
         //default end
 
-        if (referenceSourceKey == "resource_categories") {
+        if (referenceSourceKey.equals("resource_categories")) {
             String container = decodeSourceKey(sourceKey)[0].trim();
             String sourceId = decodeSourceKey(sourceKey)[1].trim();
             referenceSourceKey = this.encodesourceKey(container, referenceSourceKey);
@@ -664,9 +675,14 @@ public class BxData {
 
     }
 
-    public Document getXML() throws ParserConfigurationException, BoxalinoException, TransformerException, TransformerException, TransformerException {
+    public Document getXML() throws BoxalinoException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        DocumentBuilder dBuilder = null;
+        try {
+            dBuilder = dbFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException ex) {
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
+        }
         Document xmlDocument = dBuilder.newDocument();
 
         Element rootXML = xmlDocument.createElement("root");
@@ -784,7 +800,7 @@ public class BxData {
                         parameter.setAttribute("value", String.valueOf(value));
                     }
 
-                    if (temp_sourceValues.get("type").toString() == "transactions") {
+                    if (temp_sourceValues.get("type").toString().equals("transactions")) {
                         switch (String.valueOf(defaultValue.getKey())) {
                             case "productIdColumn":
                                 parameter.setAttribute("product_property_id", String.valueOf(temp_sourceValues.get("product_property_id")));
@@ -838,8 +854,8 @@ public class BxData {
                         transformXML.appendChild(logicXML);
 
                         String referenceSourceKey = (temp_fieldValues.get("referenceSourceKey") != null) ? String.valueOf(temp_fieldValues.get("referenceSourceKey")) : null;
-                        String logicType = referenceSourceKey == null || referenceSourceKey == "" ? "direct" : "reference";
-                        if (logicType == "direct") {
+                        String logicType = referenceSourceKey == null || referenceSourceKey.equals("") ? "direct" : "reference";
+                        if (logicType.equals("direct")) {
                             if (temp_fieldValues.containsKey("fieldParameters")) {
                                 for (Map.Entry<String, Object> parameterValue : ((Map<String, Object>) temp_fieldValues.get("fieldParameters")).entrySet()) {
                                     String parameterName = parameterValue.getKey();
@@ -910,7 +926,7 @@ public class BxData {
         connection = null;
         for (Map.Entry<String, Object> item : fields.entrySet()) {
             String value = String.valueOf(item.getValue());
-            if (item.getKey() == "xml") {
+            if (item.getKey().equals("xml")) {
                 DOMSource domSource = new DOMSource((Document) item.getValue());
                 StringWriter writer = new StringWriter();
                 StreamResult result = new StreamResult(writer);
@@ -965,22 +981,31 @@ public class BxData {
         return this.checkResponseBody(responseFromServer, url);
     }
 
-    public Map<String, Object> pushDataSpecifications(boolean ignoreDeltaException) throws BoxalinoException, ParserConfigurationException, IOException, TransformerException {
+    public Map<String, Object> pushDataSpecifications(boolean ignoreDeltaException) throws BoxalinoException {
+        
+            if (!ignoreDeltaException && this.isDelta) {
+                throw new BoxalinoException("You should not push specifications when you are pushing a delta file. Only do it when you are preparing full files. Set method parameter ignoreDeltaException to true to ignore this exception and publish anyway.");
+            }
 
-        if (!ignoreDeltaException && this.isDelta) {
-            throw new BoxalinoException("You should not push specifications when you are pushing a delta file. Only do it when you are preparing full files. Set method parameter ignoreDeltaException to true to ignore this exception and publish anyway.");
-        }
+            Map<String, Object> fields = new HashMap<>();
 
-        Map<String, Object> fields = new HashMap<>();
+            fields.put("username", this.bxClient.getUsername());
+            fields.put("password", this.bxClient.getPassword());
 
-        fields.put("username", this.bxClient.getUsername());
-        fields.put("password", this.bxClient.getPassword());
-
-        fields.put("account", this.bxClient.getAccount(false));
-        fields.put("owner", this.owner);
-        fields.put("xml", this.getXML());
-        String url = this.host + URL_XML;
-        return callAPI(fields, url, null);
+            fields.put("account", this.bxClient.getAccount(false));
+            fields.put("owner", this.owner);
+            
+            fields.put("xml", this.getXML());
+           
+            String url = this.host + URL_XML;
+            try {
+                return callAPI(fields, url, null);
+            } catch (UnsupportedEncodingException ex) {
+                throw new BoxalinoException(ex.getMessage(), ex.getCause());
+            } catch (IOException ex) {
+                throw new BoxalinoException(ex.getMessage(), ex.getCause());
+            }
+        
     }
 
     public Map<String, Object> checkResponseBody(String responseBody, String url) throws BoxalinoException {
@@ -1079,9 +1104,19 @@ public class BxData {
         return filename;
     }
 
-    public Map<String, Object> pushData(String temporaryFilePath) throws IOException, UnsupportedEncodingException, BoxalinoException, FileNotFoundException, ParserConfigurationException, TransformerException {
-
-        String zipFile = this.createZip(temporaryFilePath, EMPTY_STRING);
+    public Map<String, Object> pushData(String temporaryFilePath) throws BoxalinoException {
+        String zipFile = "";
+        try {
+            zipFile = this.createZip(temporaryFilePath, EMPTY_STRING);
+        } catch (FileNotFoundException ex) {
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
+        } catch (IOException ex) {
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
+        } catch (ParserConfigurationException ex) {
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
+        } catch (TransformerException ex) {
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
+        }
 
         Map<String, Object> fields = new HashMap<>();
         fields.put("username", this.bxClient.getUsername());
@@ -1093,7 +1128,13 @@ public class BxData {
         fields.put("data", this.getCurlFile(zipFile, "application/zip"));
 
         String url = this.host + URL_ZIP;
-        return this.callAPI(fields, url, temporaryFilePath);
+        try {
+            return this.callAPI(fields, url, temporaryFilePath);
+        } catch (UnsupportedEncodingException ex) {
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
+        } catch (IOException ex) {
+            throw new BoxalinoException(ex.getMessage(), ex.getCause());
+        }
     }
 
     public String getTaskExecuteUrl(String taskName) {

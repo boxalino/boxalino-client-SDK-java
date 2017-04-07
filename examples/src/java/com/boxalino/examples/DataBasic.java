@@ -6,32 +6,19 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.HttpContext;
 import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxData;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 /**
  *
@@ -46,7 +33,7 @@ public class DataBasic {
     boolean isDev; //are the data to be pushed dev or prod data?
     boolean isDelta; //are the data to be pushed full data (reset index) or delta (add/modify index)?
     List<String> logs; //optional, just used here in example to collect logs
-    boolean print;
+    boolean print=true;
     
 
     /**
