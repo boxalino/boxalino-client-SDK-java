@@ -25,12 +25,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class RecommendationsSimilarComplementary {
 
-    String account;
-    String password;
+    public String account;
+    public String password;
     String domain;
     List<String> logs;
     String language;
-    boolean print = true;
+    public boolean print = true;
     boolean isDev;
     public BxChooseResponse bxResponse = null;
 

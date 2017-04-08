@@ -21,12 +21,12 @@ import Helper.*;
  */
 public class Search2ndPage {
 
-    String account;
-    String password;
+    public String account;
+    public String password;
     String domain;
     List<String> logs;
     String[] languages;
-    boolean print = true;
+    public boolean print = true;
     boolean isDev;
     public BxChooseResponse bxResponse = null;
 

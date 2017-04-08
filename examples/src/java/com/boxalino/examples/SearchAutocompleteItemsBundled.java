@@ -26,12 +26,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SearchAutocompleteItemsBundled {
 
-    String account;
-    String password;
+    public String account;
+    public String password;
     String domain;
     List<String> logs;
     String language;
-    boolean print = true;
+    public boolean print = true;
     boolean isDev;
     public List<BxAutocompleteResponse> bxAutocompleteResponses = null;
 
@@ -152,16 +152,16 @@ public class SearchAutocompleteItemsBundled {
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
-        } 
+        }
     }
 
-     /**
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
      * @throws IOException if an I/O error occurs
      */
-     public void searchAutocompleteItemsBundled() throws IOException {
+    public void searchAutocompleteItemsBundled() throws IOException {
 
         PrintWriter out = new PrintWriter(System.out);
         try {
@@ -183,7 +183,6 @@ public class SearchAutocompleteItemsBundled {
             List<String> logs = new ArrayList<String>();
             //optional, just used here in example to collect logs
             boolean print = true;
-           
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
@@ -267,6 +266,6 @@ public class SearchAutocompleteItemsBundled {
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
-        } 
+        }
     }
 }

@@ -26,14 +26,15 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SearchDebugRequest {
 
-    String account;
-    String password;
+    public String account;
+    public String password;
     String domain;
     List<String> logs;
     String language;
-    boolean print = true;
+    public boolean print = true;
     boolean isDev;
     public BxChooseResponse bxResponse = null;
+    public BxClient bxClient=null;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -73,7 +74,7 @@ public class SearchDebugRequest {
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "women"; // a search query

@@ -2,6 +2,25 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchFacetCategoryTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchFacetPriceTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchSortFieldTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/RecommendationsBasketTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/src/java/com/boxalino/examples/SearchReturnFields.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchReturnFieldsTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/src/java/com/boxalino/examples/SearchFilterAdvanced.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchAutocompleteItemsBundledTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchCorrectedTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/src/java/com/boxalino/examples/SearchSubPhrases.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchDebugRequestTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchRequestContextParametersTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/src/java/com/boxalino/examples/SearchSortField.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchFacetTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchFilterAdvancedTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchAutocompleteBasicTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchFilterTest.java</file>
+            <file>file:/D:/backup/Boxalino/boxalino-client-SDK-java/examples/test/com/boxalino/test/SearchSubPhrasesTest.java</file>
+        </group>
     </open-files>
 </project-private>

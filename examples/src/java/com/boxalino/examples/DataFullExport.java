@@ -27,14 +27,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class DataFullExport {
 
-    String account; // your account name
-    String password; // your account password
+    public String account; // your account name
+    public String password; // your account password
     String domain; // your web-site domain (e.g.: www.abc.com)
     String[] languages; //declare the list of available languages
     boolean isDev; //are the data to be pushed dev or prod data?
     boolean isDelta; //are the data to be pushed full data (reset index) or delta (add/modify index)?
     List<String> logs; //optional, just used here in example to collect logs
-    boolean print;
+    public boolean print;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

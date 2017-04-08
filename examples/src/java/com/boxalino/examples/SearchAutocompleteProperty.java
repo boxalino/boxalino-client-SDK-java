@@ -24,12 +24,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SearchAutocompleteProperty {
 
-    String account;
-    String password;
+    public String account;
+    public String password;
     String domain;
     List<String> logs;
     String language;
-    boolean print = true;
+    public boolean print = true;
     boolean isDev;
     public BxAutocompleteResponse bxAutocompleteResponse = null;
 
@@ -63,7 +63,7 @@ public class SearchAutocompleteProperty {
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
-             /* TODO Instantiate ServletHttpContext to manage cookies.*/
+            /* TODO Instantiate ServletHttpContext to manage cookies.*/
             ServletHttpContext.request = request;
             ServletHttpContext.response = response;
 
@@ -115,16 +115,16 @@ public class SearchAutocompleteProperty {
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
-        } 
+        }
     }
-    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
      * @throws IOException if an I/O error occurs
      */
-     public void searchAutocompleteProperty() throws IOException {
+    public void searchAutocompleteProperty() throws IOException {
 
         PrintWriter out = new PrintWriter(System.out);
         try {
@@ -145,7 +145,6 @@ public class SearchAutocompleteProperty {
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
-            
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
@@ -195,7 +194,7 @@ public class SearchAutocompleteProperty {
             out.print("<html><body>");
             out.print(ex.getMessage());
             out.print("</body></html>");
-        } 
+        }
     }
 
 }
