@@ -6,8 +6,6 @@
 package Helper;
 
 import static Helper.Common.EMPTY_STRING;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.servlet.http.Cookie;
@@ -20,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ServletHttpContext extends HttpContext {
 
-    public static HttpServletRequest request;
-    public static HttpServletResponse response;
+    public HttpServletRequest request;
+    public HttpServletResponse response;
     
     public ServletHttpContext(String domain, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
 

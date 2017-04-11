@@ -15,14 +15,14 @@ public class HttpContext {
 
     private final int _VISITOR_COOKIE_TIME = 31536000;
 
-    public static String sessionId;
-    public static String profileId;
-    private static String domain;
-    private static String ip;
-    private static String referer;
-    private static String currentUrl;
-    private static String htmlDebug = "";
-    private static String userAgent = "";
+    public String sessionId;
+    public String profileId;
+    private String domain;
+    private String ip;
+    private String referer;
+    private String currentUrl;
+    private String htmlDebug = "";
+    private String userAgent = "";
     
      
     public HttpContext(String domain, String userAgent, String ip, String referer, String currentUrl) {

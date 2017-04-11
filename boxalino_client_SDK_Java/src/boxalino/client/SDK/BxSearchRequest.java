@@ -6,7 +6,6 @@
 package boxalino.client.SDK;
 
 import Exception.BoxalinoException;
-import static Helper.Common.EMPTY_STRING;
 
 /**
  *

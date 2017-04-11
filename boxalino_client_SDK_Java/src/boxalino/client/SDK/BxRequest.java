@@ -6,12 +6,10 @@
 package boxalino.client.SDK;
 
 import Exception.BoxalinoException;
-import Helper.Common;
 import static Helper.Common.emptyIfNull;
 import Helper.CustomBasketContent;
 import Helper.Shift;
 import com.boxalino.p13n.api.thrift.ContextItem;
-import com.boxalino.p13n.api.thrift.Filter;
 import com.boxalino.p13n.api.thrift.Hit;
 import com.boxalino.p13n.api.thrift.SimpleSearchQuery;
 import java.util.ArrayList;
@@ -20,7 +18,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.util.Pair;
 
 /**
  *
@@ -80,7 +77,7 @@ public class BxRequest {
             if (this.max == 0) {
                 this.max = 1;
             }
-            this.withRelaxation = choiceId == "search";
+            this.withRelaxation = choiceId.equals("search");
         } catch (BoxalinoException ex) {
             throw ex;
         }
@@ -92,7 +89,7 @@ public class BxRequest {
     }
 
     public void setDefaultIndexId(String indexId) {
-        if (indexId != null || indexId != Helper.Common.EMPTY_STRING) {
+        if (indexId != null || !indexId.equals(Helper.Common.EMPTY_STRING)) {
             this.setIndexId(indexId);
         }
     }
@@ -101,7 +98,7 @@ public class BxRequest {
         this.indexId = indexId;
         int k = 0;
         for (ContextItem contextItem : emptyIfNull(contextItems)) {
-            if (contextItem.indexId == null || contextItem.indexId == Helper.Common.EMPTY_STRING) {
+            if (contextItem.indexId == null || contextItem.indexId.equals(Helper.Common.EMPTY_STRING)) {
                 this.contextItems.get(k).indexId = indexId;
             }
             k++;
@@ -272,10 +269,10 @@ public class BxRequest {
 
     public void setBasketProductWithPrices(String fieldName, ArrayList<CustomBasketContent> basketContent, String role, String subRole) {
         //default start
-        if (role == null || role == Helper.Common.EMPTY_STRING) {
+        if (role == null || role.equals(Helper.Common.EMPTY_STRING)) {
             role = "mainProduct";
         }
-        if (subRole == null || subRole == Helper.Common.EMPTY_STRING) {
+        if (subRole == null || subRole.equals(Helper.Common.EMPTY_STRING)) {
             subRole = "mainProduct";
         }
 

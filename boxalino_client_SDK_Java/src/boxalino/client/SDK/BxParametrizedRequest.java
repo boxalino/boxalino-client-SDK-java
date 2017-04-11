@@ -141,7 +141,7 @@ public class BxParametrizedRequest extends BxRequest {
         getPrefixedParameters(requestWeightedParametersPrefix, true).entrySet().forEach((item) -> {
             _params.put(item.getKey(), (ArrayList<String>) item.getValue());
         });
-        getPrefixedParameters(requestParametersPrefix, false).entrySet().stream().filter((item) -> !(Common.strpos(item.getKey(), requestWeightedParametersPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestFiltersPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestFacetsPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestSortFieldPrefix, 0) != -1)).filter((item) -> !(item.getKey() == requestReturnFieldsName)).forEachOrdered((item) -> {
+        getPrefixedParameters(requestParametersPrefix, false).entrySet().stream().filter((item) -> !(Common.strpos(item.getKey(), requestWeightedParametersPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestFiltersPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestFacetsPrefix, 0) != -1)).filter((item) -> !(Common.strpos(item.getKey(), requestSortFieldPrefix, 0) != -1)).filter((item) -> !(item.getKey().equals(requestReturnFieldsName))).forEachOrdered((item) -> {
             _params.put(item.getKey(), (ArrayList<String>) item.getValue());
         });
 

@@ -6,7 +6,6 @@
 package boxalino.client.SDK;
 
 import Exception.BoxalinoException;
-import Helper.Common;
 import static Helper.Common.EMPTY_STRING;
 import Helper.LevenshteinDistance;
 import com.boxalino.p13n.api.thrift.ChoiceResponse;
@@ -14,17 +13,11 @@ import com.boxalino.p13n.api.thrift.Hit;
 import com.boxalino.p13n.api.thrift.HitsGroup;
 import com.boxalino.p13n.api.thrift.SearchResult;
 import com.boxalino.p13n.api.thrift.Variant;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  *

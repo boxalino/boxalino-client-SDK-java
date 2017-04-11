@@ -1058,7 +1058,7 @@ public class BxData {
             temporaryFilePath = System.getProperty("java.io.tmpdir") + "bxclient";
         }
 
-        if (temporaryFilePath != "" && !new File(temporaryFilePath).exists()) {
+        if (!temporaryFilePath.equals("") && !new File(temporaryFilePath).exists()) {
             new File(temporaryFilePath).mkdir();
         }
 

@@ -22,7 +22,6 @@ import com.boxalino.p13n.api.thrift.UserRecord;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -72,84 +71,83 @@ public class BxClient {
     private HttpContext httpContext;
     //Following is used when Cookies need to be managed
     private ServletHttpContext servlethttpContext;
-    public static HttpServletRequest request;
-    public static HttpServletResponse response;
+    public HttpServletRequest request;
+    public HttpServletResponse response;
 
     public BxClient(String account, String password, String domain, boolean isDev, String host, int port, String uri, String schema, String p13n_username, String p13n_password) throws BoxalinoException {
-       
-            //default value start
 
-            if (host == null || host.equals(Helper.Common.EMPTY_STRING)) {
-                host = null;
-            }
-            if (port == 0) {
-                port = 0;
-            }
-            if (uri == null || uri.equals(Helper.Common.EMPTY_STRING)) {
-                uri = null;
-            }
-            if (schema == null || schema.equals(Helper.Common.EMPTY_STRING)) {
-                schema = null;
-            }
-            if (p13n_username == null || p13n_username.equals(Helper.Common.EMPTY_STRING)) {
-                p13n_username = null;
-            }
-            if (p13n_password == null || p13n_password.equals(Helper.Common.EMPTY_STRING)) {
-                p13n_password = null;
-            }
+        //default value start
+        if (host == null || host.equals(Helper.Common.EMPTY_STRING)) {
+            host = null;
+        }
+        if (port == 0) {
+            port = 0;
+        }
+        if (uri == null || uri.equals(Helper.Common.EMPTY_STRING)) {
+            uri = null;
+        }
+        if (schema == null || schema.equals(Helper.Common.EMPTY_STRING)) {
+            schema = null;
+        }
+        if (p13n_username == null || p13n_username.equals(Helper.Common.EMPTY_STRING)) {
+            p13n_username = null;
+        }
+        if (p13n_password == null || p13n_password.equals(Helper.Common.EMPTY_STRING)) {
+            p13n_password = null;
+        }
 
-            this.chooseRequests = new ArrayList<>();
-            this.requestMap = new HashMap<>();
-            this._timeout = 2;
-            this.requestContextParameters = new HashMap<>();
-            this.sessionId = null;
-            this.profileId = null;
+        this.chooseRequests = new ArrayList<>();
+        this.requestMap = new HashMap<>();
+        this._timeout = 2;
+        this.requestContextParameters = new HashMap<>();
+        this.sessionId = null;
+        this.profileId = null;
 
-            this.account = account;
-            this.password = password;
-            this.isDev = isDev;
+        this.account = account;
+        this.password = password;
+        this.isDev = isDev;
 
-            this.host = host;
-            if (this.host == null) {
-                this.host = "cdn.bx-cloud.com";
-            }
-            this.port = port;
-            if (this.port == 0) {
-                this.port = 443;
-            }
-            this.uri = uri;
-            if (this.uri == null) {
-                this.uri = "/p13n.web/p13n";
-            }
-            this.schema = schema;
-            if (this.schema == null) {
-                this.schema = "https";
-            }
-            this.p13n_username = p13n_username;
-            if (this.p13n_username == null) {
-                this.p13n_username = "boxalino";
-            }
-            this.p13n_password = p13n_password;
-            if (this.p13n_password == null) {
-                this.p13n_password = "tkZ8EXfzeZc6SdXZntCU";
-            }
-            this.domain = domain;
+        this.host = host;
+        if (this.host == null) {
+            this.host = "cdn.bx-cloud.com";
+        }
+        this.port = port;
+        if (this.port == 0) {
+            this.port = 443;
+        }
+        this.uri = uri;
+        if (this.uri == null) {
+            this.uri = "/p13n.web/p13n";
+        }
+        this.schema = schema;
+        if (this.schema == null) {
+            this.schema = "https";
+        }
+        this.p13n_username = p13n_username;
+        if (this.p13n_username == null) {
+            this.p13n_username = "boxalino";
+        }
+        this.p13n_password = p13n_password;
+        if (this.p13n_password == null) {
+            this.p13n_password = "tkZ8EXfzeZc6SdXZntCU";
+        }
+        this.domain = domain;
+        //default value end
 
-            //default value end
-            this.httpContext = new HttpContext(domain, this.schema, this.uri, this.schema, this.uri);
-            // Following is used when cookies need to be managed
-            if (ServletHttpContext.request != null && ServletHttpContext.response != null) {
-                request = ServletHttpContext.request;
-                response = ServletHttpContext.response;
-                try {
-                    this.servlethttpContext = new ServletHttpContext(domain, request, response);
-                } catch (URISyntaxException ex) {
-                    //throw ex;
-                    throw new BoxalinoException(ex.getMessage(), ex.getCause());
-                }
+        this.httpContext = new HttpContext(this.sessionId,this.profileId,this.domain, this.schema, this.uri, this.schema, this.uri);
 
+    }
+
+    public void InstantiateServletHttp() throws BoxalinoException {
+        // Following is used when cookies need to be managed
+        if (request != null && response != null) {
+            try {
+                this.servlethttpContext = new ServletHttpContext(domain, request, response);
+            } catch (URISyntaxException ex) {
+                //throw ex;
+                throw new BoxalinoException(ex.getMessage(), ex.getCause());
             }
-        
+        }
     }
 
     public void setRequestMap(Map<String, String> requestMap) {
@@ -180,8 +178,11 @@ public class BxClient {
         this.profileId = profileId;
     }
 
-    private String[] getSessionAndProfile() {
+    private String[] getSessionAndProfile() throws BoxalinoException {
         if (request != null && response != null) {
+            if (this.servlethttpContext == null) {
+                InstantiateServletHttp();
+            }
             return this.servlethttpContext.getSessionAndProfile(this.sessionId, this.profileId, this.domain);
         } else {
             return this.httpContext.getSessionAndProfile(this.sessionId, this.profileId, this.domain);
@@ -231,7 +232,7 @@ public class BxClient {
         return parameters;
     }
 
-    public RequestContext getRequestContext() throws URISyntaxException {
+    public RequestContext getRequestContext() throws URISyntaxException, BoxalinoException {
         String[] list;
         list = this.getSessionAndProfile();
         setSessionAndProfile(list[0], list[1]);
@@ -290,7 +291,7 @@ public class BxClient {
         return requestContext;
     }
 
-    public ChoiceRequest getChoiceRequest(ArrayList<ChoiceInquiry> inquiries, RequestContext requestContext) throws URISyntaxException {
+    public ChoiceRequest getChoiceRequest(ArrayList<ChoiceInquiry> inquiries, RequestContext requestContext) throws URISyntaxException, BoxalinoException {
         ChoiceRequest choiceRequest = new ChoiceRequest();
         String[] list;
         list = this.getSessionAndProfile();
@@ -314,7 +315,7 @@ public class BxClient {
         this.requestContextParameters = new HashMap<>();
     }
 
-    protected Map<String, ArrayList<String>> getBasicRequestContextParameters() throws URISyntaxException {
+    protected Map<String, ArrayList<String>> getBasicRequestContextParameters() throws URISyntaxException, BoxalinoException {
         sessionId = this.getSessionAndProfile()[0];
         profileId = this.getSessionAndProfile()[1];
         return new HashMap<String, ArrayList<String>>() {
@@ -482,9 +483,9 @@ public class BxClient {
     }
 
     public BxChooseResponse getResponse() throws BoxalinoException {
-        if (this.chooseResponses == null) {           
-                this.choose();
-           
+        if (this.chooseResponses == null) {
+            this.choose();
+
         }
         return new BxChooseResponse(this.chooseResponses, this.chooseRequests);
     }
@@ -550,7 +551,7 @@ public class BxClient {
         }
     }
 
-    public void autocomplete() throws IOException, UnsupportedEncodingException, TException, URISyntaxException, MalformedURLException {
+    public void autocomplete() throws IOException, UnsupportedEncodingException, TException, URISyntaxException, MalformedURLException, BoxalinoException {
         try {
             String[] str = this.getSessionAndProfile();
             sessionId = str[0];
@@ -601,28 +602,21 @@ public class BxClient {
         }
     }
 
-    public ChoiceResponse pooledClient(ChoiceRequest choiceRequest) throws IOException {
-        try {
-            String url = null;
-            try {
-                url = new URI(String.format("%s://%s%s", this.schema, this.host, this.uri)).toURL().toString();
-            } catch (URISyntaxException | MalformedURLException ex) {
-            }
-            String username = this.p13n_username, pwd = this.p13n_password;
+    public ChoiceResponse pooledClient(ChoiceRequest choiceRequest) throws URISyntaxException, MalformedURLException {
 
-            ClientPool pool = PoolProvider.getDefault(url, username, pwd);
-            try {
-                ChoiceResponse response = pool.withClient(client -> {
-                    ChoiceResponse choiceResponse = client.choose(choiceRequest);
-                    return choiceResponse;
-                });
-                return response;
-            } catch (UndeclaredThrowableException e) {
-                throw e;
-            }
-        } catch (UncheckedIOException ex) {
-            throw ex.getCause();
-        }
+        String url = null;
+        url = new URI(String.format("%s://%s%s", this.schema, this.host, this.uri)).toURL().toString();
+
+        String username = this.p13n_username, pwd = this.p13n_password;
+
+        ClientPool pool = PoolProvider.getDefault(url, username, pwd);
+
+        ChoiceResponse response = pool.withClient(client -> {
+            ChoiceResponse choiceResponse = client.choose(choiceRequest);
+            return choiceResponse;
+        });
+        return response;
+
     }
 
 }
