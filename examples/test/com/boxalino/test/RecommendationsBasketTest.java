@@ -58,13 +58,15 @@ public class RecommendationsBasketTest {
             _recommendationsBasket._password = this.password;
             _recommendationsBasket._print = false;
            
-            String[] hitIds= new String[10];
-            for(int i=0;i<10;i++)
-                hitIds[i]=String.valueOf(i+1);
+            List<String> hitIds= Arrays.asList("1","2","3","4","5","6","7","8","9","10");
             
-            _recommendationsBasket.recommendationsBasket();           
+            _recommendationsBasket.recommendationsBasket();   
             
-           assertEquals(_recommendationsBasket.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0]), hitIds);
+         
+                    
+                    
+            
+           assertEquals(Arrays.asList(_recommendationsBasket.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0])), hitIds);
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());
         }

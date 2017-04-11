@@ -13,7 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-import Helper.*;
 
 /**
  *
@@ -36,7 +35,7 @@ public class Search2ndPage {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void Search2ndPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -55,12 +54,13 @@ public class Search2ndPage {
             languages = new String[]{"en"};
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             print = true;
-            /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
-            
+
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-            
+
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
+
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "watch"; // a search query
             int hitCount = 5; //a maximum number of search result to return in one page
@@ -84,23 +84,18 @@ public class Search2ndPage {
             }
 
             if (print) {
-
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
+                System.out.println(String.join("\n", logs));
 
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
+            System.out.println(ex.getMessage());
 
-        } 
+        }
     }
-    
-      /**
+
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
@@ -122,10 +117,9 @@ public class Search2ndPage {
             languages = new String[]{"en"};
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             print = true;
-           
-            
+
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-            
+
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "watch"; // a search query
             int hitCount = 5; //a maximum number of search result to return in one page
@@ -149,20 +143,15 @@ public class Search2ndPage {
             }
 
             if (print) {
-
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
+                System.out.println(String.join("\n", logs));
 
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
+            System.out.println(ex.getMessage());
 
-        } 
+        }
     }
 
 }

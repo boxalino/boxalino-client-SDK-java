@@ -7,6 +7,9 @@ package com.boxalino.test;
 
 import com.boxalino.examples.RecommendationsSimilarComplementary;
 import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.After;
@@ -58,20 +61,20 @@ public class RecommendationsSimilarComplementaryTest {
             String choiceIdSimilar = "similar";
             String choiceIdComplementary = "complementary";
             
-            String[] complementaryIds = new String[10];
-            String[] similarIds = new String[10];
+            List<String> complementaryIds = new ArrayList<String>();
+            List<String> similarIds = new ArrayList<String>();
             int j=11;
             for (int i = 0; i < 10; i++) 
             {
-                complementaryIds[i] = String.valueOf(j);
-                similarIds[i]= String.valueOf(i+1);
+                complementaryIds.add(String.valueOf(j));
+                similarIds.add(String.valueOf(i+1));
                 j++;
             }
 
            
             _recommendationsSimilarComplementary.recommendationsSimilarComplementary();
-            assertEquals(_recommendationsSimilarComplementary.bxResponse.getHitIds(choiceIdSimilar, true, 0, 10, "id").values().toArray(new String[0]), similarIds);
-            assertEquals(_recommendationsSimilarComplementary.bxResponse.getHitIds(choiceIdComplementary, true, 0, 10, "id").values().toArray(new String[0]), complementaryIds);
+            assertEquals(Arrays.asList(_recommendationsSimilarComplementary.bxResponse.getHitIds(choiceIdSimilar, true, 0, 10, "id").values().toArray(new String[0])), similarIds);
+            assertEquals(Arrays.asList(_recommendationsSimilarComplementary.bxResponse.getHitIds(choiceIdComplementary, true, 0, 10, "id").values().toArray(new String[0])), complementaryIds);
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());
         }

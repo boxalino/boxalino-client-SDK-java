@@ -6,6 +6,8 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchFacetCategory;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -54,8 +56,8 @@ public class SearchFacetCategoryTest {
             _searchFacetCategory.print = false;
 
             _searchFacetCategory.searchFacetCategory();
-            String[] hitIds = {"41", "1940"};
-            assertEquals(_searchFacetCategory.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0]), hitIds);
+            List<String> hitIds = Arrays.asList("41", "1940");
+            assertEquals(Arrays.asList(_searchFacetCategory.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0])), hitIds);
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());
         }

@@ -6,13 +6,11 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxRequest;
 import boxalino.client.SDK.BxSearchRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,12 +41,11 @@ public class SearchRequestContextParameters {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void searchRequestContextParameters(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        PrintWriter out = response.getWriter();
         try {
             /* TODO output your page here. You may use following sample code. */
             // required parameters you should set for this example to work
@@ -59,12 +56,13 @@ public class SearchRequestContextParameters {
             boolean print = true;
             boolean isDev = false;
 
-            /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             queryText = "women"; // a search query
@@ -104,21 +102,18 @@ public class SearchRequestContextParameters {
             }
 
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
-    
-     /**
+
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
@@ -126,7 +121,6 @@ public class SearchRequestContextParameters {
      */
     public void searchRequestContextParameters() throws IOException {
 
-        PrintWriter out = new PrintWriter(System.out);
         try {
             /* TODO output your page here. You may use following sample code. */
             // required parameters you should set for this example to work
@@ -137,7 +131,6 @@ public class SearchRequestContextParameters {
             boolean print = true;
             boolean isDev = false;
 
-            
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
@@ -180,18 +173,15 @@ public class SearchRequestContextParameters {
             }
 
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 
 }

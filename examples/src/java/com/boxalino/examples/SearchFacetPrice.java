@@ -6,7 +6,6 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxFacets;
@@ -45,7 +44,7 @@ public class SearchFacetPrice {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void searchFacetPrice(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -68,12 +67,13 @@ public class SearchFacetPrice {
             logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean isDev = false;
 
-            /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             queryText = "women"; // a search query
@@ -109,16 +109,16 @@ public class SearchFacetPrice {
 
             //loop on the search response hit ids and print them
             for (Map.Entry fieldValue : facets.getPriceRanges().entrySet()) {
-                String range = "<a href=\"?bx_price=" + facets.getPriceValueParameterValue((FacetValue) fieldValue.getValue()) + "\">" + facets.getPriceValueLabel((FacetValue) fieldValue.getValue()) + "</a> (" + facets.getPriceValueCount((FacetValue) fieldValue.getValue()) + ")";
+                String range = "\n" + facets.getPriceValueLabel((FacetValue) fieldValue.getValue()) + " (" + facets.getPriceValueCount((FacetValue) fieldValue.getValue()) + ")";
                 if ((facets.isPriceValueSelected((FacetValue) fieldValue.getValue())).isEmpty()) {
-                    range += "<a href=\"?\">[X]</a>";
+                    range += "[X]";
                 }
                 logs.add(range);
             }
 
             //loop on the search response hit ids and print them
             for (Map.Entry item : bxResponse.getHitFieldValues(new String[]{facets.getPriceFieldName()}, "", true, 0, 10).entrySet()) {
-                logs.add("<h3>" + item.getKey() + "</h3>");
+                logs.add("" + item.getKey() + "");
                 for (Map.Entry fieldValueMapItem : ((Map<String, List<String>>) item.getValue()).entrySet()) {
 
                     logs.add("Price: " + String.join(",", (List<String>) fieldValueMapItem.getValue()));
@@ -126,21 +126,18 @@ public class SearchFacetPrice {
             }
 
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 
-     /**
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
@@ -166,7 +163,6 @@ public class SearchFacetPrice {
             logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean isDev = false;
 
-          
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
@@ -205,16 +201,16 @@ public class SearchFacetPrice {
 
             //loop on the search response hit ids and print them
             for (Map.Entry fieldValue : facets.getPriceRanges().entrySet()) {
-                String range = "<a href=\"?bx_price=" + facets.getPriceValueParameterValue((FacetValue) fieldValue.getValue()) + "\">" + facets.getPriceValueLabel((FacetValue) fieldValue.getValue()) + "</a> (" + facets.getPriceValueCount((FacetValue) fieldValue.getValue()) + ")";
+                String range = "" + facets.getPriceValueLabel((FacetValue) fieldValue.getValue()) + " (" + facets.getPriceValueCount((FacetValue) fieldValue.getValue()) + ")";
                 if ((facets.isPriceValueSelected((FacetValue) fieldValue.getValue())).isEmpty()) {
-                    range += "<a href=\"?\">[X]</a>";
+                    range += "[X]";
                 }
                 logs.add(range);
             }
 
             //loop on the search response hit ids and print them
             for (Map.Entry item : bxResponse.getHitFieldValues(new String[]{facets.getPriceFieldName()}, "", true, 0, 10).entrySet()) {
-                logs.add("<h3>" + item.getKey() + "</h3>");
+                logs.add("" + item.getKey() + "");
                 for (Map.Entry fieldValueMapItem : ((Map<String, List<String>>) item.getValue()).entrySet()) {
 
                     logs.add("Price: " + String.join(",", (List<String>) fieldValueMapItem.getValue()));
@@ -222,17 +218,14 @@ public class SearchFacetPrice {
             }
 
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 }

@@ -56,9 +56,9 @@ public class SearchBasicTest {
             _searchBasic.password = this.password;
             _searchBasic.print = false;
 
-            String[] hitIds = {"41", "1940", "1065", "1151", "1241", "1321", "1385", "1401", "1609", "1801"};
+            List<String> hitIds = Arrays.asList("41", "1940", "1065", "1151", "1241", "1321", "1385", "1401", "1609", "1801");
             _searchBasic.searchBasic();
-            assertEquals(_searchBasic.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0]), hitIds);
+            assertEquals(Arrays.asList(_searchBasic.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0])), hitIds);
 
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());

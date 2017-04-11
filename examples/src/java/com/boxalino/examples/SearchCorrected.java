@@ -6,12 +6,10 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxSearchRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +38,10 @@ public class SearchCorrected {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void searchCorrected(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        PrintWriter out = response.getWriter();
 
         try {
             /* TODO output your page here. You may use following sample code. */
@@ -65,13 +61,14 @@ public class SearchCorrected {
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
-            /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
 
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "women"; // a search query
@@ -101,17 +98,15 @@ public class SearchCorrected {
             }
 
             if (print) {
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
+                System.out.println(String.join("\n", logs));
+
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 
     /**
@@ -122,8 +117,6 @@ public class SearchCorrected {
      */
     public void searchCorrected() throws IOException {
 
-        PrintWriter out = new PrintWriter(System.out);
-
         try {
             /* TODO output your page here. You may use following sample code. */
             /**
@@ -142,7 +135,6 @@ public class SearchCorrected {
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
-            
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
@@ -176,16 +168,14 @@ public class SearchCorrected {
             }
 
             if (print) {
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
+                System.out.println(String.join("\n", logs));
+
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 }

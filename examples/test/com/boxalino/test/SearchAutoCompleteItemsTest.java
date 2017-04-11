@@ -6,6 +6,7 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchAutocompleteItems;
+import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,13 +57,15 @@ public class SearchAutoCompleteItemsTest {
             _searchAutocompleteItems.password = this.password;
             _searchAutocompleteItems.print = false;
 
-            List<String> textualSuggestions =Arrays.asList("ida workout parachute pant","jade yoga jacket","push it messenger bag");
+            List<String> textualSuggestions =new ArrayList<String>();
+           textualSuggestions.add("ida workout parachute pant");
+           textualSuggestions.add("jade yoga jacket");
+           textualSuggestions.add("push it messenger bag");
+           
             _searchAutocompleteItems.SearchAutocompleteItems();
             String[] fieldNames = new String[]{"title"};
-            Object[] itemSuggestions = _searchAutocompleteItems.bxAutocompleteResponse.getBxSearchResponse("").getHitFieldValues(Arrays.copyOf(fieldNames, fieldNames.length, String[].class), "", true, 0, 10).values().toArray();
-
-            assertEquals(itemSuggestions.length, 5);
-
+            List<Object> itemSuggestions = Arrays.asList(_searchAutocompleteItems.bxAutocompleteResponse.getBxSearchResponse("").getHitFieldValues(fieldNames, "", true, 0, 10).values().toArray());
+            assertEquals(itemSuggestions.size(), 5);
             assertEquals(_searchAutocompleteItems.bxAutocompleteResponse.getTextualSuggestions(), textualSuggestions);
 
         } catch (Exception ex) {

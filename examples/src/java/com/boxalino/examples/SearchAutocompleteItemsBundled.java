@@ -6,12 +6,10 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxAutocompleteRequest;
 import boxalino.client.SDK.BxAutocompleteResponse;
 import boxalino.client.SDK.BxClient;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,12 +39,11 @@ public class SearchAutocompleteItemsBundled {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void searchAutocompleteItemsBundled(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        PrintWriter out = response.getWriter();
         try {
             /* TODO output your page here. You may use following sample code. */
             /**
@@ -66,14 +63,13 @@ public class SearchAutocompleteItemsBundled {
             List<String> logs = new ArrayList<String>();
             //optional, just used here in example to collect logs
             boolean print = true;
-            /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             List<String> queryTexts = new ArrayList<String>() {
                 {
@@ -111,47 +107,44 @@ public class SearchAutocompleteItemsBundled {
                 //loop on the search response hit ids and print them
                 String queryText = queryTexts.get(++i);
 
-                logs.add("<h2>textual suggestions for \"" + queryText + "\":</h2>");
+                logs.add("textual suggestions for \"" + queryText + "\":\n");
                 for (String suggestion : bxAutocompleteResponse.getTextualSuggestions()) {
-                    logs.add("<div style=\"border:1px solid; padding:10px; margin:10px\">");
+                    
 
-                    logs.add("<h3> " + suggestion + "</b></h3>");
+                    logs.add("" + suggestion + "");
 
                     logs.add("item suggestions for suggestion  \"" + suggestion + "\" :");
 
                     // loop on the search response hit ids and print them
                     for (Map.Entry item : bxAutocompleteResponse.getBxSearchResponse(suggestion).getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
-                        logs.add("<div>" + item.getKey());
+                        logs.add(item.getKey().toString());
                         for (Map.Entry itemFieldValueMap : ((Map<String, List<String>>) item.getValue()).entrySet()) {
                             logs.add(" - " + itemFieldValueMap.getKey() + ": " + String.join(",", (List<String>) itemFieldValueMap.getValue()) + "");
                         }
-                        logs.add("</div>");
+                       
                     }
-                    logs.add("</div>");
+                    
 
                 }
-                logs.add("<h2>global item suggestions for \"" + queryText + "\":</h2>");
+                logs.add("global item suggestions for \"" + queryText + "\":\n");
                 // loop on the search response hit ids and print them
                 for (Map.Entry hitvalue : bxAutocompleteResponse.getBxSearchResponse("").getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
-                    logs.add("<div>" + hitvalue.getKey() + "");
+                    logs.add("" + hitvalue.getKey() + "");
                     for (Map.Entry fvaluemap : ((Map<String, List<String>>) hitvalue.getValue()).entrySet()) {
                         logs.add(" - " + fvaluemap.getKey() + ": " + String.join(",", (List<String>) fvaluemap.getValue()) + "");
                     }
-                    logs.add("</div>");
+                   
                 }
             }
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
+            System.out.println(ex.getMessage());
+
         }
     }
 
@@ -163,7 +156,6 @@ public class SearchAutocompleteItemsBundled {
      */
     public void searchAutocompleteItemsBundled() throws IOException {
 
-        PrintWriter out = new PrintWriter(System.out);
         try {
             /* TODO output your page here. You may use following sample code. */
             /**
@@ -225,47 +217,44 @@ public class SearchAutocompleteItemsBundled {
                 //loop on the search response hit ids and print them
                 String queryText = queryTexts.get(++i);
 
-                logs.add("<h2>textual suggestions for \"" + queryText + "\":</h2>");
+                logs.add("textual suggestions for \"" + queryText + "\":\n");
                 for (String suggestion : bxAutocompleteResponse.getTextualSuggestions()) {
-                    logs.add("<div style=\"border:1px solid; padding:10px; margin:10px\">");
+                   
 
-                    logs.add("<h3> " + suggestion + "</b></h3>");
+                    logs.add("" + suggestion + "");
 
                     logs.add("item suggestions for suggestion  \"" + suggestion + "\" :");
 
                     // loop on the search response hit ids and print them
                     for (Map.Entry item : bxAutocompleteResponse.getBxSearchResponse(suggestion).getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
-                        logs.add("<div>" + item.getKey());
+                        logs.add(item.getKey().toString());
                         for (Map.Entry itemFieldValueMap : ((Map<String, List<String>>) item.getValue()).entrySet()) {
                             logs.add(" - " + itemFieldValueMap.getKey() + ": " + String.join(",", (List<String>) itemFieldValueMap.getValue()) + "");
                         }
-                        logs.add("</div>");
+                        
                     }
-                    logs.add("</div>");
+                    
 
                 }
-                logs.add("<h2>global item suggestions for \"" + queryText + "\":</h2>");
+                logs.add("global item suggestions for \"" + queryText + "\":\n");
                 // loop on the search response hit ids and print them
                 for (Map.Entry hitvalue : bxAutocompleteResponse.getBxSearchResponse("").getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
-                    logs.add("<div>" + hitvalue.getKey() + "");
+                    logs.add(hitvalue.getKey() + "");
                     for (Map.Entry fvaluemap : ((Map<String, List<String>>) hitvalue.getValue()).entrySet()) {
                         logs.add(" - " + fvaluemap.getKey() + ": " + String.join(",", (List<String>) fvaluemap.getValue()) + "");
                     }
-                    logs.add("</div>");
+                    
                 }
             }
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
+            System.out.println(ex.getMessage());
+
         }
     }
 }

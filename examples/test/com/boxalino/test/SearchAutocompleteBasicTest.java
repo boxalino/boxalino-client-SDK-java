@@ -7,6 +7,7 @@ package com.boxalino.test;
 
 import com.boxalino.examples.SearchAutocompleteBasic;
 import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -54,9 +55,15 @@ public class SearchAutocompleteBasicTest {
             _searchAutocompleteBasic.account = this.account;
             _searchAutocompleteBasic.password = this.password;
             _searchAutocompleteBasic.print = false;
-            String[] textualSuggestions = {"ida workout parachute pant","jade yoga jacket","push it messenger bag"};
+            
+            List<String> textualSuggestions =new ArrayList<String>();
+           textualSuggestions.add("ida workout parachute pant");
+           textualSuggestions.add("jade yoga jacket");
+           textualSuggestions.add("push it messenger bag");
+           
             _searchAutocompleteBasic.searchAutocompleteBasic();
-            assertEquals(_searchAutocompleteBasic.bxAutocompleteResponse.getTextualSuggestions().toArray(new String[0]), textualSuggestions);
+            
+            assertEquals(_searchAutocompleteBasic.bxAutocompleteResponse.getTextualSuggestions(), textualSuggestions);
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());
         }

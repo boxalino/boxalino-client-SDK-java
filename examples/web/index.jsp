@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-     <% new com.boxalino.examples.RecommendationsBasket().recommendationsBasket(); %>
+     <% new com.boxalino.examples.SearchFacetPrice().searchFacetPrice(request,response);%>
     </body>
 </html>

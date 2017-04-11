@@ -6,11 +6,9 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchFilterAdvanced;
-import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -59,7 +57,7 @@ public class SearchFilterAdvancedTest {
             _searchFilterAdvanced.print = false;
 
             _searchFilterAdvanced.searchFilterAdvanced();
-            ArrayList<String> fieldNames = new ArrayList<String>() {
+            List<String> fieldNames = new ArrayList<String>() {
                 {
                     add("products_color");
                 }

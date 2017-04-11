@@ -6,13 +6,11 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxFilter;
 import boxalino.client.SDK.BxSearchRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,12 +49,11 @@ public class SearchFilterAdvanced {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void searchFilterAdvanced(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        PrintWriter out = response.getWriter();
         try {
             /* TODO output your page here. You may use following sample code. */
             // required parameters you should set for this example to work
@@ -67,12 +64,13 @@ public class SearchFilterAdvanced {
             boolean print = true;
             boolean isDev = false;
 
-            /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             queryText = "women"; // a search query
@@ -118,27 +116,24 @@ public class SearchFilterAdvanced {
 
             //loop on the search response hit ids and print them
             for (Map.Entry item : bxResponse.getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
-                logs.add("<h3>" + item.getKey() + "</h3>");
+                logs.add("" + item.getKey() + "");
                 for (Map.Entry val : ((Map<String, List<String>>) item.getValue()).entrySet()) {
                     logs.add(val.getKey() + ": " + String.join(",", (List<String>) (val.getValue())));
                 }
             }
-            if ((print)) {
+            if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
-    
-     /**
+
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
@@ -146,7 +141,6 @@ public class SearchFilterAdvanced {
      */
     public void searchFilterAdvanced() throws IOException {
 
-        PrintWriter out = new PrintWriter(System.out);
         try {
             /* TODO output your page here. You may use following sample code. */
             // required parameters you should set for this example to work
@@ -157,7 +151,6 @@ public class SearchFilterAdvanced {
             boolean print = true;
             boolean isDev = false;
 
-           
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
@@ -206,23 +199,20 @@ public class SearchFilterAdvanced {
 
             //loop on the search response hit ids and print them
             for (Map.Entry item : bxResponse.getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
-                logs.add("<h3>" + item.getKey() + "</h3>");
+                logs.add("" + item.getKey() + "");
                 for (Map.Entry val : ((Map<String, List<String>>) item.getValue()).entrySet()) {
                     logs.add(val.getKey() + ": " + String.join(",", (List<String>) (val.getValue())));
                 }
             }
-            if ((print)) {
+            if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
+            System.out.println(ex.getMessage());
+
         }
     }
 

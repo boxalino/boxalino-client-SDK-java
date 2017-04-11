@@ -6,12 +6,10 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxRecommendationRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +38,11 @@ public class RecommendationsSimilar {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void recommendationsSimilar(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        PrintWriter out = response.getWriter();
         try {
 
             /**
@@ -63,13 +60,14 @@ public class RecommendationsSimilar {
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
-            /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
+
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String choiceId = "similar"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
             String itemFieldId = "id"; // the field you want to use to define the id of the product (normally id, but could also be a group id if you have a difference between group id and sku) 
@@ -92,21 +90,18 @@ public class RecommendationsSimilar {
                 logs.add(item.getKey() + ": returned id " + item.getValue());
             }
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
-    
-      /**
+
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
@@ -114,7 +109,6 @@ public class RecommendationsSimilar {
      */
     public void recommendationsSimilar() throws IOException {
 
-        PrintWriter out = new PrintWriter(System.out);
         try {
 
             /**
@@ -132,7 +126,6 @@ public class RecommendationsSimilar {
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
-          
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
@@ -159,18 +152,15 @@ public class RecommendationsSimilar {
                 logs.add(item.getKey() + ": returned id " + item.getValue());
             }
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 
 }

@@ -7,12 +7,10 @@ package com.boxalino.examples;
 
 import Exception.BoxalinoException;
 import Helper.CustomBasketContent;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxRecommendationRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +24,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class RecommendationsBasket {
 
-    public String _account="boxalino_automated_tests";
-    public String _password="boxalino_automated_tests";
+    public String _account = "boxalino_automated_tests";
+    public String _password = "boxalino_automated_tests";
     String domain;
     List<String> logs;
     String language;
-    public boolean _print=true;
+    public boolean _print = true;
     boolean isDev;
     public BxChooseResponse bxResponse = null;
 
@@ -41,12 +39,11 @@ public class RecommendationsBasket {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void recommendationsBasket(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      
-        PrintWriter out = response.getWriter();
+
         try {
 
             String account = this._account; // your account name
@@ -58,12 +55,11 @@ public class RecommendationsBasket {
             List<String> logs = new ArrayList<String>();
             //optional, just used here in example to collect logs
             boolean print = this._print;
-            
-             /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
-            
+
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String choiceId = "basket"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
             String itemFieldId = "id"; // the field you want to use to define the id of the product (normally id, but could also be a group id if you have a difference between group id and sku)
@@ -88,7 +84,7 @@ public class RecommendationsBasket {
 
             //add the request
             bxClient.addRequest(bxRequest);
-           
+
             //make the query to Boxalino server and get back the response for all requests
             bxResponse = bxClient.getResponse();
 
@@ -96,28 +92,25 @@ public class RecommendationsBasket {
                 logs.add(item.getKey() + ": returned id " + item.getValue());
             }
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
      * @throws IOException if an I/O error occurs
      */
-     public void recommendationsBasket() throws IOException {
-      
-        PrintWriter out = new PrintWriter(System.out);
+    public void recommendationsBasket() throws IOException {
+
         try {
 
             String account = this._account; // your account name
@@ -129,9 +122,7 @@ public class RecommendationsBasket {
             List<String> logs = new ArrayList<String>();
             //optional, just used here in example to collect logs
             boolean print = this._print;
-            
-          
-            
+
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String choiceId = "basket"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
@@ -157,7 +148,7 @@ public class RecommendationsBasket {
 
             //add the request
             bxClient.addRequest(bxRequest);
-           
+
             //make the query to Boxalino server and get back the response for all requests
             bxResponse = bxClient.getResponse();
 
@@ -165,18 +156,15 @@ public class RecommendationsBasket {
                 logs.add(item.getKey() + ": returned id " + item.getValue());
             }
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 
 }

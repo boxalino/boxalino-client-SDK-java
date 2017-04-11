@@ -62,14 +62,17 @@ public class SearchFacetTest {
             _searchFacet.searchFacet();
             Map<String, Object> productColor1 = new HashMap<>();
             Map<String, Object> productColor2 = new HashMap<>();
-            ArrayList<String> color1 = new ArrayList<String>();
+            
+            List<String> color1 = new ArrayList<String>();
             color1.add("Black");
             color1.add("Gray");
             color1.add("Yellow");
-            ArrayList<String> color2 = new ArrayList<String>();
+            
+            List<String> color2 = new ArrayList<String>();
             color2.add("Gray");
             color2.add("Orange");
             color2.add("Yellow");
+            
             productColor1.put("products_color", color1);
             productColor2.put("products_color", color2);
 

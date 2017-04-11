@@ -63,16 +63,20 @@ public class SearchReturnFieldsTest {
 
             Map<String, Object> productColor1 = new HashMap<>();
             Map<String, Object> productColor2 = new HashMap<>();
+            
             ArrayList<String> color1 = new ArrayList<String>();
             color1.add("Black");
             color1.add("Gray");
             color1.add("Yellow");
+            
             ArrayList<String> color2 = new ArrayList<String>();
             color2.add("Gray");
             color2.add("Orange");
             color2.add("Yellow");
+            
             productColor1.put("products_color", color1);
             productColor2.put("products_color", color2);
+            
             ArrayList<String> fieldNames = new ArrayList<String>();            
             fieldNames.add("products_color");
             for (Map.Entry item : _searchReturnFields.bxResponse.getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {

@@ -6,7 +6,6 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxFacets;
@@ -15,7 +14,6 @@ import boxalino.client.SDK.BxSearchRequest;
 import com.boxalino.p13n.api.thrift.FacetValue;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +38,11 @@ public class SearchFacetCategory {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void searchFacetCategory(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        PrintWriter out = response.getWriter();
         try {
             /* TODO output your page here. You may use following sample code. */
             /**
@@ -64,11 +61,13 @@ public class SearchFacetCategory {
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
-             /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
+
             //Create the Boxalino Data SDK instance
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
+
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "women"; // a search query
             int hitCount = 10; //a maximum number of search result to return in one page
@@ -93,17 +92,17 @@ public class SearchFacetCategory {
 
             //show the category breadcrumbs
             int level = 0;
-            logs.add("<a href=\"?\">home</a>");
+            logs.add("home");
 
             for (Map.Entry item : facets.getParentCategories().entrySet()) {
 
-                logs.add(">> <a href=\"?bx_category_id=" + item.getKey() + "\">" + item.getValue() + "</a>");
+                logs.add("\n"+item.getValue() + "");
                 level++;
             }
             logs.add(" ");
             //show the category facet values
             for (Map.Entry value : facets.getCategories().entrySet()) {
-                logs.add("<a href=\"?bx_category_id=" + facets.getCategoryValueId((FacetValue) value.getValue()) + "\">" + facets.getCategoryValueLabel((FacetValue) value.getValue()) + "</a> (" + facets.getCategoryValueCount((FacetValue) value.getValue()) + ")");
+                logs.add("" + facets.getCategoryValueLabel((FacetValue) value.getValue()) + " (" + facets.getCategoryValueCount((FacetValue) value.getValue()) + ")");
 
             }
             logs.add(" ");
@@ -112,29 +111,25 @@ public class SearchFacetCategory {
                 logs.add(item.getKey() + ": returned id " + item.getValue() + "");
             }
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
+            System.out.println(ex.getMessage());
+
         }
     }
 
-     /**
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
      * @throws IOException if an I/O error occurs
      */
-     public void searchFacetCategory() throws IOException {
+    public void searchFacetCategory() throws IOException {
 
-        PrintWriter out = new PrintWriter(System.out);
         try {
             /* TODO output your page here. You may use following sample code. */
             /**
@@ -153,7 +148,7 @@ public class SearchFacetCategory {
             boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
             boolean print = true;
-           
+
             //Create the Boxalino Data SDK instance
             BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
@@ -180,17 +175,17 @@ public class SearchFacetCategory {
 
             //show the category breadcrumbs
             int level = 0;
-            logs.add("<a href=\"?\">home</a>");
+            logs.add("home");
 
             for (Map.Entry item : facets.getParentCategories().entrySet()) {
 
-                logs.add(">> <a href=\"?bx_category_id=" + item.getKey() + "\">" + item.getValue() + "</a>");
+                logs.add("\n" + item.getValue() + "");
                 level++;
             }
             logs.add(" ");
             //show the category facet values
             for (Map.Entry value : facets.getCategories().entrySet()) {
-                logs.add("<a href=\"?bx_category_id=" + facets.getCategoryValueId((FacetValue) value.getValue()) + "\">" + facets.getCategoryValueLabel((FacetValue) value.getValue()) + "</a> (" + facets.getCategoryValueCount((FacetValue) value.getValue()) + ")");
+                logs.add("" + facets.getCategoryValueLabel((FacetValue) value.getValue()) + " (" + facets.getCategoryValueCount((FacetValue) value.getValue()) + ")");
 
             }
             logs.add(" ");
@@ -199,17 +194,14 @@ public class SearchFacetCategory {
                 logs.add(item.getKey() + ": returned id " + item.getValue() + "");
             }
             if (print) {
+                System.out.println(String.join("\n", logs));
 
-                out.print("<html><body>");
-                out.print(String.join("<br>", logs));
-                out.print("</body></html>");
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
+            System.out.println(ex.getMessage());
+
         }
     }
 }

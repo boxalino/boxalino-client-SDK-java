@@ -6,14 +6,10 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxSearchRequest;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -34,7 +30,7 @@ public class SearchDebugRequest {
     public boolean print = true;
     boolean isDev;
     public BxChooseResponse bxResponse = null;
-    public BxClient bxClient=null;
+    public BxClient bxClient = null;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,12 +38,11 @@ public class SearchDebugRequest {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
+     
      * @throws IOException if an I/O error occurs
      */
     public void searchDebugRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        PrintWriter out = response.getWriter();
         try {
             /* TODO output your page here. You may use following sample code. */
             /**
@@ -68,14 +63,14 @@ public class SearchDebugRequest {
 
             //optional, just used here in example to collect logs
             boolean print = true;
-            /* TODO Instantiate ServletHttpContext to manage cookies.*/
-            ServletHttpContext.request = request;
-            ServletHttpContext.response = response;
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
             bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
 
+            /* TODO Instantiate Request & Response to manage cookies.*/
+            bxClient.request = request;
+            bxClient.response = response;
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "women"; // a search query
             int hitCount = 10; //a maximum number of search result to return in one page
@@ -89,21 +84,18 @@ public class SearchDebugRequest {
             //make the query to Boxalino server and get back the response for all requests
             bxResponse = bxClient.getResponse();
             if (print) {
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                out.print("<html><body>");
-                out.print("<pre>" + gson.toJson(bxClient.getThriftChoiceRequest()) + "</pre>");
-                out.print("</body></html>");
+                System.out.println(String.join("\n", logs));
+
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 
-     /**
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
      *
@@ -111,7 +103,6 @@ public class SearchDebugRequest {
      */
     public void searchDebugRequest() throws IOException {
 
-        PrintWriter out =new PrintWriter(System.out);
         try {
             /* TODO output your page here. You may use following sample code. */
             /**
@@ -132,7 +123,6 @@ public class SearchDebugRequest {
 
             //optional, just used here in example to collect logs
             boolean print = true;
-            
 
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
@@ -151,17 +141,14 @@ public class SearchDebugRequest {
             //make the query to Boxalino server and get back the response for all requests
             bxResponse = bxClient.getResponse();
             if (print) {
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                out.print("<html><body>");
-                out.print("<pre>" + gson.toJson(bxClient.getThriftChoiceRequest()) + "</pre>");
-                out.print("</body></html>");
+                System.out.println(String.join("\n", logs));
+
             }
 
         } catch (BoxalinoException ex) {
 
-            out.print("<html><body>");
-            out.print(ex.getMessage());
-            out.print("</body></html>");
-        } 
+            System.out.println(ex.getMessage());
+
+        }
     }
 }

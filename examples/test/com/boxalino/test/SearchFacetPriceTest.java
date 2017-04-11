@@ -7,6 +7,8 @@ package com.boxalino.test;
 
 import com.boxalino.examples.SearchFacetPrice;
 import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -60,9 +62,9 @@ public class SearchFacetPriceTest {
             _searchFacetPrice.print = false;
 
             _searchFacetPrice.searchFacetPrice();
-            String[] princeRange = new String[_searchFacetPrice.facets.getPriceRanges().keySet().size()];
-            princeRange = _searchFacetPrice.facets.getPriceRanges().keySet().toArray(new String[0]);
-            assertEquals(princeRange[0], "22.0-37.5");
+            List<String> priceRange = new ArrayList<String>();
+            priceRange = Arrays.asList(_searchFacetPrice.facets.getPriceRanges().keySet().toArray(new String[0]));
+            assertEquals(priceRange.get(0), "22.0-37.5");
             for (Map.Entry item : _searchFacetPrice.bxResponse.getHitFieldValues(new String[]{_searchFacetPrice.facets.getPriceFieldName()}, "", true, 0, 10).entrySet()) {
 
                 for (Map.Entry fieldValueMapItem : ((Map<String, List<String>>) item.getValue()).entrySet()) {
