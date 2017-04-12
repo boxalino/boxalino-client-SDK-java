@@ -10,8 +10,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
-    </head>
+            </head>
     <body>
-     <% new com.boxalino.examples.SearchFacetPrice().searchFacetPrice(request,response);%>
+     <% new com.boxalino.examples.RecommendationsSimilarComplementary().recommendationsSimilarComplementary();%>
     </body>
 </html>

@@ -6,11 +6,14 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
+import Helper.HttpContext;
+import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxRequest;
 import boxalino.client.SDK.BxSearchRequest;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +31,11 @@ public class SearchSortField {
     public String password;
     public boolean print;
     public BxChooseResponse bxResponse = null;
+    private HttpContext httpContext = null;
+    private String ip = "";
+    private String referer = "";
+    private String currentUrl = "";
+    private String userAgent = "";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,26 +43,26 @@ public class SearchSortField {
      *
      * @param request servlet request
      * @param response servlet response
-     
+     *
      * @throws IOException if an I/O error occurs
      */
     public void searchSortField(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         try {
             /* TODO output your page here. You may use following sample code. */
-            String account = "csharp_unittest"; // your account name
-            String password = "csharp_unittest"; // your account password
+            account = "csharp_unittest"; // your account name
+            password = "csharp_unittest"; // your account password
             boolean isDev = false;
             String domain = ""; // your web-site domain (e.g.: www.abc.com)
-            List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
+            List<String> logs = new ArrayList<>(); //optional, just used here in example to collect logs
 
+            //Create HttpContext instance
+            httpContext = new ServletHttpContext(domain, request, response);
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
 
-            /* TODO Instantiate Request & Response to manage cookies.*/
-            bxClient.request = request;
-            bxClient.response = response;
+            
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "women"; // a search query
             int hitCount = 10; //a maximum number of search result to return in one page
@@ -101,6 +109,8 @@ public class SearchSortField {
 
             System.out.println(ex.getMessage());
 
+        } catch (URISyntaxException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -114,15 +124,17 @@ public class SearchSortField {
 
         try {
             /* TODO output your page here. You may use following sample code. */
-            String account = "csharp_unittest"; // your account name
-            String password = "csharp_unittest"; // your account password
+            account = "csharp_unittest"; // your account name
+            password = "csharp_unittest"; // your account password
             boolean isDev = false;
             String domain = ""; // your web-site domain (e.g.: www.abc.com)
-            List<String> logs = new ArrayList<String>(); //optional, just used here in example to collect logs
+            List<String> logs = new ArrayList<>(); //optional, just used here in example to collect logs
 
+            //Create HttpContext instance
+            httpContext = new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
 
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "women"; // a search query

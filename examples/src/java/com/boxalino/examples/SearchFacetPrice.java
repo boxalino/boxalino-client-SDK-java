@@ -6,6 +6,8 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
+import Helper.HttpContext;
+import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxFacets;
@@ -13,6 +15,7 @@ import boxalino.client.SDK.BxSearchRequest;
 import com.boxalino.p13n.api.thrift.FacetValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,14 +32,19 @@ public class SearchFacetPrice {
     public String account;
     public String password;
     public boolean print;
-    String domain;
-    List<String> logs;
-    String language;
-    String queryText;
-    int hitCount;
-    String selectedValue;
+    private String domain;
+    private List<String> logs;
+    private String language;
+    private String queryText;
+    private int hitCount;
+    private String selectedValue;
     public BxChooseResponse bxResponse = null;
     public BxFacets facets = null;
+    private HttpContext httpContext = null;
+    private String ip="";
+    private String referer="";
+    private String currentUrl="";    
+    private String userAgent = "";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,12 +52,11 @@ public class SearchFacetPrice {
      *
      * @param request servlet request
      * @param response servlet response
-     
+     *
      * @throws IOException if an I/O error occurs
      */
     public void searchFacetPrice(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        PrintWriter out = response.getWriter();
         try {
             /* TODO output your page here. You may use following sample code. */
             /**
@@ -61,19 +68,17 @@ public class SearchFacetPrice {
              */
 
             //required parameters you should set for this example to work
-            String account = "boxalino_automated_tests"; // your account name
-            String password = "boxalino_automated_tests"; // your account password
+            account = "boxalino_automated_tests"; // your account name
+            password = "boxalino_automated_tests"; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
-            logs = new ArrayList<String>(); //optional, just used here in example to collect logs
+            logs = new ArrayList<>(); //optional, just used here in example to collect logs
             boolean isDev = false;
 
+            //Create HttpContext instance
+            httpContext = new ServletHttpContext(domain, request, response);
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-
-            /* TODO Instantiate Request & Response to manage cookies.*/
-            bxClient.request = request;
-            bxClient.response = response;
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             queryText = "women"; // a search query
@@ -134,6 +139,8 @@ public class SearchFacetPrice {
 
             System.out.println(ex.getMessage());
 
+        } catch (URISyntaxException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -157,15 +164,17 @@ public class SearchFacetPrice {
              */
 
             //required parameters you should set for this example to work
-            String account = "boxalino_automated_tests"; // your account name
-            String password = "boxalino_automated_tests"; // your account password
+            account = "boxalino_automated_tests"; // your account name
+            password = "boxalino_automated_tests"; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
-            logs = new ArrayList<String>(); //optional, just used here in example to collect logs
+            logs = new ArrayList<>(); //optional, just used here in example to collect logs
             boolean isDev = false;
 
+            //Create HttpContext instance
+            httpContext = new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             queryText = "women"; // a search query

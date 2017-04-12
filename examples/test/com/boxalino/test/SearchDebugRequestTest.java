@@ -5,6 +5,7 @@
  */
 package com.boxalino.test;
 
+import Helper.HttpContext;
 import boxalino.client.SDK.BxClient;
 import com.boxalino.examples.SearchDebugRequest;
 import com.boxalino.p13n.api.thrift.ChoiceRequest;
@@ -15,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 /**
  *
@@ -57,9 +57,10 @@ public class SearchDebugRequestTest {
             _searchDebugRequest.print = false;
 
             _searchDebugRequest.searchDebugRequest();
-            ChoiceRequest choice=new ChoiceRequest();
-            _searchDebugRequest.bxClient=new BxClient(account, password, "", false, null, 0, null, null, null, null);
-            assertEquals(_searchDebugRequest.bxClient.getThriftChoiceRequest().getClass(),choice.getClass());
+            ChoiceRequest choice = new ChoiceRequest();
+            HttpContext httpContext = new HttpContext("", "", "", "", "");
+            _searchDebugRequest.bxClient = new BxClient(account, password, "", false, null, 0, null, null, null, null, httpContext);
+            assertEquals(_searchDebugRequest.bxClient.getThriftChoiceRequest().getClass(), choice.getClass());
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());
         }

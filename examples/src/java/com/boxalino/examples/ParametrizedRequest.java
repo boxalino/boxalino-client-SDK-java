@@ -6,6 +6,8 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
+import Helper.HttpContext;
+import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxFacets;
@@ -13,12 +15,12 @@ import boxalino.client.SDK.BxFilter;
 import boxalino.client.SDK.BxParametrizedRequest;
 import boxalino.client.SDK.BxSortFields;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,25 +30,28 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ParametrizedRequest {
 
-    String account;
-    String password;
-    String domain;
-    List<String> logs;
-    String[] languages;
+    public String account;
+    public String password;
+    private String domain;
+    private List<String> logs;    
     boolean print = true;
     boolean isDev;
     public BxChooseResponse bxResponse = null;
-
-    String requestWeightedParametersPrefix;
-    String requestFiltersPrefix;
-    String requestFacetsPrefix;
-    String requestSortFieldPrefix;
-    String requestReturnFieldsName;
-    List<String> bxReturnFields;
-    String getItemFieldsCB;
-    String language;
-    String choiceId;
-    int hitCount;
+    private String requestWeightedParametersPrefix;
+    private String requestFiltersPrefix;
+    private String requestFacetsPrefix;
+    private String requestSortFieldPrefix;
+    private String requestReturnFieldsName;
+    private List<String> bxReturnFields;
+    private String getItemFieldsCB;
+    private String language;
+    private String choiceId;
+    private int hitCount;
+    private HttpContext httpContext = null;
+    private String ip="";
+    private String referer="";
+    private String currentUrl="";    
+    private String userAgent = "";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -54,7 +59,7 @@ public class ParametrizedRequest {
      *
      * @param request servlet request
      * @param response servlet response
-     
+     *
      * @throws IOException if an I/O error occurs
      */
     public void parametrizedRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -65,17 +70,16 @@ public class ParametrizedRequest {
             account = "csharp_unittest";
             password = "csharp_unittest";
             domain = ""; // your web-site domain (e.g.: www.abc.com)
-            logs = new ArrayList<String>(); //optional, just used here in example to collect logs
+            logs = new ArrayList<>(); //optional, just used here in example to collect logs
             isDev = true;
 
+            //Create HttpContext instance
+            httpContext = new ServletHttpContext(domain, request, response);
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-            /* TODO Instantiate Request & Response to manage cookies.*/
-            bxClient.request = request;
-            bxClient.response = response;
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
 
-            bxClient.setRequestMap(new HashMap<String, String>());
+            bxClient.setRequestMap(new HashMap<>());
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             choiceId = "productfinder"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
@@ -86,7 +90,7 @@ public class ParametrizedRequest {
             requestSortFieldPrefix = "bxsf_";
             requestReturnFieldsName = "bxrf";
 
-            bxReturnFields = new ArrayList<String>();
+            bxReturnFields = new ArrayList<>();
             bxReturnFields.add("id");  //the list of fields which should be returned directly by Boxalino, the others will be retrieved through a call-back function
             getItemFieldsCB = "getItemFieldsCB";
 
@@ -146,6 +150,8 @@ public class ParametrizedRequest {
 
             System.out.println(ex.getMessage());
 
+        } catch (URISyntaxException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -163,13 +169,14 @@ public class ParametrizedRequest {
             account = "csharp_unittest";
             password = "csharp_unittest";
             domain = ""; // your web-site domain (e.g.: www.abc.com)
-            logs = new ArrayList<String>(); //optional, just used here in example to collect logs
+            logs = new ArrayList<>(); //optional, just used here in example to collect logs
             isDev = true;
-
+            //Create HttpContext instance
+            httpContext =  new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-            bxClient.setRequestMap(new HashMap<String, String>());
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
+            bxClient.setRequestMap(new HashMap<>());
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             choiceId = "productfinder"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)

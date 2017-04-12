@@ -6,10 +6,12 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
+import Helper.HttpContext;
+import Helper.ServletHttpContext;
 import boxalino.client.SDK.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
+import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -22,12 +24,16 @@ public class Search2ndPage {
 
     public String account;
     public String password;
-    String domain;
-    List<String> logs;
-    String[] languages;
+    private String domain;
+    private List<String> logs;
     public boolean print = true;
     boolean isDev;
     public BxChooseResponse bxResponse = null;
+    private HttpContext httpContext = null;
+    private String ip="";
+    private String referer="";
+    private String currentUrl="";    
+    private String userAgent = "";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,7 +41,7 @@ public class Search2ndPage {
      *
      * @param request servlet request
      * @param response servlet response
-     
+     *
      * @throws IOException if an I/O error occurs
      */
     public void Search2ndPage(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -51,15 +57,10 @@ public class Search2ndPage {
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             logs = new ArrayList<>(); //optional, just used here in example to collect logs
             isDev = true;
-            languages = new String[]{"en"};
-            boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             print = true;
-
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-
-            /* TODO Instantiate Request & Response to manage cookies.*/
-            bxClient.request = request;
-            bxClient.response = response;
+            //Create HttpContext instance
+            httpContext = new ServletHttpContext(domain, request, response);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
 
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "watch"; // a search query
@@ -92,6 +93,8 @@ public class Search2ndPage {
 
             System.out.println(ex.getMessage());
 
+        } catch (URISyntaxException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -114,11 +117,10 @@ public class Search2ndPage {
             domain = ""; // your web-site domain (e.g.: www.abc.com)
             logs = new ArrayList<>(); //optional, just used here in example to collect logs
             isDev = true;
-            languages = new String[]{"en"};
-            boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             print = true;
-
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            //Create HttpContext instance
+            httpContext = new HttpContext(domain,userAgent,ip,referer,currentUrl);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
 
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "watch"; // a search query

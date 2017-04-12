@@ -6,15 +6,17 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
+import Helper.HttpContext;
+import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxAutocompleteRequest;
 import boxalino.client.SDK.BxAutocompleteResponse;
 import boxalino.client.SDK.BxClient;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,6 +34,11 @@ public class SearchAutocompleteItemsBundled {
     public boolean print = true;
     boolean isDev;
     public List<BxAutocompleteResponse> bxAutocompleteResponses = null;
+    private HttpContext httpContext = null;
+    private String ip="";
+    private String referer="";
+    private String currentUrl="";    
+    private String userAgent = "";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,7 +46,7 @@ public class SearchAutocompleteItemsBundled {
      *
      * @param request servlet request
      * @param response servlet response
-     
+     *
      * @throws IOException if an I/O error occurs
      */
     public void searchAutocompleteItemsBundled(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -57,20 +64,18 @@ public class SearchAutocompleteItemsBundled {
             account = "boxalino_automated_tests"; // your account name
             password = "boxalino_automated_tests"; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
-            String[] languages = new String[]{"en"}; //declare the list of available languages
-            boolean isDev = false; //are the data to be pushed dev or prod data?
-            boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
-            List<String> logs = new ArrayList<String>();
+            isDev = false; //are the data to be pushed dev or prod data?
+            logs = new ArrayList<>();
             //optional, just used here in example to collect logs
-            boolean print = true;
+            print = true;
 
+            //Create HttpContext instance
+            httpContext = new ServletHttpContext(domain, request, response);
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-            /* TODO Instantiate Request & Response to manage cookies.*/
-            bxClient.request = request;
-            bxClient.response = response;
-            String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
+
+            language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             List<String> queryTexts = new ArrayList<String>() {
                 {
                     add("whit");
@@ -109,7 +114,6 @@ public class SearchAutocompleteItemsBundled {
 
                 logs.add("textual suggestions for \"" + queryText + "\":\n");
                 for (String suggestion : bxAutocompleteResponse.getTextualSuggestions()) {
-                    
 
                     logs.add("" + suggestion + "");
 
@@ -121,9 +125,8 @@ public class SearchAutocompleteItemsBundled {
                         for (Map.Entry itemFieldValueMap : ((Map<String, List<String>>) item.getValue()).entrySet()) {
                             logs.add(" - " + itemFieldValueMap.getKey() + ": " + String.join(",", (List<String>) itemFieldValueMap.getValue()) + "");
                         }
-                       
+
                     }
-                    
 
                 }
                 logs.add("global item suggestions for \"" + queryText + "\":\n");
@@ -133,7 +136,7 @@ public class SearchAutocompleteItemsBundled {
                     for (Map.Entry fvaluemap : ((Map<String, List<String>>) hitvalue.getValue()).entrySet()) {
                         logs.add(" - " + fvaluemap.getKey() + ": " + String.join(",", (List<String>) fvaluemap.getValue()) + "");
                     }
-                   
+
                 }
             }
             if (print) {
@@ -145,6 +148,8 @@ public class SearchAutocompleteItemsBundled {
 
             System.out.println(ex.getMessage());
 
+        } catch (URISyntaxException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -169,18 +174,18 @@ public class SearchAutocompleteItemsBundled {
             account = "boxalino_automated_tests"; // your account name
             password = "boxalino_automated_tests"; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
-            String[] languages = new String[]{"en"}; //declare the list of available languages
-            boolean isDev = false; //are the data to be pushed dev or prod data?
-            boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
-            List<String> logs = new ArrayList<String>();
+            isDev = false; //are the data to be pushed dev or prod data?
+            logs = new ArrayList<>();
             //optional, just used here in example to collect logs
-            boolean print = true;
+            print = true;
 
+            //Create HttpContext instance
+            httpContext =  new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Client SDK instance
             //N.B.: you should not create several instances of BxClient on the same page, make sure to save it in a static variable and to re-use it.
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
 
-            String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
+            language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             List<String> queryTexts = new ArrayList<String>() {
                 {
                     add("whit");
@@ -219,7 +224,6 @@ public class SearchAutocompleteItemsBundled {
 
                 logs.add("textual suggestions for \"" + queryText + "\":\n");
                 for (String suggestion : bxAutocompleteResponse.getTextualSuggestions()) {
-                   
 
                     logs.add("" + suggestion + "");
 
@@ -231,9 +235,8 @@ public class SearchAutocompleteItemsBundled {
                         for (Map.Entry itemFieldValueMap : ((Map<String, List<String>>) item.getValue()).entrySet()) {
                             logs.add(" - " + itemFieldValueMap.getKey() + ": " + String.join(",", (List<String>) itemFieldValueMap.getValue()) + "");
                         }
-                        
+
                     }
-                    
 
                 }
                 logs.add("global item suggestions for \"" + queryText + "\":\n");
@@ -243,7 +246,7 @@ public class SearchAutocompleteItemsBundled {
                     for (Map.Entry fvaluemap : ((Map<String, List<String>>) hitvalue.getValue()).entrySet()) {
                         logs.add(" - " + fvaluemap.getKey() + ": " + String.join(",", (List<String>) fvaluemap.getValue()) + "");
                     }
-                    
+
                 }
             }
             if (print) {

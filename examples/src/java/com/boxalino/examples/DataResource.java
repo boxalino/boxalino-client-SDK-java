@@ -6,6 +6,7 @@
 package com.boxalino.examples;
 
 import Exception.BoxalinoException;
+import Helper.HttpContext;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxData;
 import java.io.File;
@@ -30,6 +31,10 @@ public class DataResource {
     boolean isDelta; //are the data to be pushed full data (reset index) or delta (add/modify index)?
     List<String> logs; //optional, just used here in example to collect logs
     boolean print;
+    private String ip="";
+    private String referer="";
+    private String currentUrl="";    
+    private String userAgent = "";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -58,9 +63,10 @@ public class DataResource {
             this.isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
             this.logs = new ArrayList<>(); //optional, just used here in example to collect logs
             this.print = true;//optional, just used here in example to collect logs
-
+            //Create HttpContext instance
+            HttpContext httpContext =  new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Data SDK instance
-            BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null), languages, isDev, isDelta);
+            BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null,httpContext), languages, isDev, isDelta);
 
             //To get the real path of the files
             String path = this.getClass().getResource("").getPath();

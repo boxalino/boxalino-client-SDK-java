@@ -7,14 +7,16 @@ package com.boxalino.examples;
 
 import Exception.BoxalinoException;
 import Helper.CustomBasketContent;
+import Helper.HttpContext;
+import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxRecommendationRequest;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,12 +28,17 @@ public class RecommendationsBasket {
 
     public String _account = "boxalino_automated_tests";
     public String _password = "boxalino_automated_tests";
-    String domain;
-    List<String> logs;
-    String language;
+    private String domain;
+    private List<String> logs;
+    private String language;
     public boolean _print = true;
-    boolean isDev;
+    private boolean isDev;
     public BxChooseResponse bxResponse = null;
+    private HttpContext httpContext = null;
+    private String ip="";
+    private String referer="";
+    private String currentUrl="";    
+    private String userAgent = "";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,7 +46,7 @@ public class RecommendationsBasket {
      *
      * @param request servlet request
      * @param response servlet response
-     
+     *
      * @throws IOException if an I/O error occurs
      */
     public void recommendationsBasket(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -49,17 +56,15 @@ public class RecommendationsBasket {
             String account = this._account; // your account name
             String password = this._password; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
-            String[] languages = new String[]{"en"}; //declare the list of available languages
-            boolean isDev = false; //are the data to be pushed dev or prod data?
-            boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
-            List<String> logs = new ArrayList<String>();
+            isDev = false; //are the data to be pushed dev or prod data?            
+            logs = new ArrayList<>();
             //optional, just used here in example to collect logs
             boolean print = this._print;
 
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
-            /* TODO Instantiate Request & Response to manage cookies.*/
-            bxClient.request = request;
-            bxClient.response = response;
+            //Create HttpContext instance
+            httpContext = new ServletHttpContext(domain, request, response);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
+
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String choiceId = "basket"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
             String itemFieldId = "id"; // the field you want to use to define the id of the product (normally id, but could also be a group id if you have a difference between group id and sku)
@@ -100,6 +105,8 @@ public class RecommendationsBasket {
 
             System.out.println(ex.getMessage());
 
+        } catch (URISyntaxException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -116,14 +123,14 @@ public class RecommendationsBasket {
             String account = this._account; // your account name
             String password = this._password; // your account password
             domain = ""; // your web-site domain (e.g.: www.abc.com)
-            String[] languages = new String[]{"en"}; //declare the list of available languages
-            boolean isDev = false; //are the data to be pushed dev or prod data?
-            boolean isDelta = false; //are the data to be pushed full data (reset index) or delta (add/modify index)?
-            List<String> logs = new ArrayList<String>();
+            isDev = false; //are the data to be pushed dev or prod data?            
+            logs = new ArrayList<>();
             //optional, just used here in example to collect logs
             boolean print = this._print;
 
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null);
+            //Create HttpContext instance
+            httpContext = new HttpContext(domain,userAgent,ip,referer,currentUrl);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String choiceId = "basket"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
             String itemFieldId = "id"; // the field you want to use to define the id of the product (normally id, but could also be a group id if you have a difference between group id and sku)
