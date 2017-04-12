@@ -1,4 +1,4 @@
-package boxalino.p13n.pool;
+package boxalino.client.SDK;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

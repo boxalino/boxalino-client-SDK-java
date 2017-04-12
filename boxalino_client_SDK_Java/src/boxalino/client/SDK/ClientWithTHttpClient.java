@@ -1,4 +1,4 @@
-package boxalino.p13n.pool;
+package boxalino.client.SDK;
 
 import org.apache.thrift.transport.THttpClient;
 

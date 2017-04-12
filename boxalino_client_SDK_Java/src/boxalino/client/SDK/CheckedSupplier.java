@@ -1,4 +1,4 @@
-package boxalino.p13n.pool;
+package boxalino.client.SDK;
 
 @FunctionalInterface
 public interface CheckedSupplier<R> {

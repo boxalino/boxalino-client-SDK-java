@@ -1,4 +1,4 @@
-package boxalino.p13n.pool;
+package boxalino.client.SDK;
 
 import com.boxalino.p13n.api.thrift.P13nService;
 

@@ -23,8 +23,7 @@ public class HttpContext {
     private String currentUrl;
     private String htmlDebug = "";
     private String userAgent = "";
-    
-     
+
     public HttpContext(String domain, String userAgent, String ip, String referer, String currentUrl) {
         this.sessionId = null;
         this.profileId = null;
@@ -43,6 +42,21 @@ public class HttpContext {
         this.ip = ip;
         this.referer = referer;
         this.currentUrl = currentUrl;
+    }
+
+    public void setSessionAndProfile(String sessionId, String profileId) {
+        this.sessionId = sessionId;
+        this.profileId = profileId;
+    }
+
+    public String getSessionId(String domain) {
+        this.getSessionAndProfile(null, null, domain);
+        return this.sessionId;
+    }
+
+    public String getProfileId(String domain) {
+        this.getSessionAndProfile(null, null, domain);
+        return this.profileId;
     }
 
     public String[] getSessionAndProfile(String sessionId, String profileId, String domain) {

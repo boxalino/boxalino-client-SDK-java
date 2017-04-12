@@ -20,9 +20,8 @@ public class ServletHttpContext extends HttpContext {
 
     public HttpServletRequest request;
     public HttpServletResponse response;
-    
-    public ServletHttpContext(String domain, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
 
+    public ServletHttpContext(String domain, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
         super(domain, request.getHeader("User-Agent"), request.getRemoteAddr(),
                 request.getHeader("referer") == null ? EMPTY_STRING : new URI(request.getHeader("referer")).getPath(),
                 request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getRequestURI() + "?" + request.getQueryString());

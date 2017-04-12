@@ -1,4 +1,4 @@
-package boxalino.p13n.pool;
+package boxalino.client.SDK;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

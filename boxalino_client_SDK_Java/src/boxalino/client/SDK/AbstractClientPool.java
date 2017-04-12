@@ -1,4 +1,4 @@
-package boxalino.p13n.pool;
+package boxalino.client.SDK;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.http.auth.AuthScope;
