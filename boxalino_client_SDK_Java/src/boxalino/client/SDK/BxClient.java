@@ -7,6 +7,7 @@ package boxalino.client.SDK;
 
 import Exception.BoxalinoException;
 import Helper.HttpContext;
+
 import com.boxalino.p13n.api.thrift.AutocompleteRequest;
 import com.boxalino.p13n.api.thrift.AutocompleteRequestBundle;
 import com.boxalino.p13n.api.thrift.AutocompleteResponse;
@@ -61,6 +62,7 @@ public class BxClient {
 
     private Map<String, String> requestMap;
     private HttpContext httpContext;
+
 
     public BxClient(String account, String password, String domain, boolean isDev, String host, int port, String uri, String schema, String p13n_username, String p13n_password, HttpContext httpContext) throws BoxalinoException {
 
@@ -148,11 +150,15 @@ public class BxClient {
     }
 
     public void setSessionAndProfile(String sessionId, String profileId) {
-        this.httpContext.setSessionAndProfile(sessionId, profileId);
+
+    	this.httpContext.setSessionAndProfile(sessionId, profileId);
+
     }
 
     private String[] getSessionAndProfile() throws BoxalinoException {
-        return this.httpContext.getSessionAndProfile(null, null, this.domain);
+
+    	return this.httpContext.getSessionAndProfile(null, null, this.domain);
+
     }
 
     private UserRecord getUserRecord() {
@@ -223,11 +229,8 @@ public class BxClient {
                 });
                 put("User-Referer", new ArrayList<String>() {
                     {
-//                        try {
-                        add(httpContext.getReferer());
-//                        } catch (URISyntaxException ex) {
-//                            throw ex;
-//                        }
+
+                        add(httpContext.getReferer());                     
                     }
                 });
                 put("User-URL", new ArrayList<String>() {
