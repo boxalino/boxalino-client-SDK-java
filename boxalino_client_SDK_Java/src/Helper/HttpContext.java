@@ -45,6 +45,21 @@ public class HttpContext {
         this.currentUrl = currentUrl;
     }
 
+    public void setSessionAndProfile(String sessionId, String profileId) {
+        this.sessionId = sessionId;
+        this.profileId = profileId;
+    }
+    
+    public String getSessionId(String domain) {
+    	this.getSessionAndProfile(null,  null,  domain);
+    	return this.sessionId;
+    }
+    
+    public String getProfileId(String domain) {
+    	this.getSessionAndProfile(null,  null,  domain);
+    	return this.profileId;
+    }
+
     public String[] getSessionAndProfile(String sessionId, String profileId, String domain) {
         if (sessionId != null) {
             this.sessionId = sessionId;

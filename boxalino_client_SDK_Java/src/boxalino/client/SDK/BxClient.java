@@ -7,7 +7,6 @@ package boxalino.client.SDK;
 
 import Exception.BoxalinoException;
 import Helper.HttpContext;
-import Helper.ServletHttpContext;
 import boxalino.p13n.pool.ClientPool;
 import boxalino.p13n.pool.PoolProvider;
 import com.boxalino.p13n.api.thrift.AutocompleteRequest;
@@ -30,8 +29,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.transport.THttpClient;
@@ -64,17 +61,10 @@ public class BxClient {
     private int _timeout = 2;
     private Map<String, ArrayList<String>> requestContextParameters;
 
-    public String sessionId = null;
-    public String profileId = null;
-
     private Map<String, String> requestMap;
     private HttpContext httpContext;
-    //Following is used when Cookies need to be managed
-    private ServletHttpContext servlethttpContext;
-    public HttpServletRequest request;
-    public HttpServletResponse response;
 
-    public BxClient(String account, String password, String domain, boolean isDev, String host, int port, String uri, String schema, String p13n_username, String p13n_password) throws BoxalinoException {
+   public BxClient(String account, String password, String domain, boolean isDev, String host, int port, String uri, String schema, String p13n_username, String p13n_password, HttpContext httpContext) throws BoxalinoException {
 
         //default value start
         if (host == null || host.equals(Helper.Common.EMPTY_STRING)) {
@@ -100,8 +90,6 @@ public class BxClient {
         this.requestMap = new HashMap<>();
         this._timeout = 2;
         this.requestContextParameters = new HashMap<>();
-        this.sessionId = null;
-        this.profileId = null;
 
         this.account = account;
         this.password = password;
@@ -134,20 +122,8 @@ public class BxClient {
         this.domain = domain;
         //default value end
 
-        this.httpContext = new HttpContext(this.sessionId,this.profileId,this.domain, this.schema, this.uri, this.schema, this.uri);
+        this.httpContext = httpContext;
 
-    }
-
-    public void InstantiateServletHttp() throws BoxalinoException {
-        // Following is used when cookies need to be managed
-        if (request != null && response != null) {
-            try {
-                this.servlethttpContext = new ServletHttpContext(domain, request, response);
-            } catch (URISyntaxException ex) {
-                //throw ex;
-                throw new BoxalinoException(ex.getMessage(), ex.getCause());
-            }
-        }
     }
 
     public void setRequestMap(Map<String, String> requestMap) {
@@ -174,19 +150,11 @@ public class BxClient {
     }
 
     public void setSessionAndProfile(String sessionId, String profileId) {
-        this.sessionId = sessionId;
-        this.profileId = profileId;
+    	this.httpContext.setSessionAndProfile(sessionId, profileId);
     }
 
     private String[] getSessionAndProfile() throws BoxalinoException {
-        if (request != null && response != null) {
-            if (this.servlethttpContext == null) {
-                InstantiateServletHttp();
-            }
-            return this.servlethttpContext.getSessionAndProfile(this.sessionId, this.profileId, this.domain);
-        } else {
-            return this.httpContext.getSessionAndProfile(this.sessionId, this.profileId, this.domain);
-        }
+    	return this.httpContext.getSessionAndProfile(null, null, this.domain);
     }
 
     private UserRecord getUserRecord() {
@@ -226,7 +194,7 @@ public class BxClient {
         Map<String, ArrayList<String>> parameters = this.requestContextParameters;
         chooseRequests.forEach((request) -> {
             request.getRequestContextParameters().entrySet().forEach((v) -> {
-                parameters.put(v.getKey(), new ArrayList(v.getValue()));
+                parameters.put(v.getKey(), new ArrayList<String>(v.getValue()));
             });
         });
         return parameters;
@@ -237,7 +205,7 @@ public class BxClient {
         list = this.getSessionAndProfile();
         setSessionAndProfile(list[0], list[1]);
         RequestContext requestContext = new RequestContext();
-        String sessionIdd = this.sessionId;
+        String sessionIdd = this.httpContext.getSessionId(this.domain);
         requestContext.parameters = new HashMap<String, List<String>>() {
             {
                 put("User-Agent", new ArrayList<String>() {
@@ -297,7 +265,7 @@ public class BxClient {
         list = this.getSessionAndProfile();
 
         choiceRequest.userRecord = this.getUserRecord();
-        choiceRequest.profileId = profileId;
+        choiceRequest.profileId = this.httpContext.getProfileId(this.domain);
         choiceRequest.inquiries = inquiries;
         if (requestContext == null) {
             requestContext = this.getRequestContext();
@@ -316,8 +284,8 @@ public class BxClient {
     }
 
     protected Map<String, ArrayList<String>> getBasicRequestContextParameters() throws URISyntaxException, BoxalinoException {
-        sessionId = this.getSessionAndProfile()[0];
-        profileId = this.getSessionAndProfile()[1];
+        String sessionId = this.httpContext.getSessionId(this.domain);
+        String profileId = this.httpContext.getProfileId(this.domain);
         return new HashMap<String, ArrayList<String>>() {
             {
                 put("User-Agent", new ArrayList<String>() {
@@ -553,13 +521,9 @@ public class BxClient {
 
     public void autocomplete() throws IOException, UnsupportedEncodingException, TException, URISyntaxException, MalformedURLException, BoxalinoException {
         try {
-            String[] str = this.getSessionAndProfile();
-            sessionId = str[0];
-            profileId = str[1];
-
             UserRecord userRecord = this.getUserRecord();
 
-            ArrayList<AutocompleteRequest> p13nrequests = use(this.autocompleteRequests, profileId, userRecord);
+            ArrayList<AutocompleteRequest> p13nrequests = use(this.autocompleteRequests, this.httpContext.getSessionId(this.domain), userRecord);
             int i = -1;
             this.autocompleteResponses = use1(this.p13nautocompleteAll(p13nrequests), i);
         } catch (UncheckedIOException ex) {
