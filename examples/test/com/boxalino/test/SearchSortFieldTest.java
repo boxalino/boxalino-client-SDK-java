@@ -6,7 +6,6 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchSortField;
-import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,8 +58,8 @@ public class SearchSortFieldTest {
 
             _searchSortField.searchSortField();
             String sortField = "title";
-            List<String> fieldsToMatch=Arrays.asList("1940","41");
-            List<String> HitfieldValues=Arrays.asList(_searchSortField.bxResponse.getHitFieldValues(new String[]{sortField}, "", true, 0, 10).keySet().toArray(new String[0]));
+            List<String> fieldsToMatch=Arrays.asList("41","1940");
+            List<String> HitfieldValues=Arrays.asList(_searchSortField.bxResponse.getHitFieldValues(java.util.Arrays.asList(sortField), "", true, 0, 10).keySet().toArray(new String[0]));
             List<String> fieldsSelected = new ArrayList<>(HitfieldValues.subList(0,2));
             assertEquals(fieldsSelected, fieldsToMatch);
 

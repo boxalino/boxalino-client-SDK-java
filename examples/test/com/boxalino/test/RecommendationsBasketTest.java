@@ -6,11 +6,8 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.RecommendationsBasket;
-import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -66,7 +63,7 @@ public class RecommendationsBasketTest {
                     
                     
             
-           assertEquals(Arrays.asList(_recommendationsBasket.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0])), hitIds);
+           assertEquals(Arrays.asList(_recommendationsBasket.bxResponse.getHitIds("", true, 0, 10, "id").toArray(new String[0])), hitIds);
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());
         }

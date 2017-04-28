@@ -57,7 +57,7 @@ public class RecommendationsSimilarTest {
             List<String> hitIds= Arrays.asList("1","2","3","4","5","6","7","8","9","10");
 
             _recommendationsSimilar.recommendationsSimilar();
-            assertEquals(Arrays.asList(_recommendationsSimilar.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0])), hitIds);
+            assertEquals(Arrays.asList(_recommendationsSimilar.bxResponse.getHitIds("", true, 0, 10, "id").toArray(new String[0])), hitIds);
 
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());

@@ -6,7 +6,6 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchAutocompleteBasic;
-import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;

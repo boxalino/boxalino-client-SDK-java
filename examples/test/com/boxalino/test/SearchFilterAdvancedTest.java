@@ -62,7 +62,7 @@ public class SearchFilterAdvancedTest {
                     add("products_color");
                 }
             };
-           assertEquals(_searchFilterAdvanced.bxResponse.getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).size(),10);            
+           assertEquals(_searchFilterAdvanced.bxResponse.getHitFieldValues(fieldNames, "", true, 0, 10).size(),10);            
            
 
         } catch (Exception ex) {

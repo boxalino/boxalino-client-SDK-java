@@ -63,7 +63,7 @@ public class SearchAutoCompleteItemsTest {
            textualSuggestions.add("push it messenger bag");
            
             _searchAutocompleteItems.SearchAutocompleteItems();
-            String[] fieldNames = new String[]{"title"};
+            List<String> fieldNames = java.util.Arrays.asList("title");
             List<Object> itemSuggestions = Arrays.asList(_searchAutocompleteItems.bxAutocompleteResponse.getBxSearchResponse("").getHitFieldValues(fieldNames, "", true, 0, 10).values().toArray());
             assertEquals(itemSuggestions.size(), 5);
             assertEquals(_searchAutocompleteItems.bxAutocompleteResponse.getTextualSuggestions(), textualSuggestions);

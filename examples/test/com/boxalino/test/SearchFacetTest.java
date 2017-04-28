@@ -6,7 +6,6 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchFacet;
-import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -76,7 +75,7 @@ public class SearchFacetTest {
             productColor1.put("products_color", color1);
             productColor2.put("products_color", color2);
 
-            for (Map.Entry item : _searchFacet.bxResponse.getHitFieldValues(Arrays.copyOf(_searchFacet.facetField.toArray(), _searchFacet.facetField.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
+            for (Map.Entry item : _searchFacet.bxResponse.getHitFieldValues(_searchFacet.facetField, "", true, 0, 10).entrySet()) {
                 if (item.getKey().toString().equals("41")) {
                     assertEquals(item.getValue(), productColor1);
                 }

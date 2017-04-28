@@ -5,8 +5,6 @@
  */
 package com.boxalino.test;
 
-import boxalino.client.SDK.BxAutocompleteRequest;
-import boxalino.client.SDK.BxAutocompleteResponse;
 import com.boxalino.examples.SearchAutocompleteItemsBundled;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,31 +61,30 @@ public class SearchAutocompleteItemsBundledTest {
 
             _searchAutocompleteItemsBundled.searchAutocompleteItemsBundled();
             assertEquals(_searchAutocompleteItemsBundled.bxAutocompleteResponses.size(), 2);
-          
-           
+
             //first response
             assertEquals(_searchAutocompleteItemsBundled.bxAutocompleteResponses.get(0).getTextualSuggestions(), firstTextualSuggestions);
 
-            String[] fieldNames = new String[]{"title"};
-             
-             List<String> globalIds1=new ArrayList<String>();
-             globalIds1.add("355");
-             globalIds1.add("115");
-             globalIds1.add("611");
-             globalIds1.add("227");
-             globalIds1.add("131");
-             
-             List<String> globalIds2=new ArrayList<String>();
-             globalIds2.add("1545");
-             
+            List<String> fieldNames = java.util.Arrays.asList("title");
+
+            List<String> globalIds1 = new ArrayList<String>();
+            globalIds1.add("115");
+            globalIds1.add("131");
+            globalIds1.add("227");
+            globalIds1.add("355");
+            globalIds1.add("611");
+
+            List<String> globalIds2 = new ArrayList<String>();
+            globalIds2.add("1545");
+
             //global ids
-            assertEquals(Arrays.asList(_searchAutocompleteItemsBundled.bxAutocompleteResponses.get(0).getBxSearchResponse("").getHitFieldValues(fieldNames, "", true, 0, 10).keySet().toArray(new String[0])),globalIds1 );
+            assertEquals(Arrays.asList(_searchAutocompleteItemsBundled.bxAutocompleteResponses.get(0).getBxSearchResponse("").getHitFieldValues(fieldNames, "", true, 0, 10).keySet().toArray(new String[0])), globalIds1);
 
             //second response
             assertEquals(_searchAutocompleteItemsBundled.bxAutocompleteResponses.get(1).getTextualSuggestions(), secondTextualSuggestions);
 
             //global ids
-            assertEquals(Arrays.asList(_searchAutocompleteItemsBundled.bxAutocompleteResponses.get(1).getBxSearchResponse("").getHitFieldValues(fieldNames, "", true, 0, 10).keySet().toArray(new String[0])),globalIds2);
+            assertEquals(Arrays.asList(_searchAutocompleteItemsBundled.bxAutocompleteResponses.get(1).getBxSearchResponse("").getHitFieldValues(fieldNames, "", true, 0, 10).keySet().toArray(new String[0])), globalIds2);
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());
         }

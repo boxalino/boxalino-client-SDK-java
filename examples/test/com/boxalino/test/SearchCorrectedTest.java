@@ -6,7 +6,6 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchCorrected;
-import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
@@ -60,7 +59,7 @@ public class SearchCorrectedTest {
             _searchCorrected.searchCorrected();
             assertEquals(_searchCorrected.bxResponse.areResultsCorrected("", 0, 10), true);
 
-            assertEquals(Arrays.asList(_searchCorrected.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0])), hitIds);
+            assertEquals(Arrays.asList(_searchCorrected.bxResponse.getHitIds("", true, 0, 10, "id").toArray(new String[0])), hitIds);
 
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());

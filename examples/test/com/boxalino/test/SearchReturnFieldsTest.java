@@ -6,11 +6,9 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchReturnFields;
-import com.sun.xml.rpc.processor.modeler.j2ee.xml.string;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -79,7 +77,7 @@ public class SearchReturnFieldsTest {
             
             ArrayList<String> fieldNames = new ArrayList<String>();            
             fieldNames.add("products_color");
-            for (Map.Entry item : _searchReturnFields.bxResponse.getHitFieldValues(Arrays.copyOf(fieldNames.toArray(), fieldNames.toArray().length, String[].class), "", true, 0, 10).entrySet()) {
+            for (Map.Entry item : _searchReturnFields.bxResponse.getHitFieldValues(fieldNames, "", true, 0, 10).entrySet()) {
                 if (item.getKey().toString().equals("41")) {
                     assertEquals(item.getValue(), productColor1);
                 }

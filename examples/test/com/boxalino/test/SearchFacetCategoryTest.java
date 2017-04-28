@@ -57,7 +57,7 @@ public class SearchFacetCategoryTest {
 
             _searchFacetCategory.searchFacetCategory();
             List<String> hitIds = Arrays.asList("41", "1940");
-            assertEquals(Arrays.asList(_searchFacetCategory.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0])), hitIds);
+            assertEquals(Arrays.asList(_searchFacetCategory.bxResponse.getHitIds("", true, 0, 10, "id").toArray(new String[0])), hitIds);
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());
         }

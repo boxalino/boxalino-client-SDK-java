@@ -6,11 +6,9 @@
 package com.boxalino.test;
 
 import com.boxalino.examples.SearchFilter;
-import javax.validation.constraints.AssertTrue;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -57,8 +55,8 @@ public class SearchFilterTest {
 
             _searchFilter.searchFilter();
 
-            assertTrue(!_searchFilter.bxResponse.getHitIds("", true, 0, 10, "id").containsKey("41"));
-            assertTrue(!_searchFilter.bxResponse.getHitIds("", true, 0, 10, "id").containsKey("1940"));
+            assertTrue(!_searchFilter.bxResponse.getHitIds("", true, 0, 10, "id").contains("41"));
+            assertTrue(!_searchFilter.bxResponse.getHitIds("", true, 0, 10, "id").contains("1940"));
 
         } catch (Exception ex) {
             Assert.fail("Expected no exception, but got: " + ex.getMessage());

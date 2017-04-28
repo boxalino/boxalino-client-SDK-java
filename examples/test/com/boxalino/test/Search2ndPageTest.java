@@ -55,7 +55,7 @@ public class Search2ndPageTest {
                 _search2ndPage.print = false;
                 List<String> hitIds= Arrays.asList("40","41","42","44");
                 _search2ndPage.Search2ndPage();
-                assertEquals(Arrays.asList(_search2ndPage.bxResponse.getHitIds("", true, 0, 10, "id").values().toArray(new String[0])), hitIds);
+                assertEquals(Arrays.asList(_search2ndPage.bxResponse.getHitIds("", true, 0, 10, "id").toArray(new String[0])), hitIds);
             }
             catch (Exception ex)
             {
