@@ -80,6 +80,7 @@ public class BxFacets {
         return thriftFacets;
     }
 
+    @SuppressWarnings("unchecked")
     public void addFacet(String fieldName, String selectedValue, String type, String label, int order, boolean boundsOnly) {
 
         //default start
@@ -427,6 +428,7 @@ public class BxFacets {
         return this.facets.size() > 0 ? Arrays.asList((String[]) (this.facets).keySet().toArray()) : new ArrayList<String>();
     }
 
+    @SuppressWarnings("unchecked")
     protected Map<String, Object> getFacetByFieldName(String fieldName) {
         for (Map.Entry<String, Object> item : this.facets.entrySet()) {
             if (fieldName.equals(item.getKey())) {

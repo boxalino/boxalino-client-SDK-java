@@ -81,6 +81,7 @@ public class BxData {
         return this.languages;
     }
 
+    @SuppressWarnings("unchecked")
     public Object getSourceCSVRow(String container, String sourceId, int row, int maxRow) throws BoxalinoException {
         try {
             //default start
@@ -141,6 +142,7 @@ public class BxData {
 
     }
 
+    @SuppressWarnings("unchecked")
     public void addSourceField(String sourceKey, String fieldName, String type, boolean localized, Object colMap, String referenceSourceKey, boolean validate) throws BoxalinoException, IOException {
 
         String container = this.decodeSourceKey(sourceKey)[0].trim();
@@ -213,6 +215,7 @@ public class BxData {
         return file;
     }
 
+    @SuppressWarnings("unchecked")
     public void validateSource(String container, String sourceId) throws IOException, BoxalinoException {
         try {
 
@@ -232,6 +235,7 @@ public class BxData {
         return container + " -" + sourceId;
     }
 
+    @SuppressWarnings("unchecked")
     public String addSourceFile(String filePath, String sourceId, String container, String type, String format, Object parameters, boolean validate) throws BoxalinoException, IOException {
         //default start
         if (format == EMPTY_STRING) {
@@ -339,6 +343,7 @@ public class BxData {
         return sourceKey;
     }
 
+    @SuppressWarnings("unchecked")
     public void addFieldParameter(String sourceKey, String fieldName, String parameterName, String parameterValue) throws BoxalinoException {
         String container = this.decodeSourceKey(sourceKey)[0].trim();
         String sourceId = this.decodeSourceKey(sourceKey)[1].trim();
@@ -359,6 +364,7 @@ public class BxData {
         this.addFieldParameter(sourceKey, fieldName, "multiValued", multiValued ? "true" : "false");
     }
 
+    @SuppressWarnings("unchecked")
     public void addSourceParameter(String sourceKey, String parameterName, String parameterValue) throws BoxalinoException {
         String container = this.decodeSourceKey(sourceKey)[0].trim();
         String sourceId = this.decodeSourceKey(sourceKey)[1].trim();
@@ -675,6 +681,7 @@ public class BxData {
 
     }
 
+    @SuppressWarnings("unchecked")
     public Document getXML() throws BoxalinoException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
@@ -1028,6 +1035,7 @@ public class BxData {
         return value;
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getFiles() {
         Map<String, Object> files = new HashMap<>();
         this.sources.entrySet().forEach((containerSources) -> {

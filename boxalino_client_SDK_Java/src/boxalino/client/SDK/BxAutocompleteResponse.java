@@ -64,6 +64,7 @@ public class BxAutocompleteResponse {
         return hit.searchResult.totalHitCount;
     }
 
+    @SuppressWarnings("unchecked")
     public BxChooseResponse getBxSearchResponse(String textualSuggestion) throws BoxalinoException {
         BxAutocompleteRequest bxAutocompleteRequestt = this.bxAutocompleteRequest;
         SearchResult searchResult = textualSuggestion.isEmpty() ? this.getResponse().prefixSearchResult : this.getTextualSuggestionHit(textualSuggestion).searchResult;

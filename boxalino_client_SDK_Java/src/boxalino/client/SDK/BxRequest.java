@@ -312,7 +312,7 @@ public class BxRequest {
         this.withRelaxation = withRelaxation;
     }
 
-    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> items, String[] fields) {
+    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> items, List<String> fields) {
         return new ArrayList<>();
     }
 

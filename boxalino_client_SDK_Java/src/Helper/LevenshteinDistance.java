@@ -67,21 +67,7 @@ public class LevenshteinDistance {
             }
         }
         calculated = true;
-        displayMatrix();
     }
 
-    private void displayMatrix() {
-        System.out.println("  " + compOne);
-        for (int y = 0; y <= compTwo.length(); y++) {
-            if (y - 1 < 0) {
-                System.out.print(" ");
-            } else {
-                System.out.print(compTwo.charAt(y - 1));
-            }
-            for (int x = 0; x <= compOne.length(); x++) {
-                System.out.print(matrix[x][y]);
-            }
-            System.out.println();
-        }
-    }
+    
 }

@@ -96,7 +96,7 @@ public class BxParametrizedRequest extends BxRequest {
         String requestParametersPrefixx = this.requestParametersPrefix;
         String requestWeightedParametersPrefixx = this.requestWeightedParametersPrefix;
         String requestFiltersPrefixx = this.requestFiltersPrefix;
-        String requestFacetsPrefixx= this.requestFacetsPrefix;
+        String requestFacetsPrefixx = this.requestFacetsPrefix;
         String requestSortFieldPrefixx = this.requestSortFieldPrefix;
         return new ArrayList<String>() {
             {
@@ -136,6 +136,7 @@ public class BxParametrizedRequest extends BxRequest {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<String, ArrayList<String>> getRequestContextParameters() {
         HashMap<String, ArrayList<String>> _params = new HashMap<>();
         getPrefixedParameters(requestWeightedParametersPrefix, true).entrySet().forEach((item) -> {
@@ -148,6 +149,7 @@ public class BxParametrizedRequest extends BxRequest {
         return _params;
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getWeightedParameters() {
         Map<String, Object> _params = new HashMap<>();
 
@@ -208,7 +210,7 @@ public class BxParametrizedRequest extends BxRequest {
             sortFields = new BxSortFields();
         }
         for (Map.Entry<String, Object> obj : this.getPrefixedParameters(this.requestSortFieldPrefix, false).entrySet()) {
-            sortFields.push(obj.getKey(),((Boolean)obj.getValue()));
+            sortFields.push(obj.getKey(), ((Boolean) obj.getValue()));
         }
         return sortFields;
     }
@@ -219,7 +221,7 @@ public class BxParametrizedRequest extends BxRequest {
             super.returnFields = new ArrayList<>();
         }
         super.returnFields.addAll(this.bxReturnFields);
-        return (ArrayList<String>)super.returnFields.stream().distinct().collect(Collectors.toList());
+        return (ArrayList<String>) super.returnFields.stream().distinct().collect(Collectors.toList());
     }
 
     public List<String> getAllReturnFields() {
@@ -231,7 +233,7 @@ public class BxParametrizedRequest extends BxRequest {
         return returnFieldss;
     }
 
-    public Map<String, Object> retrieveFromCallBack(List<Hit> items, String[] fields) {
+    public Map<String, Object> retrieveFromCallBack(List<Hit> items, List<String> fields) {
         if (this.callBackCache == null) {
             this.callBackCache = new HashMap<>();
             List<String> ids;
@@ -244,12 +246,13 @@ public class BxParametrizedRequest extends BxRequest {
     }
 
     @Override
-    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> items, String[] fields) {
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> items, List<String> fields) {
         Map<String, Object> itemFields = this.retrieveFromCallBack(items, fields);
         List<Map<String, Object>> temp = new ArrayList<>();
         temp.add(itemFields);
         if (((HashMap) temp.get(0)).get("id") != null) {
-            return (List<Map<String, Object>>) ((HashMap) temp.get(0)).get("id");
+            return (List<Map<String, Object>>) ((HashMap<String, Object>) temp.get(0)).get("id");
         }
         return super.retrieveHitFieldValues(item, field, items, fields);
     }

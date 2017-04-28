@@ -16,6 +16,7 @@ import com.boxalino.p13n.api.thrift.Variant;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,29 +49,22 @@ public class BxChooseResponse {
         return this.response;
     }
 
-    protected Variant getChoiceIdResponseVariant(int id) throws BoxalinoException, NoSuchFieldException {
-        Object responsee = this.getResponse();
-        Field field = null;
-        try {
-            field = responsee.getClass().getField("variants");
-        } catch (NoSuchFieldException ex) {
+    protected Variant getChoiceIdResponseVariant(int id) throws BoxalinoException, Exception {
+        Object response = getResponse();
+        if (response instanceof ChoiceResponse) {
+            ChoiceResponse cr = (ChoiceResponse) response;
+            return cr.variants.get(id - 1);
         }
-
-        if (field != null) {
-            if (((ChoiceResponse) responsee).variants != null) {
-                return ((ChoiceResponse) responsee).variants.get(id - 1);
-            }
-        }
-
-        if (responsee.getClass().getName().equals(new SearchResult().getClass().getName())) {
+        if (response instanceof SearchResult) {
             Variant variant = new Variant();
-            variant.searchResult = (SearchResult) responsee;
+            variant.searchResult = (SearchResult) response;
             return variant;
         }
         throw new BoxalinoException("no variant provided in choice response for variant id " + id);
     }
 
-    public Variant getChoiceResponseVariant(String choice, int count) throws BoxalinoException, NoSuchFieldException {
+    @SuppressWarnings("unchecked")
+    public Variant getChoiceResponseVariant(String choice, int count) throws BoxalinoException, Exception {
         int k = 0;
         for (BxRequest bxRequest : (ArrayList<BxRequest>) this.bxRequests) {
             k++;
@@ -99,7 +93,8 @@ public class BxChooseResponse {
         return null;
     }
 
-    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> fields, String[] hits) {
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> fields, List<String> hits) {
         List<Map<String, Object>> fieldValues = new ArrayList<>();
         ((ArrayList<BxRequest>) this.bxRequests).forEach((bxRequest) -> {
             fieldValues.addAll(bxRequest.retrieveHitFieldValues(item, field, fields, hits));
@@ -107,6 +102,7 @@ public class BxChooseResponse {
         return fieldValues;
     }
 
+    @SuppressWarnings("unchecked")
     public BxFacets getRequestFacets(String choice) {
         if (choice.isEmpty()) {
             if (((ArrayList<BxRequest>) this.bxRequests).get(0) != null) {
@@ -170,7 +166,7 @@ public class BxChooseResponse {
         Variant variant = null;
         try {
             variant = this.getChoiceResponseVariant(choice, count);
-        } catch (NoSuchFieldException ex) {
+        } catch (Exception ex) {
             throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
         SearchResult searchResult = this.getVariantSearchResult(variant, considerRelaxation, maxDistance);
@@ -182,14 +178,15 @@ public class BxChooseResponse {
         return facets;
     }
 
-    public Map<String, Object> getSearchHitFieldValues(SearchResult searchResult, String[] fields) {
-        Map<String, Object> fieldValues = new HashMap<>();
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getSearchHitFieldValues(SearchResult searchResult, List<String> fields) {
+        Map<String, Object> fieldValues = new LinkedHashMap<>();
 
         if (searchResult != null) {
             for (Hit item : searchResult.hits) {
-                String[] finalFields = fields;
+                List<String> finalFields = fields;
                 if (finalFields == null) {
-                    finalFields = item.values.keySet().toArray(new String[item.values.size()]);
+                     finalFields = java.util.Arrays.asList(item.values.keySet().toArray(new String[item.values.size()])); 
                 }
 
                 for (String field : finalFields) {
@@ -197,15 +194,15 @@ public class BxChooseResponse {
                         if (item.values.get(field).size() > 0) {
                             if (!item.values.get(field).get(0).equals(EMPTY_STRING) || item.values.get(field).get(0) != null) {
                                 String key = item.values.get("id").get(0).toString();
-                                fieldValues.put(key, new HashMap());
-                                ((HashMap) fieldValues.get(key)).put(field, item.values.get(field));
+                                fieldValues.put(key, new LinkedHashMap());
+                                ((LinkedHashMap) fieldValues.get(key)).put(field, item.values.get(field));
                             }
                         }
                     }
 
                     if (fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0)) == null) {
                         fieldValues.put(((ArrayList<String>) item.values.get("id")).get(0), new HashMap());
-                        ((HashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).put(field, this.retrieveHitFieldValues(item, field, searchResult.hits, finalFields));
+                        ((LinkedHashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).put(field, this.retrieveHitFieldValues(item, field, searchResult.hits, finalFields));
 
                     }
 
@@ -215,7 +212,7 @@ public class BxChooseResponse {
         return fieldValues;
     }
 
-    public Map<String, Object> getHitFieldValues(String[] fields, String choice, boolean considerRelaxation, int count, int maxDistance) throws BoxalinoException {
+    public Map<String, Object> getHitFieldValues(List<String> fields, String choice, boolean considerRelaxation, int count, int maxDistance) throws BoxalinoException {
         //default start
         if (maxDistance == 0) {
             maxDistance = 10;
@@ -224,22 +221,23 @@ public class BxChooseResponse {
         Variant variant = null;
         try {
             variant = this.getChoiceResponseVariant(choice, count);
-        } catch (NoSuchFieldException ex) {
+        } catch (Exception ex) {
             throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
         return this.getSearchHitFieldValues(this.getVariantSearchResult(variant, considerRelaxation, maxDistance), fields);
     }
 
-    public Object getFirstHitFieldValue(String field, boolean returnOneValue, int hitIndex, String choice, int count, int maxDistance) throws NoSuchFieldException, BoxalinoException {
+    @SuppressWarnings("unchecked")
+    public Object getFirstHitFieldValue(String field, boolean returnOneValue, int hitIndex, String choice, int count, int maxDistance) throws Exception, BoxalinoException {
         //default start
         if (maxDistance == 0) {
             maxDistance = 10;
         }
-        //default end
+        //default endException
 
-        String[] fieldNames = null;
+        List<String> fieldNames = null;
         if (field != null) {
-            fieldNames = new String[]{field};
+             fieldNames = java.util.Arrays.asList(field); 
         }
         count = 0;
         for (Map.Entry<String, Object> fieldValueMap : this.getHitFieldValues(fieldNames, choice, true, count, maxDistance).entrySet()) {
@@ -267,27 +265,26 @@ public class BxChooseResponse {
         try {
             Variant variant = getChoiceResponseVariant(choice, count);
             return (variant.searchRelaxation.subphrasesResults) != null ? true : false && (variant.searchRelaxation.subphrasesResults).size() > 0;
-        } catch (NoSuchFieldException ex) {
+        } catch (Exception ex) {
             throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
     }
 
-    public Map<String, SearchResult> getSubPhrasesQueries(String choice, int count) throws BoxalinoException {
+    public List< SearchResult> getSubPhrasesQueries(String choice, int count) throws BoxalinoException {
 
         if (!this.areThereSubPhrases(choice, count)) {
-            return new HashMap<>();
+            return new ArrayList<>();
         }
 
-        Map<String, SearchResult> queries = new HashMap<>();
+        List<SearchResult> queries = new ArrayList<>();
         try {
             Variant variant = this.getChoiceResponseVariant(choice, count);
-            int index = 0;
             for (SearchResult searchResult : variant.searchRelaxation.subphrasesResults) {
-                queries.put(String.valueOf(index++), searchResult);
+                queries.add(searchResult);
             }
 
             return queries;
-        } catch (NoSuchFieldException ex) {
+        } catch (Exception ex) {
             throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
     }
@@ -305,7 +302,7 @@ public class BxChooseResponse {
             }
 
             return null;
-        } catch (NoSuchFieldException ex) {
+        } catch (Exception ex) {
             throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
     }
@@ -319,32 +316,30 @@ public class BxChooseResponse {
         return 0;
     }
 
-    public Map<String, String> getSearchResultHitIds(SearchResult searchResult, String fieldId) {
+    public List<String> getSearchResultHitIds(SearchResult searchResult, String fieldId) {
         //default start
         if (fieldId.equals(EMPTY_STRING)) {
             fieldId = "id";
         }
         //default end
 
-        Map<String, String> ids = new HashMap<>();
+        List<String> ids = new ArrayList<>();
 
         if (searchResult != null) {
             if (searchResult.hits.size() > 0) {
-                int index = 0;
                 for (Hit item : searchResult.hits) {
-                    ids.put(String.valueOf(index++), ((List<String>) item.values.get(fieldId)).get(0));
+                    ids.add(((List<String>) item.values.get(fieldId)).get(0));
                 }
             } else if ((searchResult.hitsGroups).size() > 0) {
-                int index = 0;
                 for (HitsGroup hitGroup : searchResult.hitsGroups) {
-                    ids.put(String.valueOf(index++), hitGroup.groupValue);
+                    ids.add(hitGroup.groupValue);
                 }
             }
         }
         return ids;
     }
 
-    public Map<String, String> getSubPhraseHitIds(String queryText, String choice, int count, String fieldId) throws BoxalinoException {
+    public List<String> getSubPhraseHitIds(String queryText, String choice, int count, String fieldId) throws BoxalinoException {
         //default start
         if (fieldId.equals(EMPTY_STRING)) {
             fieldId = "id";
@@ -354,10 +349,10 @@ public class BxChooseResponse {
         if (searchResult != null) {
             return this.getSearchResultHitIds(searchResult, fieldId);
         }
-        return new HashMap<>();
+        return new ArrayList<>();
     }
 
-    public Map<String, String> getHitIds(String choice, boolean considerRelaxation, int count, int maxDistance, String fieldId) throws BoxalinoException {
+    public List<String> getHitIds(String choice, boolean considerRelaxation, int count, int maxDistance, String fieldId) throws BoxalinoException {
         //default start
         if (maxDistance == 0) {
             maxDistance = 10;
@@ -369,7 +364,7 @@ public class BxChooseResponse {
         Variant variant = null;
         try {
             variant = this.getChoiceResponseVariant(choice, count);
-        } catch (NoSuchFieldException ex) {
+        } catch (Exception ex) {
             throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
         return this.getSearchResultHitIds(this.getVariantSearchResult(variant, considerRelaxation, maxDistance), fieldId);
@@ -385,7 +380,7 @@ public class BxChooseResponse {
         Variant variant = null;
         try {
             variant = this.getChoiceResponseVariant(choice, count);
-        } catch (NoSuchFieldException ex) {
+        } catch (Exception ex) {
             throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
 
@@ -396,7 +391,7 @@ public class BxChooseResponse {
         return searchResult.totalHitCount;
     }
 
-    public Map<String, Object> getSubPhraseHitFieldValues(String queryText, String[] fields, String choice, boolean considerRelaxation, int count) throws BoxalinoException, NoSuchFieldException {
+    public Map<String, Object> getSubPhraseHitFieldValues(String queryText, List<String> fields, String choice, boolean considerRelaxation, int count) throws BoxalinoException, Exception {
         SearchResult searchResult = this.getSubPhraseSearchResult(queryText, choice, count);
         if (searchResult != null) {
             return this.getSearchHitFieldValues(searchResult, fields);
@@ -422,13 +417,14 @@ public class BxChooseResponse {
             if (searchResult != null) {
                 return searchResult.queryText;
             }
-        } catch (NoSuchFieldException ex) {
+        } catch (Exception ex) {
             throw new BoxalinoException(ex.getMessage(), ex.getCause());
         }
         return null;
     }
 
-    public String toJson(String[] fields) throws BoxalinoException {
+    @SuppressWarnings("unchecked")
+    public String toJson(List<String>fields) throws BoxalinoException {
         List<Map<String, Object>> temp = new ArrayList<>();
         Map<String, Object> myObject = new HashMap<String, Object>();
 
