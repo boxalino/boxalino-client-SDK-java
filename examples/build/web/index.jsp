@@ -12,6 +12,6 @@
         <title>JSP Page</title>
             </head>
     <body>
-     <% new com.boxalino.examples.RecommendationsSimilarComplementary().recommendationsSimilarComplementary();%>
+     <% new com.boxalino.examples.SearchSortField().searchSortField();%>
     </body>
 </html>

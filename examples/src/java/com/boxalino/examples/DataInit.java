@@ -85,7 +85,7 @@ public class DataInit {
              */
             //NOT YET READY NOTICE: prepareAutocompleteIndex doesn't add the fields yet even if you pass them to the function like in this example here (TODO), for now, you need to go in the data intelligence admin and set the fields manually. You can contact support@boxalino.com to do that.
             //the autocomplete index is automatically filled with common searches done over time, but of course, before going live, you will not have any. While it is possible to load pre-existing search logs (contact support@boxalino.com to learn how, you can also define some fields which will be considered for the autocompletion anyway (e.g.: brand, product line, etc.).
-            List<String> fields = new ArrayList() {
+            List<String> fields = new ArrayList<String>() {
                 {
                     add("products_color");
                 }

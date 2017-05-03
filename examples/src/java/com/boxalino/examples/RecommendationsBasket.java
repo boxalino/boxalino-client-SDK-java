@@ -8,17 +8,12 @@ package com.boxalino.examples;
 import Exception.BoxalinoException;
 import Helper.CustomBasketContent;
 import Helper.HttpContext;
-import Helper.ServletHttpContext;
 import boxalino.client.SDK.BxChooseResponse;
 import boxalino.client.SDK.BxClient;
 import boxalino.client.SDK.BxRecommendationRequest;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -39,76 +34,6 @@ public class RecommendationsBasket {
     private String referer="";
     private String currentUrl="";    
     private String userAgent = "";
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     *
-     * @throws IOException if an I/O error occurs
-     */
-    public void recommendationsBasket(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        try {
-
-            String account = this._account; // your account name
-            String password = this._password; // your account password
-            domain = ""; // your web-site domain (e.g.: www.abc.com)
-            isDev = false; //are the data to be pushed dev or prod data?            
-            logs = new ArrayList<>();
-            //optional, just used here in example to collect logs
-            boolean print = this._print;
-
-            //Create HttpContext instance
-            httpContext = new ServletHttpContext(domain, request, response);
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
-
-            language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
-            String choiceId = "basket"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
-            String itemFieldId = "id"; // the field you want to use to define the id of the product (normally id, but could also be a group id if you have a difference between group id and sku)
-
-            ArrayList<CustomBasketContent> itemFieldIdValuesPrices = new ArrayList<CustomBasketContent>(); //the product ids and their prices that the user currently has in his basket
-            CustomBasketContent customBasketContent = new CustomBasketContent();
-            customBasketContent.Id = "1940";
-            customBasketContent.Price = "10.80";
-            itemFieldIdValuesPrices.add(customBasketContent);
-            customBasketContent = new CustomBasketContent();
-            customBasketContent.Id = "1234";
-            customBasketContent.Price = "130.5";
-            itemFieldIdValuesPrices.add(customBasketContent);
-
-            int hitCount = 10; //a maximum number of recommended result to return in one page
-
-            //create similar recommendations request
-            BxRecommendationRequest bxRequest = new BxRecommendationRequest(language, choiceId, hitCount);
-
-            //indicate the products the user currently has in his basket (reference of products for the recommendations)
-            bxRequest.setBasketProductWithPrices(itemFieldId, itemFieldIdValuesPrices, "", "");
-
-            //add the request
-            bxClient.addRequest(bxRequest);
-
-            //make the query to Boxalino server and get back the response for all requests
-            bxResponse = bxClient.getResponse();
-
-            for (Map.Entry item : bxResponse.getHitIds("", true, 0, 10, "id").entrySet()) {
-                logs.add(item.getKey() + ": returned id " + item.getValue());
-            }
-            if (print) {
-                System.out.println(String.join("\n", logs));
-
-            }
-
-        } catch (BoxalinoException ex) {
-
-            System.out.println(ex.getMessage());
-
-        } catch (URISyntaxException ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -159,8 +84,10 @@ public class RecommendationsBasket {
             //make the query to Boxalino server and get back the response for all requests
             bxResponse = bxClient.getResponse();
 
-            for (Map.Entry item : bxResponse.getHitIds("", true, 0, 10, "id").entrySet()) {
-                logs.add(item.getKey() + ": returned id " + item.getValue());
+            int index=0;
+            for (String item : bxResponse.getHitIds("", true, 0, 10, "id")) {
+                logs.add(index + ": returned id " + item);
+                index++;
             }
             if (print) {
                 System.out.println(String.join("\n", logs));
