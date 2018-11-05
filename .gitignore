@@ -1,5 +1,4 @@
 ./boxalino_client_SDK_Java/nbproject/
-./boxalino_client_SDK_Java/build/
 ./boxalino_client_SDK_Java/dist/
 ./BoxalinoWeb/nbproject/private/
 /BoxalinoWeb/build/*
@@ -9,5 +8,7 @@ examples/build/
 examples/dist/
 examples/.settings
 build
-./boxalino_client_SDK_Java/dist/javadoc/
+./boxalino_client_SDK_Java/dist/javadoc
 ./boxalino_client_SDK_Java/.classpath
+examples/.classpath
+./boxalino_client_SDK_Java/build/

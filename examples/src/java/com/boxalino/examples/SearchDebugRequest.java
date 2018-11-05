@@ -64,7 +64,7 @@ public class SearchDebugRequest {
             //Create HttpContext instance
             httpContext = new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Client SDK instance
-            bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
+            bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null,httpContext, null, null);
 
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String queryText = "women"; // a search query

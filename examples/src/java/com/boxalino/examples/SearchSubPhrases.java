@@ -60,7 +60,7 @@ public class SearchSubPhrases {
             //Create HttpContext instance
             httpContext = new HttpContext(domain, userAgent, ip, referer, currentUrl);
             //Create the Boxalino Client SDK instance
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null,httpContext, null, null);
 
             //create search request
             BxSearchRequest bxrequest = new BxSearchRequest(language, queryText, hitCount, "");

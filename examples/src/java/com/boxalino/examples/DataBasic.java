@@ -65,7 +65,7 @@ public class DataBasic {
              //Create HttpContext instance
             HttpContext httpContext=new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Data SDK instance
-            BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null,httpContext), languages, isDev, isDelta);
+            BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null,httpContext, null, null), languages, isDev, isDelta);
             String file = new File(GetDirectory() + "/WEB-INF/Resources/SampleData/products.csv").getPath();
             String itemIdColumn = "id"; //the column header row name of the csv with the unique id of each item
 

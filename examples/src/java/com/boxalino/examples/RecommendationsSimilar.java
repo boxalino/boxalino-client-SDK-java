@@ -33,6 +33,11 @@ public class RecommendationsSimilar {
     private String currentUrl = "";
     private String userAgent = "";
 
+    
+    public static void main(String[] args) throws Exception {
+		new RecommendationsSimilar().recommendationsSimilar();
+	}
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods. Use this method if do not want to manage cookies
@@ -40,9 +45,7 @@ public class RecommendationsSimilar {
      * @throws IOException if an I/O error occurs
      */
     public void recommendationsSimilar() throws IOException {
-
         try {
-
             /**
              * In this example, we take a very simple CSV file with product
              * data, generate the specifications, load them, publish them and
@@ -60,7 +63,7 @@ public class RecommendationsSimilar {
             //Create HttpContext instance
             httpContext = new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Client SDK instance
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext, null, null);
 
             String language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String choiceId = "similar"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
@@ -91,9 +94,7 @@ public class RecommendationsSimilar {
             }
 
         } catch (BoxalinoException ex) {
-
             System.out.println(ex.getMessage());
-
         }
     }
 

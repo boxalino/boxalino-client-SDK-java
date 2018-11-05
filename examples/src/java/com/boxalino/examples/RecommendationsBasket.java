@@ -55,7 +55,7 @@ public class RecommendationsBasket {
 
             //Create HttpContext instance
             httpContext = new HttpContext(domain,userAgent,ip,referer,currentUrl);
-            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null, httpContext);
+            BxClient bxClient = new BxClient(account, password, domain, isDev, null, 0, null, null, null, null,httpContext, null, null);
             language = "en"; // a valid language code (e.g.: "en", "fr", "de", "it", ...)
             String choiceId = "basket"; //the recommendation choice id (standard choice ids are: "similar" => similar products on product detail page, "complementary" => complementary products on product detail page, "basket" => cross-selling recommendations on basket page, "search"=>search results, "home" => home page personalized suggestions, "category" => category page suggestions, "navigation" => navigation product listing pages suggestions)
             String itemFieldId = "id"; // the field you want to use to define the id of the product (normally id, but could also be a group id if you have a difference between group id and sku)

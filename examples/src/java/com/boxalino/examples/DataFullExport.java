@@ -63,7 +63,7 @@ public class DataFullExport {
             //Create HttpContext instance
             HttpContext httpContext = new HttpContext(domain,userAgent,ip,referer,currentUrl);
             //Create the Boxalino Data SDK instance
-            BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null,httpContext), languages, isDev, isDelta);
+            BxData bxData = new BxData(new BxClient(account, password, domain, isDev, null, 0, null, null, null, null,httpContext, null, null), languages, isDev, isDelta);
 
             //To get the real path of the files
             String path = this.getClass().getResource("").getPath();

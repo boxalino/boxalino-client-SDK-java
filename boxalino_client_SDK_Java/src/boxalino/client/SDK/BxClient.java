@@ -34,13 +34,14 @@ import org.apache.thrift.transport.THttpClient;
 import org.apache.thrift.transport.TTransportException;
 
 /**
- *
  * @author HASHIR
  */
 public class BxClient {
 
     private final String account;
     private final String password;
+    private final String apiKey;
+    private final String apiSecret;
     private final boolean isDev;
     private String host;
     private Integer port;
@@ -64,8 +65,7 @@ public class BxClient {
     private HttpContext httpContext;
 
 
-    public BxClient(String account, String password, String domain, boolean isDev, String host, int port, String uri, String schema, String p13n_username, String p13n_password, HttpContext httpContext) throws BoxalinoException {
-
+    public BxClient(String account, String password, String domain, boolean isDev, String host, int port, String uri, String schema, String p13n_username, String p13n_password, HttpContext httpContext, String apiKey, String apiSecret) throws BoxalinoException {
         //default value start
         if (host == null || host.equals(Helper.Common.EMPTY_STRING)) {
             host = null;
@@ -96,8 +96,12 @@ public class BxClient {
         this.isDev = isDev;
 
         this.host = host;
-        if (this.host == null) {
-            this.host = "cdn.bx-cloud.com";
+        if (host == null)
+        {
+        	this.host = "main.bx-cloud.com";
+        }
+        if (apiKey == null || apiKey.equals(Helper.Common.EMPTY_STRING)) {
+        	this.host = "cdn.bx-cloud.com";
         }
         this.port = port;
         if (this.port == 0) {
@@ -120,6 +124,8 @@ public class BxClient {
             this.p13n_password = "tkZ8EXfzeZc6SdXZntCU";
         }
         this.domain = domain;
+        this.apiKey = apiKey;
+		this.apiSecret = apiSecret;
         //default value end
 
         this.httpContext = httpContext;
@@ -131,9 +137,9 @@ public class BxClient {
     }
 
     public String getAccount(boolean checkDev) {
-        //dfefault start            
+        //default start            
         checkDev = true;
-        //dfefault end
+        //default end
 
         if (checkDev && this.isDev) {
             return this.account + "_dev";
@@ -148,22 +154,28 @@ public class BxClient {
     public String getPassword() {
         return this.password;
     }
+    
+    public String getApiKey() {
+        return this.apiKey;
+    }
+
+    public String getApiSecret() {
+        return this.apiSecret;
+    }
 
     public void setSessionAndProfile(String sessionId, String profileId) {
-
     	this.httpContext.setSessionAndProfile(sessionId, profileId);
-
     }
 
     private String[] getSessionAndProfile() throws BoxalinoException {
-
     	return this.httpContext.getSessionAndProfile(null, null, this.domain);
-
     }
 
     private UserRecord getUserRecord() {
         UserRecord userRecord = new UserRecord();
         userRecord.username = this.getAccount(true);
+        userRecord.apiKey = this.getApiKey();
+        userRecord.apiSecret = this.getApiSecret();
         return userRecord;
     }
 
@@ -276,7 +288,6 @@ public class BxClient {
     }
 
     public void addRequestContextParameter(String name, ArrayList<String> value) {
-
         this.requestContextParameters.put(name, value);
     }
 
