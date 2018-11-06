@@ -81,9 +81,9 @@ public class SearchSortField {
             bxResponse = bxClient.getResponse();
 
             //loop on the search response hit ids and print them
-            Map<String, Object> HitFieldValues = bxResponse.getHitFieldValues(java.util.Arrays.asList(sortField), "", true, 0, 10);
+            Map<String, Map<String, List<String>>> hitFieldValues = bxResponse.getHitFieldValues(java.util.Arrays.asList(sortField), "", true, 0, 10);
 
-            for (Map.Entry obj : HitFieldValues.entrySet()) {
+            for (Map.Entry obj : hitFieldValues.entrySet()) {
                 String Id = String.valueOf(obj.getKey());
                 HashMap<String, Object> fieldValueMap = (HashMap<String, Object>) obj.getValue();
 
