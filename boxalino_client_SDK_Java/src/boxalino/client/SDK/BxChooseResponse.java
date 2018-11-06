@@ -15,6 +15,7 @@ import com.boxalino.p13n.api.thrift.SearchResult;
 import com.boxalino.p13n.api.thrift.Variant;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -94,15 +95,6 @@ public class BxChooseResponse {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> retrieveHitFieldValues(Hit item, String field, List<Hit> fields, List<String> hits) {
-        List<Map<String, Object>> fieldValues = new ArrayList<>();
-        ((ArrayList<BxRequest>) this.bxRequests).forEach((bxRequest) -> {
-            fieldValues.addAll(bxRequest.retrieveHitFieldValues(item, field, fields, hits));
-        });
-        return fieldValues;
-    }
-
-    @SuppressWarnings("unchecked")
     public BxFacets getRequestFacets(String choice) {
         if (choice.isEmpty()) {
             if (((ArrayList<BxRequest>) this.bxRequests).get(0) != null) {
@@ -179,40 +171,34 @@ public class BxChooseResponse {
     }
 
     @SuppressWarnings("unchecked")
-    public Map<String, Object> getSearchHitFieldValues(SearchResult searchResult, List<String> fields) {
-        Map<String, Object> fieldValues = new LinkedHashMap<>();
+    public Map<String, Map<String, List<String>>> getSearchHitFieldValues(SearchResult searchResult, List<String> fields) {
+    	Map<String, Map<String, List<String>>> fieldValues = new LinkedHashMap<>();
 
         if (searchResult != null) {
             for (Hit item : searchResult.hits) {
+            	String id = item.values.get("id").get(0).toString();
                 List<String> finalFields = fields;
                 if (finalFields == null) {
-                     finalFields = java.util.Arrays.asList(item.values.keySet().toArray(new String[item.values.size()])); 
+                     finalFields = Arrays.asList(item.values.keySet().toArray(new String[item.values.size()]));
                 }
-
+                
+                fieldValues.put(id, new LinkedHashMap<>());
                 for (String field : finalFields) {
                     if (item.values.get(field) != null) {
                         if (item.values.get(field).size() > 0) {
-                            if (!item.values.get(field).get(0).equals(EMPTY_STRING) || item.values.get(field).get(0) != null) {
-                                String key = item.values.get("id").get(0).toString();
-                                fieldValues.put(key, new LinkedHashMap());
-                                ((LinkedHashMap) fieldValues.get(key)).put(field, item.values.get(field));
+                            if (!item.values.get(field).get(0).equals(EMPTY_STRING) && item.values.get(field).get(0) != null) {
+                            	fieldValues.get(id).put(field, item.values.get(field));
                             }
                         }
                     }
-
-                    if (fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0)) == null) {
-                        fieldValues.put(((ArrayList<String>) item.values.get("id")).get(0), new HashMap());
-                        ((LinkedHashMap) fieldValues.get(((ArrayList<String>) item.values.get("id")).get(0))).put(field, this.retrieveHitFieldValues(item, field, searchResult.hits, finalFields));
-
-                    }
-
                 }
             }
         }
+        
         return fieldValues;
     }
 
-    public Map<String, Object> getHitFieldValues(List<String> fields, String choice, boolean considerRelaxation, int count, int maxDistance) throws BoxalinoException {
+    public Map<String, Map<String, List<String>>> getHitFieldValues(List<String> fields, String choice, boolean considerRelaxation, int count, int maxDistance) throws BoxalinoException {
         //default start
         if (maxDistance == 0) {
             maxDistance = 10;
@@ -240,7 +226,7 @@ public class BxChooseResponse {
              fieldNames = java.util.Arrays.asList(field); 
         }
         count = 0;
-        for (Map.Entry<String, Object> fieldValueMap : this.getHitFieldValues(fieldNames, choice, true, count, maxDistance).entrySet()) {
+        for (Map.Entry<String, Map<String, List<String>>> fieldValueMap : this.getHitFieldValues(fieldNames, choice, true, count, maxDistance).entrySet()) {
             Map<String, List<String>> temp_fieldValueMap = new HashMap<>();
             if (count++ < hitIndex) {
                 continue;
@@ -391,12 +377,12 @@ public class BxChooseResponse {
         return searchResult.totalHitCount;
     }
 
-    public Map<String, Object> getSubPhraseHitFieldValues(String queryText, List<String> fields, String choice, boolean considerRelaxation, int count) throws BoxalinoException, Exception {
+    public Map<String, Map<String, List<String>>> getSubPhraseHitFieldValues(String queryText, List<String> fields, String choice, boolean considerRelaxation, int count) throws BoxalinoException, Exception {
         SearchResult searchResult = this.getSubPhraseSearchResult(queryText, choice, count);
         if (searchResult != null) {
             return this.getSearchHitFieldValues(searchResult, fields);
         }
-        return new HashMap<>();
+        return new LinkedHashMap<>();
     }
 
     public boolean areResultsCorrected(String choice, int count, int maxDistance) throws BoxalinoException {
@@ -428,9 +414,9 @@ public class BxChooseResponse {
         List<Map<String, Object>> temp = new ArrayList<>();
         Map<String, Object> myObject = new HashMap<String, Object>();
 
-        for (Map.Entry<String, Object> fieldValueMap : this.getHitFieldValues(fields, null, true, 0, 10).entrySet()) {
+        for (Map.Entry<String, Map<String, List<String>>> fieldValueMap : this.getHitFieldValues(fields, null, true, 0, 10).entrySet()) {
             Map<String, Object> hitFieldValues = new HashMap<String, Object>();
-            ((Map<String, Object>) fieldValueMap.getValue()).entrySet().forEach((fieldValues) -> {
+            fieldValueMap.getValue().entrySet().forEach((fieldValues) -> {
                 hitFieldValues.put((fieldValues.getKey()), (new HashMap<String, Object>() {
                     {
                         put("values", fieldValues.getValue());
